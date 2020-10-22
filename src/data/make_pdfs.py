@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+import logging
+from pathlib import Path
+from dotenv import find_dotenv, load_dotenv
 import os
-import sys
 from collections import defaultdict
 from zipfile import ZipFile
 from pikepdf import Pdf
@@ -7,18 +10,11 @@ from PyPDF2 import PdfFileReader
 from io import BytesIO
 import json
 
-# TODO: apply preprocessing to text, 
-# solve reading problem with "Sembrando Vida Operations_Mexico.pdf", 
-# solve data problems with several files (e.g. "Sembrando Vida_Mexico", "Sembrando Vida Report", ...)
-
-
-INTER_PATH = os.path.join("data", "interim")
-DOCS_PATH = os.path.join("data", "raw", "onedrive_docs.zip")
-
 
 def text_cleaning(text):
-    # Remove \n
-    text = text.translate(str.maketrans('', '', '\n'))
+    # Remove escaped characters
+    escapes = ''.join([chr(char) for char in range(1, 32)])
+    text = text.translate(str.maketrans('', '', escapes))
     return text
 
 
@@ -33,19 +29,26 @@ def file_recovery(filename, zipfile):
 def text_reader():
     # Useful link: https://stackoverflow.com/questions/55993860/getting-typeerror-ord-expected-string-of-length-1-but-int-found-error
     pass
-            
 
-if __name__ == "__main__":
+
+def main():
+    """ Runs data processing scripts to turn raw data from (../raw) into
+        cleaned data ready to be analyzed (saved in ../processed).
+    """
+    logger = logging.getLogger(__name__)
+    logger.info('Making pdf_files.json from base pdf files')
+
     with ZipFile(DOCS_PATH) as myzip:
         # List files inside zip
         filenames = list(map(lambda x: x.filename, filter(lambda x: not x.is_dir(), myzip.infolist())))
         pdf_dict = defaultdict(dict)
         for file in filenames:
-            print("Processing file:", file)
+            logger.info(f"Processing {file}...")
             try:
                 pdfReader = PdfFileReader(BytesIO(myzip.read(file)))  # read file
             except Exception as e:  # In case the file is corrupted
-                print(f"The following Exception was caught: \"{e}\"")
+                logger.warning(e)
+                logger.info(f"Attempting to recover {file}...")
                 pdfReader = file_recovery(file, myzip)  # attempting to recover file
             # doc_dict holds the attributes of each pdf file
             doc_dict = {i[1:]: str(j) for i, j in pdfReader.getDocumentInfo().items()}
@@ -55,7 +58,8 @@ if __name__ == "__main__":
                 try:
                     page_text = pdfReader.getPage(page).extractText()  # extracting pdf text
                 except TypeError as e:
-                    print(f"The following Exception was caught: \"{e}\"")
+                    logger.warning(e)
+                    logger.info(f"Skipping {file}...")
                     continue
                     # doc_dict["Text"] = 
                     # break
@@ -63,6 +67,21 @@ if __name__ == "__main__":
                 doc_dict["Text"] += page_text
             pdf_dict[os.path.splitext(os.path.basename(file))[0]] = doc_dict
 
-
     with open(os.path.join(INTER_PATH, 'pdf_files.json'), 'w') as outfile:
         json.dump(pdf_dict, outfile, ensure_ascii=False, indent=4)
+
+
+if __name__ == '__main__':
+    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
+
+    # not used in this stub but often useful for finding various files
+    project_dir = Path(__file__).resolve().parents[2]
+    INTER_PATH = os.path.join(project_dir, "data", "interim")
+    DOCS_PATH = os.path.join(project_dir, "data", "raw", "onedrive_docs.zip")
+
+    # find .env automagically by walking up directories until it's found, then
+    # load up the .env entries as environment variables
+    load_dotenv(find_dotenv())
+
+    main()
