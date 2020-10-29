@@ -1,3 +1,27 @@
+Current Roadmap
+==============================
+### Phase 1: Classifying documents as relevant/non-relevant
+
+**Current Data**
+- PDF Docs (NOT from Ecolex) in [OneDrive link](https://onedrive.live.com/?authkey=%21APg%5FS4HvxM%5FJBBw&id=C675544AC4321F5C%21125&cid=C675544AC4321F5C) 
+- Policy document information (around 12k+) from Ecolex, including `Title, Subjects, Keywords, Abstract` (NOT the actual documents, also in OneDrive link)
+
+**Tasks** 
+1. [X] Scraping of policy documents information (NOT the actual documents).
+2. [X] Extract keywords and keyphrases from PDF Docs and any type of meaningful information that differentiates these documents.
+3. [ ] (_In progress_) Apply keywords and keyphrases to the policy document information dataset, to cut down from 12k+ to around 1k-2k.
+4. [ ] (_In progress_) At the same time, tag a random subset of documents as relevant/non-relevant based on policy information. 
+5. [ ] Scraping of full policy documents from the narrowed down filter in steps 3. and 4. (_or more?_ - second scraping phase)
+6. [ ] Second round of relevant/non-relevant tagging process for the full policy documents.
+7. [ ] Create a model for classifying relevant/non-relevant documents (_Important question: Will this be using only the document information, or the full text data?_)
+
+### Phase 2: Classifying relevant documents using multiple tags
+1. [ ] Scraping full policy documents from list of relevant policy information 
+2. [ ] Tagging the scraped full documents according to the different types of incentives/disincentives/etc. 
+3. [ ] Create a multi-class classification model for the labeled data above
+
+-------------------------------------
+
 World Resource Institute
 ==============================
 # Background and Motivation
@@ -19,13 +43,6 @@ Success will be achieved as governments or market platforms create aligned incen
 # Internal Stakeholders
 
 Global Restoration Initiative and Forest teams. Supporting the work of the Policy Accelerator
-
-# Details
-
-## Reading PDF files
-
-The src/data/reading_pdfs.py takes as input data/raw/onedrive_docs.zip and outputs data/interim/pdf_files.json
-To execute the script you need to have the data folder structure described in the Project Organization section with the onedrive_docs.zip under data/raw. Then, after activating the python environment, run `make pdf_files` from the root directory.
 
 # Project Organization
 ------------
