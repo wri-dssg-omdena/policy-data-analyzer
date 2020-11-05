@@ -13,7 +13,8 @@ Current Roadmap
 4. [ ] (_In progress_) At the same time, tag a random subset of documents as relevant/non-relevant based on policy information. 
 5. [ ] Scraping of full policy documents from the narrowed down filter in steps 3. and 4. (_or more?_ - second scraping phase)
 6. [ ] Second round of relevant/non-relevant tagging process for the full policy documents.
-7. [ ] Create a model for classifying relevant/non-relevant documents (_Important question: Will this be using only the document information, or the full text data?_)
+7. [ ] Create a model for classifying relevant/non-relevant documents using abstracts from documents only
+8. [ ] Create a model for classifying relevant/non-relevant documents using the full text of documents
 
 ### Phase 2: Classifying relevant documents using multiple tags
 1. [ ] Scraping full policy documents from list of relevant policy information 
