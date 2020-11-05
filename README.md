@@ -53,7 +53,7 @@ Contribution Guidelines
 - _I want to bring the changes from one branch into mine, to keep mine updated, how do I do that?_
     - Say you want to merge `branch_1` INTO `branch_2`, then you would:
     ```
-    $ git checkout branch_2.   # if you aren't in branch 2 already
+    $ git checkout branch_2   # if you aren't in branch 2 already
     $ git merge branch_1
     ```
 - _If I'm working with someone in the same issue, can I contribute/push to their branch?_
