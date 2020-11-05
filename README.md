@@ -18,7 +18,7 @@ Roadmap
 
 ### Phase 2: Classifying relevant documents using multiple tags
 1. [ ] Scraping full policy documents from list of relevant policy information 
-2. [ ] Tagging the scraped full documents according to the different types of incentives/disincentives/etc. 
+2. [ ] Tagging a sample of the scraped full documents according to the different types of incentives/disincentives/etc. 
 3. [ ] Create a multi-class classification model for the labeled data above
 
 -------------------------------------

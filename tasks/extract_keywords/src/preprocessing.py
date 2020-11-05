@@ -1,5 +1,3 @@
-import os
-import random
 import unicodedata
 from collections import defaultdict
 
@@ -12,24 +10,30 @@ from sklearn.utils.validation import check_is_fitted
 class CorpusPreprocess(BaseEstimator, TransformerMixin):
     def __init__(self, language='english', stop_words=None, lowercase=True, strip_accents=False,
                  strip_numbers=False, strip_punctuation=None, stemmer=None, max_df=1.0, min_df=1):
-        """
-        Scikit-learn like Transformer for Corpus preprocessing
-        :param stop_words:
-        :param lowercase:
-        :param strip_accents:
-        :param strip_numbers:
-        :param strip_punctuation:
-        :param stemmer: 
-        :param max_df:
-        :param min_df:
+        """Scikit-learn like Transformer for Corpus preprocessing.
+        Preprocesses text by applying multiple tasks (e.g. lowecasing, stemming, etc).
+        Fits the data for obtaining vocabulary_ (mapping of terms to document frequencies)
+         and stop_words_ (terms that were ignored because of either 'max_df', 'min_df' or 'stop_words').
 
-        :attr vocabulary_: dict
-            A mapping of terms to document frequencies.
-        :attr stop_words_ : set
-            Terms that were ignored because they either:
-              - occurred in too many documents (`max_df`)
-              - occurred in too few documents (`min_df`)
-              - also contains the same terms as stop_words
+        Args:
+            language (str, optional): language of input text. Passed to word tokenizer. Defaults to 'english'.
+            stop_words (list, optional): list of stop words to be removed. Defaults to None.
+            lowercase (bool, optional): lowercases text if True. Defaults to True.
+            strip_accents (bool, optional): strips accents from text if True. Defaults to False.
+            strip_numbers (bool, optional): strips numbers from text if True. Defaults to False.
+            strip_punctuation (iterable, optional): strips provided punctuation from text if not None.
+             Defaults to None.
+            stemmer (Stemmer instance, optional): applies the provided Stemmer's stem method to text.
+             Defaults to None.
+            max_df (float in range [0.0, 1.0] or int, optional): ignore terms with a document frequency higher 
+             than the given threshold. If float, the parameter represents a proportion of documents, integer 
+             absolute counts. Defaults to 1.0.
+            min_df (float in range [0.0, 1.0] or int, optional): ignore terms with a document frequency lower 
+             than the given threshold. If float, the parameter represents a proportion of documents, integer 
+             absolute counts. Defaults to 1.
+
+        Raises:
+            ValueError: max_df and min_df are bounded to range [0.0, 1.0]
         """
         self.language = language
         self.stop_words = stop_words
@@ -37,7 +41,6 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         self.strip_accents = strip_accents
         self.strip_numbers = strip_numbers
         self.strip_punctuation = strip_punctuation
-        self.strip_numbers
         self.stemmer = stemmer
         self.max_df = max_df
         self.min_df = min_df
@@ -61,25 +64,28 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 vocab_df[unique] += 1
 
         # Find stop_words_ based on max_df and min_df
-        self.stop_words_ = set(self.stop_words)
+        if self.stop_words is None:
+            self.stop_words_ = set()
+        else:
+            self.stop_words_ = set(self.stop_words)
 
         if self.max_df is not None:
             if isinstance(self.max_df, float):
                 vocab_rel_df = {k: v / len(X) for k, v in vocab_df.items()}
-                self.stop_words_.update({k for k, v in vocab_rel_df.items() if v > self.max_df})
-            elif isinstance(self.max_df, int):
-                self.stop_words_.update({k for k, v in vocab_df.items() if v > self.max_df})
+                self.stop_words_.update(
+                    {k for k, v in vocab_rel_df.items() if v > self.max_df})
             else:
-                raise ValueError("max_df parameter should be int or float")
+                self.stop_words_.update(
+                    {k for k, v in vocab_df.items() if v > self.max_df})
 
         if self.min_df is not None:
             if isinstance(self.min_df, float):
                 vocab_rel_df = {k: v / len(X) for k, v in vocab_df.items()}
-                self.stop_words_.update({k for k, v in vocab_rel_df.items() if v < self.min_df})
-            elif isinstance(self.min_df, int):
-                self.stop_words_.update({k for k, v in vocab_df.items() if v < self.min_df})
+                self.stop_words_.update(
+                    {k for k, v in vocab_rel_df.items() if v < self.min_df})
             else:
-                raise ValueError("min_df parameter should be int or float")
+                self.stop_words_.update(
+                    {k for k, v in vocab_df.items() if v < self.min_df})
 
         # Remove stop_words_ from vocabulary
         for k in self.stop_words_:
@@ -92,7 +98,7 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         if self.stop_words is not None:
             corpus = [[token for token in doc if token not in self.stop_words]
                       for doc in corpus]
-        
+
         # Split vs merged
         if not tokenize:
             corpus = [" ".join(doc) for doc in corpus]
@@ -107,7 +113,8 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         corpus = self._word_tokenizer(X)
 
         # Remove stop_words from corpus
-        corpus = [[token for token in doc if token not in self.stop_words_] for doc in corpus]
+        corpus = [[token for token in doc if token not in self.stop_words_]
+                  for doc in corpus]
 
         # Split vs merged
         if not tokenize:
@@ -116,10 +123,14 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         return corpus
 
     def _word_tokenizer(self, X):
-        """
-        Preprocesses and tokenizes documents
-        :param X: list of documents
-        :return: list of preprocessed and tokenized documents
+        """Preprocesses and tokenizes each document by applying a 
+         preprocessing function.
+
+        Args:
+            X (iterable): documents to preprocess
+
+        Returns:
+            list: preprocessed and tokenized documents
         """
         # Define function conditionally so we only need to evaluate the condition once instead at every document
         if self.strip_accents and self.lowercase and self.strip_numbers and self.strip_punctuation is not None:
@@ -129,11 +140,13 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Lowercase
                 doc = doc.lower()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 # Remove numbers
                 doc = doc.translate(str.maketrans('', '', "0123456789"))
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         elif self.strip_accents and self.lowercase and self.strip_punctuation is not None:
             def doc_preprocessing(doc):
@@ -142,9 +155,11 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Lowercase
                 doc = doc.lower()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         if self.strip_accents and self.lowercase and self.strip_numbers:
             def doc_preprocessing(doc):
@@ -153,7 +168,8 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Lowercase
                 doc = doc.lower()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 # Remove numbers
                 doc = doc.translate(str.maketrans('', '', "0123456789"))
                 return doc
@@ -162,11 +178,13 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Removes HTML tags
                 doc = BeautifulSoup(doc, features="lxml").get_text()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 # Remove numbers
                 doc = doc.translate(str.maketrans('', '', "0123456789"))
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         if self.lowercase and self.strip_numbers and self.strip_punctuation is not None:
             def doc_preprocessing(doc):
@@ -177,7 +195,8 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Remove numbers
                 doc = doc.translate(str.maketrans('', '', "0123456789"))
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         elif self.strip_accents and self.lowercase:
             def doc_preprocessing(doc):
@@ -186,14 +205,16 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Lowercase
                 doc = doc.lower()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 return doc
         elif self.strip_accents and self.strip_numbers:
             def doc_preprocessing(doc):
                 # Removes HTML tags
                 doc = BeautifulSoup(doc, features="lxml").get_text()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 # Remove numbers
                 doc = doc.translate(str.maketrans('', '', "0123456789"))
                 return doc
@@ -202,9 +223,11 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Removes HTML tags
                 doc = BeautifulSoup(doc, features="lxml").get_text()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         elif self.lowercase and self.strip_numbers:
             def doc_preprocessing(doc):
@@ -222,7 +245,8 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Lowercase
                 doc = doc.lower()
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         elif self.strip_numbers and self.strip_punctuation is not None:
             def doc_preprocessing(doc):
@@ -231,14 +255,16 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Remove numbers
                 doc = doc.translate(str.maketrans('', '', "0123456789"))
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         elif self.strip_accents:
             def doc_preprocessing(doc):
                 # Removes HTML tags
                 doc = BeautifulSoup(doc, features="lxml").get_text()
                 # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode('ASCII', 'ignore').decode('ASCII')
+                doc = unicodedata.normalize('NFKD', doc).encode(
+                    'ASCII', 'ignore').decode('ASCII')
                 return doc
         elif self.lowercase:
             def doc_preprocessing(doc):
@@ -259,7 +285,8 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
                 # Removes HTML tags
                 doc = BeautifulSoup(doc, features="lxml").get_text()
                 # Remove punctuation
-                doc = doc.translate(str.maketrans('', '', self.strip_punctuation))
+                doc = doc.translate(str.maketrans(
+                    '', '', self.strip_punctuation))
                 return doc
         else:
             def doc_preprocessing(doc):
@@ -274,7 +301,8 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         corpus = [word_tokenize(doc, language=self.language) for doc in corpus]
 
         if self.stemmer is not None:
-            corpus = [[self.stemmer.stem(token) for token in doc] for doc in corpus]
+            corpus = [[self.stemmer.stem(token)
+                       for token in doc] for doc in corpus]
             return corpus
 
         return corpus
