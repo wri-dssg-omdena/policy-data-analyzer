@@ -1,4 +1,4 @@
-Current Roadmap
+Roadmap
 ==============================
 ### Phase 1: Classifying documents as relevant/non-relevant
 
@@ -22,7 +22,42 @@ Current Roadmap
 3. [ ] Create a multi-class classification model for the labeled data above
 
 -------------------------------------
+Contribution Guidelines
+==============================
+### Steps to contribute to the master branch
 
+**On Github**
+1. Let's say you want to work on extracting text! In the `Projects` tab on github, add a card in the TODO column and then click on the dropdown menu for the card and "Convert to issue"
+2. In the issue description, be as detailed as possible with what the expected inputs and outputs should be, and if possible what the process to solve the issue will be. 
+3. Assign someone! 
+
+**On your local machine**
+1. If you haven't already, accept the invite to be a member of wri-dssg! Then clone the repository using `git clone https://github.com/wri-dssg/policy-data-collector.git`
+2. If you're going to work on issue #69 which is about extracting text, then create a branch for that issue (`git checkout -b issue_69_text_extraction` if the branch doesn't exist, else remove the `-b` flag). Let's see if that naming convention works but if not we can try something different!
+3. Once work is done, commit and push
+
+**Back on Github**
+
+4. Once issue is solved, make a Pull Request (PR) on Github to merge to the master branch, and link the issue in the PR description and assign people to review. If possible, do one PR once a week to avoid merge conflicts. 
+5. If the PR gets approved and merged, you can close the issue and delete the branch! The Github Projects page will be automatically updated
+
+**To work on tasks**
+1. So far the tasks will be defined by the Roadmap and you can follow the structure described in [Project Organization](#project-organization) or see existing structure of current tasks.
+
+### FAQs
+- _I want to bring the changes from one branch into mine, to keep mine updated, how do I do that?_
+    - Say you want to merge `branch_1` INTO `branch_2`, then you would:
+    ```
+    $ git checkout branch_2
+    $ git merge branch_1
+    ```
+- _If I'm working with someone in the same issue, can I contribute/push to their branch?_
+    - Technically yes, but it would be safer if you would work on yours first (maybe divide the issue in smaller issues) and then open a PR to theirs once you feel ready to merge code. Alternatively you could pair program and not worry about overwritting someone else's code :)
+- _Can I push directly to master?_
+    - Please don't :( 
+    
+
+-------------------------------------
 World Resource Institute
 ==============================
 # Background and Motivation
