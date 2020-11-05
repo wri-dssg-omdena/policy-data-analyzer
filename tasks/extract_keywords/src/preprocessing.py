@@ -89,8 +89,10 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         self.vocabulary_ = vocab_df
 
         # Remove stop_words from corpus
-        corpus = [[token for token in doc if token not in self.stop_words] for doc in corpus]
-
+        if self.stop_words is not None:
+            corpus = [[token for token in doc if token not in self.stop_words]
+                      for doc in corpus]
+        
         # Split vs merged
         if not tokenize:
             corpus = [" ".join(doc) for doc in corpus]
@@ -98,7 +100,7 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         return corpus
 
     def transform(self, X, y=None, tokenize=True):
-        # Check if fit had been called
+        # Check if fit has been called
         check_is_fitted(self)
 
         # Preprocess and tokenize corpus
