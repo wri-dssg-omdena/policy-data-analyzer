@@ -45,10 +45,15 @@ Contribution Guidelines
 1. So far the tasks will be defined by the Roadmap and you can follow the structure described in [Project Organization](#project-organization) or see existing structure of current tasks.
 
 ### FAQs
+- _I want to create a new branch starting from an old branch, how do I do that?_
+    - Say you want to create `branch_2` based on `branch_1` (in other words, with `branch_1` as a starting point), then you would:
+    ```
+    $ git checkout -b branch_2 branch_1    
+    ```
 - _I want to bring the changes from one branch into mine, to keep mine updated, how do I do that?_
     - Say you want to merge `branch_1` INTO `branch_2`, then you would:
     ```
-    $ git checkout branch_2
+    $ git checkout branch_2.   # if you aren't in branch 2 already
     $ git merge branch_1
     ```
 - _If I'm working with someone in the same issue, can I contribute/push to their branch?_
