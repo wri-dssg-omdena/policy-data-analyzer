@@ -57,15 +57,15 @@ Global Restoration Initiative and Forest teams. Supporting the work of the Polic
     │   └── raw            <- The original, immutable data dump.
     │
     ├── tasks              <- Top level folder for all tasks and code
-    │   ├── task_name        <- Folder to contain materials for one single task
+    │   └── task_name        <- Folder to contain materials for one single task
     │       ├── src              <- Source code for use in this task.
     │       ├── input            <- Input files for this task ONLY (otherwise use the data/ folder by default)
     │       ├── output           <- Output files from the task
     │       ├── notebooks        <- Place to store jupyter notebooks/R markdowns or any prototyping files (the drafts)
-    │       ├── README.md        <- Basic instructions on how to replicate the results from the output/run the code in src
+    │       └── README.md        <- Basic instructions on how to replicate the results from the output/run the code in src
     │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt` (we will probably need to change this to include R information in the future)
+    └── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
+                             generated with `pip freeze > requirements.txt` (we will probably need to change this to include R information in the future)
 --------
 
 Project structure based on the [cookiecutter data science project template](https://drivendata.github.io/cookiecutter-data-science/) and the [task as a quantum of workflow project template](https://hrdag.org/2016/06/14/the-task-is-a-quantum-of-workflow/). 
