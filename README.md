@@ -90,16 +90,13 @@ Global Restoration Initiative and Forest teams. Supporting the work of the Polic
 
     ├── LICENSE
     ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
+    |
+    ├── src                <- Source code for use in this project. Code used across tasks.
     │
     ├── tasks              <- Top level folder for all tasks and code
-    │   └── task_name        <- Folder to contain materials for one single task
+    │   └── <task_name>        <- Folder to contain materials for one single task
     │       ├── src              <- Source code for use in this task.
-    │       ├── input            <- Input files for this task ONLY (otherwise use the data/ folder by default)
+    │       ├── input            <- Input files for this task
     │       ├── output           <- Output files from the task
     │       ├── notebooks        <- Place to store jupyter notebooks/R markdowns or any prototyping files (the drafts)
     │       └── README.md        <- Basic instructions on how to replicate the results from the output/run the code in src
