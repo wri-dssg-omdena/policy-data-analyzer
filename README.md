@@ -1,3 +1,68 @@
+Roadmap
+==============================
+### Phase 1: Classifying documents as relevant/non-relevant
+
+**Current Data**
+- PDF Docs (NOT from Ecolex) in [OneDrive link](https://onedrive.live.com/?authkey=%21APg%5FS4HvxM%5FJBBw&id=C675544AC4321F5C%21125&cid=C675544AC4321F5C) 
+- Policy document information (around 12k+) from Ecolex, including `Title, Subjects, Keywords, Abstract` (NOT the actual documents, also in OneDrive link)
+
+**Tasks** 
+1. [X] Scraping of policy documents information (NOT the actual documents).
+2. [X] Extract keywords and keyphrases from PDF Docs and any type of meaningful information that differentiates these documents.
+3. [ ] (_In progress_) Apply keywords and keyphrases to the policy document information dataset, to cut down from 12k+ to around 1k-2k.
+4. [ ] (_In progress_) At the same time, tag a random subset of documents as relevant/non-relevant based on policy information. 
+5. [ ] Scraping of full policy documents from the narrowed down filter in steps 3. and 4. (_or more?_ - second scraping phase)
+6. [ ] Second round of relevant/non-relevant tagging process for the full policy documents.
+7. [ ] Create a model for classifying relevant/non-relevant documents using abstracts from documents only
+8. [ ] Create a model for classifying relevant/non-relevant documents using the full text of documents
+
+### Phase 2: Classifying relevant documents using multiple tags
+1. [ ] Scraping full policy documents from list of relevant policy information 
+2. [ ] Tagging a sample of the scraped full documents according to the different types of incentives/disincentives/etc. 
+3. [ ] Create a multi-class classification model for the labeled data above
+
+-------------------------------------
+Contribution Guidelines
+==============================
+### Steps to contribute to the master branch
+
+**On Github**
+1. Let's say you want to work on extracting text! In the `Projects` tab on github, add a card in the TODO column and then click on the dropdown menu for the card and "Convert to issue"
+2. In the issue description, be as detailed as possible with what the expected inputs and outputs should be, and if possible what the process to solve the issue will be. 
+3. Assign someone! 
+
+**On your local machine**
+1. If you haven't already, accept the invite to be a member of wri-dssg! Then clone the repository using `git clone https://github.com/wri-dssg/policy-data-collector.git`
+2. If you're going to work on issue #69 which is about extracting text, then create a branch for that issue (`git checkout -b issue_69_text_extraction` if the branch doesn't exist, else remove the `-b` flag). Let's see if that naming convention works but if not we can try something different!
+3. Once work is done, commit and push
+
+**Back on Github**
+
+4. Once issue is solved, make a Pull Request (PR) on Github to merge to the master branch, and link the issue in the PR description and assign people to review. If possible, do one PR once a week to avoid merge conflicts. 
+5. If the PR gets approved and merged, you can close the issue and delete the branch! The Github Projects page will be automatically updated
+
+**To work on tasks**
+1. So far the tasks will be defined by the Roadmap and you can follow the structure described in [Project Organization](#project-organization) or see existing structure of current tasks.
+
+### FAQs
+- _I want to create a new branch starting from an old branch, how do I do that?_
+    - Say you want to create `branch_2` based on `branch_1` (in other words, with `branch_1` as a starting point), then you would:
+    ```
+    $ git checkout -b branch_2 branch_1    
+    ```
+- _I want to bring the changes from one branch into mine, to keep mine updated, how do I do that?_
+    - Say you want to merge `branch_1` INTO `branch_2`, then you would:
+    ```
+    $ git checkout branch_2   # if you aren't in branch 2 already
+    $ git merge branch_1
+    ```
+- _If I'm working with someone in the same issue, can I contribute/push to their branch?_
+    - Technically yes, but it would be safer if you would work on yours first (maybe divide the issue in smaller issues) and then open a PR to theirs once you feel ready to merge code. Alternatively you could pair program and not worry about overwritting someone else's code :)
+- _Can I push directly to master?_
+    - Please don't :( 
+    
+
+-------------------------------------
 World Resource Institute
 ==============================
 # Background and Motivation
@@ -20,58 +85,25 @@ Success will be achieved as governments or market platforms create aligned incen
 
 Global Restoration Initiative and Forest teams. Supporting the work of the Policy Accelerator
 
-# Details
-
-## Reading PDF files
-
-The src/data/reading_pdfs.py takes as input data/raw/onedrive_docs.zip and outputs data/interim/pdf_files.json
-To execute the script you need to have the data folder structure described in the Project Organization section with the onedrive_docs.zip under data/raw. Then, after activating the python environment, run `make pdf_files` from the root directory.
-
 # Project Organization
 ------------
 
     ├── LICENSE
     ├── README.md          <- The top-level README for developers using this project.
-    ├── data
-    │   ├── external       <- Data from third party sources.
-    │   ├── interim        <- Intermediate data that has been transformed.
-    │   ├── processed      <- The final, canonical data sets for modeling.
-    │   └── raw            <- The original, immutable data dump.
+    |
+    ├── src                <- Source code for use in this project. Code used across tasks.
     │
-    ├── docs               <- A default Sphinx project; see sphinx-doc.org for details
+    ├── tasks              <- Top level folder for all tasks and code
+    │   └── <task_name>        <- Folder to contain materials for one single task
+    │       ├── src              <- Source code for use in this task.
+    │       ├── input            <- Input files for this task
+    │       ├── output           <- Output files from the task
+    │       ├── notebooks        <- Place to store jupyter notebooks/R markdowns or any prototyping files (the drafts)
+    │       └── README.md        <- Basic instructions on how to replicate the results from the output/run the code in src
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
-    │
-    ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-    │                         the creator's initials, and a short `-` delimited description, e.g.
-    │                         `1.0-jqp-initial-data-exploration`.
-    │
-    ├── references         <- Data dictionaries, manuals, and all other explanatory materials.
-    │
-    ├── reports            <- Generated analysis as HTML, PDF, LaTeX, etc.
-    │   └── figures        <- Generated graphics and figures to be used in reporting
-    │
-    ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pip freeze > requirements.txt`
-    │
-    ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
-    ├── src                <- Source code for use in this project.
-    │   ├── __init__.py    <- Makes src a Python module
-    │   │
-    │   ├── data           <- Scripts to download or generate data
-    │   │   └── make_dataset.py
-    │   │
-    │   ├── features       <- Scripts to turn raw data into features for modeling
-    │   │   └── build_features.py
-    │   │
-    │   ├── models         <- Scripts to train models and then use trained models to make
-    │   │   │                 predictions
-    │   │   ├── predict_model.py
-    │   │   └── train_model.py
-    │   │
-    │   └── visualization  <- Scripts to create exploratory and results oriented visualizations
-    │       └── visualize.py
-   
+    └── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
+                             generated with `pip freeze > requirements.txt` (we will probably need to change this to include R information in the future)
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+Project structure based on the [cookiecutter data science project template](https://drivendata.github.io/cookiecutter-data-science/) and the [task as a quantum of workflow project template](https://hrdag.org/2016/06/14/the-task-is-a-quantum-of-workflow/). 
+
