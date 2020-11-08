@@ -24,7 +24,7 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
             lowercase (bool, optional): lowercases text if True. Defaults to True.
             strip_accents (bool, optional): strips accents from text if True. Defaults to False.
             strip_numbers (bool, optional): strips numbers from text if True. Defaults to False.
-            punctuation_list (iterable, optional): strip_punctuation (iterable, optional): strips provided punctuation from text if not None. Defaults to None
+            punctuation_list (iterable, optional): strips provided punctuation from text if not None. Defaults to None
             strip_urls: removes URLs from text if True. Defaults to True
             stemmer (Stemmer instance, optional): applies the provided Stemmer's stem method to text.
              Defaults to None.
