@@ -1,15 +1,18 @@
 import unicodedata
 from collections import defaultdict
-
+import re
 from bs4 import BeautifulSoup
 from nltk import word_tokenize
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
+from string import punctuation
+from nltk.stem.snowball import SnowballStemmer
 
 
 class CorpusPreprocess(BaseEstimator, TransformerMixin):
     def __init__(self, language='english', stop_words=None, lowercase=True, strip_accents=False,
-                 strip_numbers=False, strip_punctuation=None, stemmer=None, max_df=1.0, min_df=1):
+                 strip_numbers=False, strip_punctuation=False, strip_urls=True, stemmer=None,
+                 max_df=1.0, min_df=1):
         """Scikit-learn like Transformer for Corpus preprocessing.
         Preprocesses text by applying multiple tasks (e.g. lowecasing, stemming, etc).
         Fits the data for obtaining vocabulary_ (mapping of terms to document frequencies)
@@ -21,8 +24,9 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
             lowercase (bool, optional): lowercases text if True. Defaults to True.
             strip_accents (bool, optional): strips accents from text if True. Defaults to False.
             strip_numbers (bool, optional): strips numbers from text if True. Defaults to False.
-            strip_punctuation (iterable, optional): strips provided punctuation from text if not None.
-             Defaults to None.
+            strip_punctuation (bool, optional): strips provided punctuation from text if not False.
+             Defaults to False.
+            strip_urls: removes URLs from text if True. Defaults to True
             stemmer (Stemmer instance, optional): applies the provided Stemmer's stem method to text.
              Defaults to None.
             max_df (float in range [0.0, 1.0] or int, optional): ignore terms with a document frequency higher 
@@ -41,6 +45,7 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         self.strip_accents = strip_accents
         self.strip_numbers = strip_numbers
         self.strip_punctuation = strip_punctuation
+        self.strip_urls = strip_urls
         self.stemmer = stemmer
         self.max_df = max_df
         self.min_df = min_df
@@ -123,7 +128,7 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         return corpus
 
     def _word_tokenizer(self, X):
-        """Preprocesses and tokenizes each document by applying a 
+        """Preprocesses and tokenizes each document by applying a
          preprocessing function.
 
         Args:
@@ -132,177 +137,48 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         Returns:
             list: preprocessed and tokenized documents
         """
-        # Define function conditionally so we only need to evaluate the condition once instead at every document
-        if self.strip_accents and self.lowercase and self.strip_numbers and self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        elif self.strip_accents and self.lowercase and self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        if self.strip_accents and self.lowercase and self.strip_numbers:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                return doc
-        if self.strip_accents and self.strip_numbers and self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        if self.lowercase and self.strip_numbers and self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        elif self.strip_accents and self.lowercase:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                return doc
-        elif self.strip_accents and self.strip_numbers:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                return doc
-        elif self.strip_accents and self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        elif self.lowercase and self.strip_numbers:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                return doc
-        elif self.lowercase and self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        elif self.strip_numbers and self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        elif self.strip_accents:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Remove accentuation
-                doc = unicodedata.normalize('NFKD', doc).encode(
-                    'ASCII', 'ignore').decode('ASCII')
-                return doc
-        elif self.lowercase:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Lowercase
-                doc = doc.lower()
-                return doc
-        elif self.strip_numbers:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Remove numbers
-                doc = doc.translate(str.maketrans('', '', "0123456789"))
-                return doc
-        elif self.strip_punctuation is not None:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                # Remove punctuation
-                doc = doc.translate(str.maketrans(
-                    '', '', self.strip_punctuation))
-                return doc
-        else:
-            def doc_preprocessing(doc):
-                # Removes HTML tags
-                doc = BeautifulSoup(doc, features="lxml").get_text()
-                return doc
 
-        # Apply cleaning function over X
-        corpus = map(doc_preprocessing, X)
+        X = map(remove_html_tags, X)
+        if self.lowercase:
+            X = map(str.lower, X)
+        if self.strip_urls:
+            X = map(remove_urls, X)
+        if self.strip_accents:
+            X = map(remove_accents, X)
+        if self.strip_numbers:
+            X = map(remove_numbers, X)
+        if self.strip_punctuation:
+            X = map(remove_punctuation, X)
 
         # Word tokenizer
-        corpus = [word_tokenize(doc, language=self.language) for doc in corpus]
+        corpus = [word_tokenize(doc, language=self.language) for doc in X]
 
         if self.stemmer is not None:
             corpus = [[self.stemmer.stem(token)
                        for token in doc] for doc in corpus]
-            return corpus
 
         return corpus
+
+
+def remove_html_tags(text):
+    return BeautifulSoup(text, features="lxml").get_text()
+
+
+def remove_urls(text):
+    # Remove URLs with http
+    text_without_http = re.sub(r'http\S+', '', text)
+
+    # Remove URLs with only www. start
+    return re.sub(r'www\S+', '', text_without_http)
+
+
+def remove_accents(text):
+    return unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('ASCII')
+
+
+def remove_numbers(text):
+    return text.translate(str.maketrans('', '', "0123456789"))
+
+
+def remove_punctuation(text):
+    return text.translate(str.maketrans('', '', punctuation))
