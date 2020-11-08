@@ -11,7 +11,7 @@ from nltk.stem.snowball import SnowballStemmer
 
 class CorpusPreprocess(BaseEstimator, TransformerMixin):
     def __init__(self, language='english', stop_words=None, lowercase=True, strip_accents=False,
-                 strip_numbers=False, strip_punctuation=False, strip_urls=True, stemmer=None,
+                 strip_numbers=False, punctuation_list=False, strip_urls=True, stemmer=None,
                  max_df=1.0, min_df=1):
         """Scikit-learn like Transformer for Corpus preprocessing.
         Preprocesses text by applying multiple tasks (e.g. lowecasing, stemming, etc).
@@ -24,8 +24,7 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
             lowercase (bool, optional): lowercases text if True. Defaults to True.
             strip_accents (bool, optional): strips accents from text if True. Defaults to False.
             strip_numbers (bool, optional): strips numbers from text if True. Defaults to False.
-            strip_punctuation (bool, optional): strips provided punctuation from text if not False.
-             Defaults to False.
+            punctuation_list (iterable, optional): strip_punctuation (iterable, optional): strips provided punctuation from text if not None. Defaults to None
             strip_urls: removes URLs from text if True. Defaults to True
             stemmer (Stemmer instance, optional): applies the provided Stemmer's stem method to text.
              Defaults to None.
@@ -44,7 +43,7 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
         self.lowercase = lowercase
         self.strip_accents = strip_accents
         self.strip_numbers = strip_numbers
-        self.strip_punctuation = strip_punctuation
+        self.punctuation_list = punctuation_list
         self.strip_urls = strip_urls
         self.stemmer = stemmer
         self.max_df = max_df
@@ -138,20 +137,20 @@ class CorpusPreprocess(BaseEstimator, TransformerMixin):
             list: preprocessed and tokenized documents
         """
 
-        X = map(remove_html_tags, X)
+        docs = map(remove_html_tags, X)
         if self.lowercase:
-            X = map(str.lower, X)
+            docs = map(str.lower, docs)
         if self.strip_urls:
-            X = map(remove_urls, X)
+            docs = map(remove_urls, docs)
         if self.strip_accents:
-            X = map(remove_accents, X)
+            docs = map(remove_accents, docs)
         if self.strip_numbers:
-            X = map(remove_numbers, X)
-        if self.strip_punctuation:
-            X = map(remove_punctuation, X)
+            docs = map(remove_numbers, docs)
+        if self.punctuation_list is not None:
+            docs = [remove_punctuation(doc, self.punctuation_list) for doc in docs]
 
         # Word tokenizer
-        corpus = [word_tokenize(doc, language=self.language) for doc in X]
+        corpus = [word_tokenize(doc, language=self.language) for doc in docs]
 
         if self.stemmer is not None:
             corpus = [[self.stemmer.stem(token)
@@ -180,5 +179,5 @@ def remove_numbers(text):
     return text.translate(str.maketrans('', '', "0123456789"))
 
 
-def remove_punctuation(text):
-    return text.translate(str.maketrans('', '', punctuation))
+def remove_punctuation(text, punctuation_list):
+    return text.translate(str.maketrans('', '', punctuation_list))
