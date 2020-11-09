@@ -73,7 +73,7 @@ def main():
                 pdfReader = file_recovery(file, myzip)  # attempting to recover file
             # doc_dict holds the attributes of each pdf file
             doc_dict = {i[1:]: str(j) for i, j in pdfReader.getDocumentInfo().items()}
-            doc_dict["Country"], doc_dict["Text"] = file.split("/")[0], []
+            doc_dict["Country"], doc_dict["Text"] = file.split("/")[0], ""
             for page in range(pdfReader.numPages):
                 try:
                     page_text = pdfReader.getPage(page).extractText()  # extracting pdf text
@@ -82,8 +82,7 @@ def main():
                     logger.info(f"Skipping {file}...")
                     continue
                 page_text = text_cleaning(page_text)  # clean pdf text
-                doc_dict["Text"].append(page_text)
-            doc_dict["Text"] = " ".join(doc_dict["Text"])  # joining pages' text
+                doc_dict["Text"] += page_text  # concatenate pages' text
             pdf_dict[os.path.splitext(os.path.basename(file))[0]] = doc_dict
 
     with open(os.path.join(OUTPUT_PATH, 'pdf_files.json'), 'w') as outfile:
