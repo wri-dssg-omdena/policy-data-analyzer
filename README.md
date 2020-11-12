@@ -5,6 +5,7 @@ Roadmap
 **Current Data**
 - PDF Docs (NOT from Ecolex) in [OneDrive link](https://onedrive.live.com/?authkey=%21APg%5FS4HvxM%5FJBBw&id=C675544AC4321F5C%21125&cid=C675544AC4321F5C) 
 - Policy document information (around 12k+) from Ecolex, including `Title, Subjects, Keywords, Abstract` (NOT the actual documents, also in OneDrive link)
+- 1000 abstracts from policy documents (plus other info such as subject, keywords, etc,) **labeled as relevant/non-relevant (column IS_INSTANCE in the document)** in [this table](https://onedrive.live.com/edit.aspx?resid=C675544AC4321F5C!1256&ithint=file%2cxlsx&authkey=!AE1-WJImJJpVyVs)
 
 **Tasks** 
 1. [X] Scraping of policy documents information (NOT the actual documents).
