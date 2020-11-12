@@ -9,11 +9,11 @@ Roadmap
 **Tasks** 
 1. [X] Scraping of policy documents information (NOT the actual documents).
 2. [X] Extract keywords and keyphrases from PDF Docs and any type of meaningful information that differentiates these documents.
-3. [ ] (_In progress_) Apply keywords and keyphrases to the policy document information dataset, to cut down from 12k+ to around 1k-2k.
-4. [ ] (_In progress_) At the same time, tag a random subset of documents as relevant/non-relevant based on policy information. 
+3. [ ] (_On hold_) Apply keywords and keyphrases to the policy document information dataset, to cut down from 12k+ to around 1k-2k.
+4. [X] At the same time, tag a random subset of documents as relevant/non-relevant based on policy information. 
 5. [ ] Scraping of full policy documents from the narrowed down filter in steps 3. and 4. (_or more?_ - second scraping phase)
 6. [ ] Second round of relevant/non-relevant tagging process for the full policy documents.
-7. [ ] Create a model for classifying relevant/non-relevant documents using abstracts from documents only
+7. [ ] (_In progress_) Create a model for classifying relevant/non-relevant documents using abstracts from documents only
 8. [ ] Create a model for classifying relevant/non-relevant documents using the full text of documents
 
 ### Phase 2: Classifying relevant documents using multiple tags
