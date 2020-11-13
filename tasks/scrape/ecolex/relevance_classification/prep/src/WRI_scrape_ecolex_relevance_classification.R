@@ -123,9 +123,15 @@ policy_profiles_all_relevant_sample <- policy_profiles_w_keyword_and_subject %>%
   mutate(IS_RELEVANT = NA)
  
 
+policy_profiles <- policy_profiles %>%
+  mutate(IN_INITIAL_FILTER = case_when(
+    POLICY_ID %in% policy_profiles_w_keyword_and_subject$POLICY_ID ~ 1,
+    TRUE ~ 0
+  ) )
+
 #Export Ecolex Search Results ---------------------------------------------------------------------
 
-write.csv(policy_profiles_w_keyword_and_subject,
+write.csv(policy_profiles,
           here(
                 "tasks",
                 "scrape",
