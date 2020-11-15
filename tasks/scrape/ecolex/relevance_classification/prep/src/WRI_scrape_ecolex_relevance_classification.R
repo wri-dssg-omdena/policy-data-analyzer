@@ -122,11 +122,11 @@ policy_profiles_w_keyword_and_subject <- policy_profiles %>%
   filter(n_relevant_keywords > 0 & n_relevant_subjects > 0)
 
 
-#NOTE: originally set the seed for 4893 (i.e. set.seed(4893)), but while reviewing realized this code,
+#NOTE: originally set the seed for 4893 (i.e. set.seed(4893)), but while reviewing this code,
 #I was unable to replicate the original sample. To replicate, I needed to run the code twice 
 #(the first time setting the seed and the second time not setting the seed). 
-#I had to capture the random seed being used, which I put into the .csv that now imports the seed 
-#needed to replicate the original sample. 
+#I captured the random seed being used in the second run, which I put into the_seed_used.csv 
+#and provides the seed needed to replicate the original sample. 
 #More on .Random.seed here: http://www.cookbook-r.com/Numbers/Saving_the_state_of_the_random_number_generator/
 .Random.seed <- the_seed
 
