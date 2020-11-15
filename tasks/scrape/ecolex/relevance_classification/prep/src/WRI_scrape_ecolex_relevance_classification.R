@@ -59,6 +59,20 @@ subjects_tagged <- readxl::read_excel(
 ) %>%
   as.data.frame()  
 
+
+the_seed <- read_csv(
+            here(
+                "tasks",
+                "scrape",
+                "ecolex",
+                "relevance_classification",
+                "prep",
+                "input",
+                "the_seed_used.csv")
+) %>%
+  pull(as.integer(seed_string))
+
+
 # Subset Profiles by keyword and subjects ----------------------------------------------------------
 keywords_include <- keywords_tagged %>%
   filter(use_for_search == 1) %>%
@@ -107,25 +121,41 @@ policy_profiles <- policy_profiles %>%
 policy_profiles_w_keyword_and_subject <- policy_profiles %>%
   filter(n_relevant_keywords > 0 & n_relevant_subjects > 0)
 
-# policy_profiles_all_relevant <- policy_profiles %>%
-#   filter(prop_relevant_keywords == 1 & prop_relevant_subjects == 1) %>%
-#   mutate(TAG_IS_RELEVANT = NA_character_)
-# 
-# policy_profiles_custom <- policy_profiles %>%
-#   filter(prop_relevant_keywords >= .75 & n_relevant_subjects >= 1) %>%
-#   mutate(TAG_IS_RELEVANT = NA_character_)
 
-set.seed(4893)
-policy_profiles_all_relevant_sample <- policy_profiles_w_keyword_and_subject %>%
+#NOTE: originally set the seed for 4893 (i.e. set.seed(4893)), but while reviewing this code,
+#I was unable to replicate the original sample. To replicate, I needed to run the code twice 
+#(the first time setting the seed and the second time not setting the seed). 
+#I captured the random seed being used in the second run, which I put into the_seed_used.csv 
+#and provides the seed needed to replicate the original sample. 
+#More on .Random.seed here: http://www.cookbook-r.com/Numbers/Saving_the_state_of_the_random_number_generator/
+.Random.seed <- the_seed
+
+policy_profiles_all_relevant_sample <-
+  policy_profiles_w_keyword_and_subject %>%
   sample_n(size = 1000, replace = F) %>%
-  select(POLICY_ID, FULL_DOC_LINK,
-         TITLE, DATE, SUBJECT, KEYWORDS, ABSTRACT) %>%
-  mutate(IS_RELEVANT = NA)
- 
+  select(POLICY_ID,
+         FULL_DOC_LINK,
+         TITLE,
+         DATE,
+         SUBJECT,
+         KEYWORDS,
+         ABSTRACT) %>%
+  mutate(
+    IS_RESTORATION	 = NA,
+    IS_INCENTIVE		 = NA,
+    REVIEWED_FULL_DOC	 = NA
+  )
+
+policy_profiles <- policy_profiles %>%
+  mutate(IN_INITIAL_FILTER = case_when(
+    POLICY_ID %in% policy_profiles_w_keyword_and_subject$POLICY_ID ~ 1,
+    TRUE ~ 0
+  ) )
+
 
 #Export Ecolex Search Results ---------------------------------------------------------------------
 
-write.csv(policy_profiles_w_keyword_and_subject,
+write.csv(policy_profiles,
           here(
                 "tasks",
                 "scrape",
