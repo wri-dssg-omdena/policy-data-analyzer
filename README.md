@@ -22,6 +22,7 @@ Roadmap
 2. [ ] Tagging a sample of the scraped full documents according to the different types of incentives/disincentives/etc. 
 3. [ ] Create a multi-class classification model for the labeled data above
 
+
 -------------------------------------
 Contribution Guidelines
 ==============================
@@ -62,6 +63,28 @@ Contribution Guidelines
 - _Can I push directly to master?_
     - Please don't :( 
     
+# Project Organization
+------------
+
+    ├── LICENSE
+    ├── README.md          <- The top-level README for developers using this project.
+    |
+    ├── src                <- Source code for use in this project. Code used across tasks.
+    │
+    ├── tasks              <- Top level folder for all tasks and code
+    │   └── <task_name>        <- Folder to contain materials for one single task
+    │       ├── src              <- Source code for use in this task.
+    │       ├── input            <- Input files for this task
+    │       ├── output           <- Output files from the task
+    │       ├── notebooks        <- Place to store jupyter notebooks/R markdowns or any prototyping files (the drafts)
+    │       └── README.md        <- Basic instructions on how to replicate the results from the output/run the code in src
+    │
+    └── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
+                             generated with `pip freeze > requirements.txt` (we will probably need to change this to include R information in the future)
+--------
+
+Project structure based on the [cookiecutter data science project template](https://drivendata.github.io/cookiecutter-data-science/) and the [task as a quantum of workflow project template](https://hrdag.org/2016/06/14/the-task-is-a-quantum-of-workflow/). 
+
 
 -------------------------------------
 World Resource Institute
@@ -85,26 +108,3 @@ Success will be achieved as governments or market platforms create aligned incen
 # Internal Stakeholders
 
 Global Restoration Initiative and Forest teams. Supporting the work of the Policy Accelerator
-
-# Project Organization
-------------
-
-    ├── LICENSE
-    ├── README.md          <- The top-level README for developers using this project.
-    |
-    ├── src                <- Source code for use in this project. Code used across tasks.
-    │
-    ├── tasks              <- Top level folder for all tasks and code
-    │   └── <task_name>        <- Folder to contain materials for one single task
-    │       ├── src              <- Source code for use in this task.
-    │       ├── input            <- Input files for this task
-    │       ├── output           <- Output files from the task
-    │       ├── notebooks        <- Place to store jupyter notebooks/R markdowns or any prototyping files (the drafts)
-    │       └── README.md        <- Basic instructions on how to replicate the results from the output/run the code in src
-    │
-    └── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-                             generated with `pip freeze > requirements.txt` (we will probably need to change this to include R information in the future)
---------
-
-Project structure based on the [cookiecutter data science project template](https://drivendata.github.io/cookiecutter-data-science/) and the [task as a quantum of workflow project template](https://hrdag.org/2016/06/14/the-task-is-a-quantum-of-workflow/). 
-
