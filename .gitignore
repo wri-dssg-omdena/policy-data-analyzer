@@ -90,3 +90,5 @@ target/
 
 # Mypy cache
 .mypy_cache/
+tasks/preprocess_text/notebooks/client_secret.json
+tasks/extract_text/notebooks/client_secret.json
