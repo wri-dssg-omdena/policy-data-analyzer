@@ -1,6 +1,7 @@
 # Models
 
 On the 29th of November 2020 the folder was created and the files dealing with sBERT from the Omdena repo were transferred here. These files were:
+* context_word_embeddings.py
 * evaluate_sbert.py
 * this README.md file
 * segment_highlighter.py
