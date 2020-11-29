@@ -1,5 +1,10 @@
 # Models
 
+On the 29th of November 2020 the folder was created and the files dealing with sBERT from the Omdena repo were transferred here. These files were:
+* evaluate_sbert.py
+* this README.md file
+* segment_highlighter.py
+
 In this folder one will find:
 - The scripts related to models as wells as those related to their evaluation.
 - Instructions on where to find the data to run the models and the app. The app has its own README in src/visualizations/.
