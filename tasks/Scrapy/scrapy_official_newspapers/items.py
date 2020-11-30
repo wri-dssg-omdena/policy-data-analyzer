@@ -9,21 +9,22 @@ import scrapy
 
 
 class ScrapyOfficialNewspapersItem(scrapy.Item):
-    # define the fields for your item here like:
-    country = scrapy.Field()
-    geo_code = scrapy.Field()
-    level = scrapy.Field()
-    data_source = scrapy.Field()
-    title = scrapy.Field()
-    reference = scrapy.Field()
-    authorship = scrapy.Field()
-    resume = scrapy.Field()
-    publication_date = scrapy.Field()
-    enforcement_date = scrapy.Field()
-    url = scrapy.Field()
-    doc_url = scrapy.Field()
-    doc_name = scrapy.Field()
-    doc_class = scrapy.Field()
-    doc_type = scrapy.Field()
-    file_urls = scrapy.Field()
-    pass
+	# define the fields for your item here like:
+	country = scrapy.Field()
+	geo_code = scrapy.Field()
+	level = scrapy.Field()
+	data_source = scrapy.Field()
+	title = scrapy.Field()
+	reference = scrapy.Field()
+	authorship = scrapy.Field()
+	resume = scrapy.Field()
+	publication_date = scrapy.Field()
+	enforcement_date = scrapy.Field()
+	enforcement_check = scrapy.Field()
+	url = scrapy.Field()
+	doc_url = scrapy.Field()
+	doc_name = scrapy.Field()
+	doc_class = scrapy.Field()
+	doc_type = scrapy.Field()
+	file_urls = scrapy.Field()
+	pass
