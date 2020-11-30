@@ -29,7 +29,7 @@ class MexicoDOF(BaseSpider):
     with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
         negative_keyword_dict = json.load(dict)
 
-    def __init__(self, date = datetime.datetime(2015,1,1)):
+    def __init__(self, date = datetime.datetime(2020,9,1)):
         if type(date) == str:
             try:
                 self.from_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
