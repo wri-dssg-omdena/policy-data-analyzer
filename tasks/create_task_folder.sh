@@ -18,7 +18,13 @@ case $i in
     done
     shift # past argument=value
     ;;
-    -a=*|--add_notebook=*)
+    -apy=*|--add_python_init=*)
+    ADD_INIT="${i#*=}"
+    if [[ $ADD_INIT == "True" ]]; then
+        touch __init__.py
+    fi
+    ;;
+    -an=*|--add_notebooks=*)
     ADD_NOTEBOOK="${i#*=}"
     if [[ $ADD_NOTEBOOK == "True" ]]; then
 	mkdir notebooks
