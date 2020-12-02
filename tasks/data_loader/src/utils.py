@@ -9,21 +9,21 @@ def load_file(file_name):
         return None
 
 def labeled_sentences_from_dataset(dataset):
-    sentence_tags_map = {}
+    sentence_tags_pairs = []
                     
     for document in dataset.values():
         for section in document.values():
             for subsection in section.values():
                 for sentence in subsection['sentences'].values():
-                    sentence_tags_map[sentence['text']] = sentence['labels'][0]
+                    sentence_tags_pairs.append((sentence['text'], sentence['labels'][0]))
                     
-    return sentence_tags_map
+    return sentence_tags_pairs
 
 def labeled_sentences_from_model_output(model_preds):
-    sentence_tags_map = {}
+    sentence_tags_pairs = []
     for preds in model_preds:
-        sentence_tags_map[preds["text"]] = preds["labels"][0]
-    return sentence_tags_map
+        sentence_tags_pairs.append((preds["text"], preds["labels"][0]))
+    return sentence_tags_pairs
 
 def labels_from_dataset(dataset):
     labels = []
