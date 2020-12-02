@@ -1,0 +1,108 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: >-
+  Project - Deploy database  for Omdena project "WRI Latinamerica"
+  Author - Susanne Brockmann
+
+  Description": "AWS CloudFormation Sample Template for creating an Amazon RDS DB instance: 
+  Sample template showing how to create a DB instance with Enhanced Monitoring enabled. 
+  **WARNING** This template creates an RDS DB instance. You will be billed for the AWS 
+  resources used if you create a stack from this template.
+
+Parameters:
+  EnvironmentName:
+      Description: Env Name that will be prefixed in order to access Variables exported in the stack from Lession 21
+      Type: String
+
+  #PublicSubnet2CIDR:
+  #  Description: Please enter the IP range (CIDR notation) for the public subnet in the second Availability Zone
+  #  Type: String
+  #  Default: 10.0.1.0/24
+
+  DBInstanceID:
+    Default: omdena-db-yaml
+    Description: My database instance
+    Type: String
+    MinLength: '1'
+    MaxLength: '63'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9\-]*'
+    ConstraintDescription: >-
+      Must begin with a letter and must not end with a hyphen or contain two
+      consecutive hyphens.
+
+  DBName:
+    Default: wriLatin
+    Description: My database
+    Type: String
+    MinLength: '1'
+    MaxLength: '64'
+    AllowedPattern: '[a-zA-Z][a-zA-Z0-9\-\_]*'
+    ConstraintDescription: Must begin with a letter and contain only alphanumeric characters.
+
+  DBInstanceClass:
+    Default: db.t2.micro
+    Description: DB instance class
+    Type: String
+    ConstraintDescription: Must select a valid DB instance type.
+
+  # DBSubnetGroup:
+  #   Default: 
+  #     Fn::ImportValue:
+  #       Fn::Sub: "${EnvironmentName}-DB-SNG"
+  #   #Default: Fn::ImportValue: !Sub "${EnvironmentName}-DB-SNG"
+  #   Description: DBSubnetGroup
+  #   Type: String
+  #   ConstraintDescription: Must select a valid DBSubnetGroup.
+
+    
+
+  DBAllocatedStorage:
+    Default: '5'
+    Description: The size of the database (GiB)
+    Type: Number
+    MinValue: '5'
+    MaxValue: '1024'
+    ConstraintDescription: must be between 20 and 65536 GiB.
+
+
+  DBUsername:
+    Type : 'AWS::SSM::Parameter::Value<String>'
+    Default: omdena_db_admin
+    NoEcho: 'true'
+
+
+  DBPassword:
+    Type : 'AWS::SSM::Parameter::Value<String>'
+    Default: omdena_db_password
+    NoEcho: 'true'
+    Description: Password MySQL database access
+
+
+Resources:
+  OmdenaDBInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref DBInstanceID
+      DBName: !Ref DBName
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: !Ref DBAllocatedStorage
+      Engine: MySQL
+      EngineVersion: 8.0.20
+      MasterUsername: !Ref DBUsername
+      #MasterUsername: '{{resolve:ssm:omdena_db_admin:1}}'
+      MasterUserPassword: !Ref DBPassword
+      #MasterUserPassword: '{{resolve:ssm:omdena_db_password:1}}' 
+      PubliclyAccessible: true
+      DeletionProtection: false
+      #DBSubnetGroup: !Ref DBSubnetGroup
+      DBSubnetGroupName: 
+        Fn::ImportValue:
+          Fn::Sub: "${EnvironmentName}-DB-SNG"
+      #MonitoringInterval: '60'
+      #MonitoringRoleArn: 'arn:aws:iam::123456789012:role/rds-monitoring-role'
+
+Outputs:
+  DBInstanceEndpoint:
+      Description: The endpoint of the DB instance.
+      Value: !GetAtt OmdenaDBInstance.Endpoint.Address
+      Export: 
+          Name: !Sub ${EnvironmentName}-DB-ENDPOINT
