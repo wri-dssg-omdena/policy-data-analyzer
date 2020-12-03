@@ -1,12 +1,10 @@
 import json
 
+
 def load_file(file_name):
-    try:
-        with open(file_name, "r") as f:
-            return json.load(f)
-    except Exception as e:
-        print("Couldn't load file. Error: " + e)
-        return None
+    with open(file_name, "r") as f:
+        return json.load(f)
+
 
 def labeled_sentences_from_dataset(dataset):
     sentence_tags_pairs = []
@@ -19,11 +17,13 @@ def labeled_sentences_from_dataset(dataset):
                     
     return sentence_tags_pairs
 
+
 def labeled_sentences_from_model_output(model_preds):
     sentence_tags_pairs = []
     for preds in model_preds:
         sentence_tags_pairs.append((preds["text"], preds["labels"][0]))
     return sentence_tags_pairs
+
 
 def labels_from_dataset(dataset):
     labels = []
@@ -35,6 +35,7 @@ def labels_from_dataset(dataset):
                     labels.append(sentence['labels'][0])
                     
     return labels
+
 
 def labels_from_model_output(model_preds):
     return [preds["labels"][0] for preds in model_preds]
