@@ -1,0 +1,27 @@
+{% extends "./index.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header col-12">
+    <h1 class="page-title">Geographical representation of the correlation matrix.</h1>
+  </div>
+    <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+            <div class="container">
+            <p>The values displayed represent the normalized sum of incentives for the crop, forest, and pasture that co-occur within a
+              country. The normalization is performed by dividing the sum of co-occurrences in a country by the highest number of
+              co-occurrences found in one of the analyzed countries.
+            </p>
+            </div>
+            </div>
+          </div>
+                {{ map_html | safe }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
