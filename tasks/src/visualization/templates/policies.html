@@ -1,0 +1,38 @@
+{% extends "./index.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header col-12">
+    <h1 class="page-title">Economic Incentives for Reforestation in {{country_name}}</h1>
+  </div>
+  <div class="row">
+    <div class="col-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Policy Documents</h3>
+        </div>
+        <!-- Card content -->
+        <div class="card-body o-auto" style="max-height: 5.5in">
+          <table class="table table-hover table-outline table-vcenter card-table">
+            {{policy_rows|safe}}
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="col-6">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Highlights</h3>
+        </div>
+        <!-- Card content -->
+        <div class="card-body o-auto" style="max-height: 5.5in">
+          <table class="table table-hover table-outline table-vcenter card-table">
+            {{highlight_rows|safe}}
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
