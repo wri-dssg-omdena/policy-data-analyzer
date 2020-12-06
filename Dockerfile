@@ -5,12 +5,22 @@ FROM continuumio/miniconda3:4.9.2-alpine
 USER root
 
 # Install system dependencies
-RUN apk --no-cache add\
+RUN apk --no-cache add \
     build-base \
     poppler-utils \
     swig \
-    tesseract-ocr\
+    tesseract-ocr \
+    tesseract-ocr-data-spa \
     tini
+
+# Generate the en_US.UTF-8 locale and setting it (required by jamspell. See https://github.com/bakwc/JamSpell/issues/17)
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub \
+    && wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.32-r0/glibc-i18n-2.32-r0.apk \
+    && apk add glibc-i18n-2.32-r0.apk \
+    && /usr/glibc-compat/bin/localedef -i en_US -f UTF-8 en_US.UTF-8
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
 # Programs will be executed under Tini
 ENTRYPOINT ["/sbin/tini", "--"]
@@ -31,8 +41,7 @@ COPY --chown=anaconda . .
 RUN conda activate base \
     && pip install -r requirements.txt
 
-# Changing back to default user
-# Check https://medium.com/@mccode/processes-in-containers-should-not-run-as-root-2feae3f0df3b
+# Changing back to default user. See https://medium.com/@mccode/processes-in-containers-should-not-run-as-root-2feae3f0df3b
 USER anaconda
 #
 # ----------------------------------------------------------------------------------------------------------------------

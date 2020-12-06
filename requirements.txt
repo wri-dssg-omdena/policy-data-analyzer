@@ -15,6 +15,8 @@ pillow==7.0.0
 beautifulsoup4==4.9.3
 pillow==7.0.0
 pytesseract==0.3.6
+pyspellchecker==0.5.5
+nltk==3.5
 pdf2image==1.14.0
 boto3==1.16.25
 jamspell==0.0.12
