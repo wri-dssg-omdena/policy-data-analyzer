@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  python_project:
+    image: policy_container:latest
+    build: .
+    ports:
+      - "8888:8888"
+    env_file:
+      - .env
+    # Might not be the most secure way. Explore https://docs.docker.com/engine/swarm/secrets/
+    tty: true
+    stdin_open: true
+    # Same as docker run -ti
