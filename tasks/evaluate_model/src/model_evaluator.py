@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 from itertools import cycle
+import matplotlib.colors as mcolors
 
 import sys
 
@@ -13,13 +14,19 @@ sys.path.append("../../")
 
 
 METRICS = ["Precision", "Recall (Sensitivity)", "True negative rate (Specificity)", "F1-score"]
-LABEL_NAMES = ["Direct payment (PES)", "Tax deduction", "Credit/guarantee", "Technical assistance", "Supplies", "Fine"]
+LABEL_NAMES = ["No incentive", "Direct payment (PES)", "Tax deduction", "Credit/guarantee", "Technical assistance", "Supplies", "Fine"]
 INDICES = LABEL_NAMES + ["Macro avg", "Weighted avg"]
 OUTPUT_PATH = "../output/"
-N_CLASSES = 6
+N_CLASSES = 7
 
 
 def get_counts_per_label(y_true):
+    """
+    Return a map of {label: number of data points with that label} for the given list of labels
+
+    Parameters:
+        - y_true: a list of labels (integers)
+    """
     label_counts = [0] * N_CLASSES
     for label in y_true:
         label_counts[label] += 1
@@ -27,6 +34,15 @@ def get_counts_per_label(y_true):
 
 
 def weighted_avg(metric_array, y_true):
+    """
+    Given a numpy array of a particular metric for all classes (i.e precision for all classes),
+    return a weighted average of the metric, where the weights are the number of data points that
+    have a given label.
+
+    Parameters:
+        - metric array: a 1D-numpy array of floats representing metrics
+        - y_true: a list of labels (integers)
+    """
     weights = get_counts_per_label(y_true)
     weighted_metrics = sum(metric_array * weights)
     return weighted_metrics / len(y_true)
@@ -108,10 +124,12 @@ def plot_precision_recall_curve(y_true, y_pred, multi_class=False, store=False, 
 
     if multi_class:
 
-        # setup plot details
-        colors = cycle(['navy', 'turquoise', 'darkorange', 'cornflowerblue', 'teal'])
-
+        # Setup plot details
+        colors = cycle(list(mcolors.TABLEAU_COLORS.keys()))
         plt.figure(figsize=(7, 8))
+        plt.style.use('seaborn-white')
+
+        # Plot f1 score lines
         f_scores = np.linspace(0.2, 0.8, num=4)
         lines = []
         labels = []
@@ -121,6 +139,7 @@ def plot_precision_recall_curve(y_true, y_pred, multi_class=False, store=False, 
             l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
             plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
 
+        # Plot precision-recall lines
         lines.append(l)
         labels.append('iso-f1 curves')
         l, = plt.plot(recall["micro"], precision["micro"], color='gold', lw=2)
@@ -138,6 +157,7 @@ def plot_precision_recall_curve(y_true, y_pred, multi_class=False, store=False, 
         lines.append(rand_l)
         labels.append("Precision-Recall for Random Classifier")
 
+        # Final touches on plot
         fig = plt.gcf()
         fig.subplots_adjust(bottom=0.25)
         plt.xlim([0.0, 1.0])
@@ -145,7 +165,7 @@ def plot_precision_recall_curve(y_true, y_pred, multi_class=False, store=False, 
         plt.xlabel('Recall')
         plt.ylabel('Precision')
         plt.title('Multiclass Precision-Recall Curve')
-        plt.legend(lines, labels, loc=(0, -.58), prop=dict(size=14))
+        plt.legend(lines, labels, loc=(0, -.68), prop=dict(size=14))
 
         if store:
             if exp_name is None:
@@ -204,6 +224,23 @@ class ModelEvaluator:
             self.update(y_true, y_pred)
 
     def update(self, y_true, y_pred):
+        """
+        Given a set of true labels and model predictions, calculate and store the following metrics:
+            - Confusion matrix
+            - FP: Number of false positives
+            - FN: Number of false negatives
+            - TP: Number of true positives
+            - TN: Number of true negatives
+            - Recall
+            - Specificity
+            - Precision
+            - F1-score
+            - Accuracy
+            - FDR: False discovery rate
+            - NPV: Negative predictive value
+            - FPR: False positive rate
+            - False negative rate
+        """
         # Ignore division by 0 errors
         settings = np.seterr(divide='ignore', invalid='ignore')
 
@@ -240,6 +277,23 @@ class ModelEvaluator:
     def evaluate(self, y_true, y_pred,
                  plot_cm=False, plot_prc=False, plot_prc_multi=False,
                  normalize=False, store=False, exp_name=None):
+        """
+        Given a set of true labels and model predictions, runs a series of selected evaluation metrics:
+            - Precision
+            - Recall (Sensitivity)
+            - Accuracy
+            - Specificity
+            - Confusion matrix
+            - Precision-Recall curve
+
+        Parameters:
+            `plot_cm`: (boolean) Plot confusion matrix
+            `plot_prc`: (boolean) Plot precision-recall curve (averaged for all classes)
+            `plot_prc_multi`: (boolean) Plot the multi-class version of the precision-recall curve (`plot_prc` MUST be `True` if this is set to `True`)
+            `normalize`: (boolean) Normalize the confusion matrix content
+            `store`: (boolean) Store the plots and the results dataframe. If this is set to `True`, then `exp_name` MUST have a value and it can't be None. The files will be stored in the `evaluate_model/output/` folder.
+            `exp_name`: (str) The name of the model or the experiment, useful if we will want to store files (e.g `test_BETO_1`).
+        """
 
         self.update(y_true, y_pred)
 
@@ -279,15 +333,3 @@ class ModelEvaluator:
                 print(f"Stored results: {fname}")
 
         return self.metrics_df
-
-
-# def main():
-#     # Read command line arguments
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument("-metric", type=str)
-#     parser.add_argument("-model_name", type=str)
-#     parser.add_argument("-model_output_path", type=str)
-#     parser.add_argument("-dataset_path", type=str)
-#     args = vars(parser.parse_args())
-#
-#     evaluate_model(args["dataset_path"], args["model_output_path"])
