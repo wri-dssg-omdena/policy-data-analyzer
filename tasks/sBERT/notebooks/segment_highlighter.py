@@ -6,9 +6,9 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 
-from src.models.context_word_embeddings import ContextWordEmbeddings
-from src.models.sentence_embeddings import SentenceEmbeddings
-from src.data.text_preprocessor import TextPreprocessor
+from tasks.sBERT.context_word_embeddings import ContextWordEmbeddings
+from tasks.sBERT.sentence_embeddings import SentenceEmbeddings
+from tasks.sBERT.text_preprocessor import TextPreprocessor
 
 class SegmentHighlighter(metaclass=ABCMeta):
     @abstractmethod
