@@ -17,7 +17,7 @@ class ElSalvador(BaseSpider):
 	scrapper_name = "Jordi Planas"
 	scrapable = "True"
 	allowed_domains = ["jurisprudencia.gob.sv"]
-	keywords = ["forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
+	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola"]#["forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
 	info_url = ""
 	counter = 0
 	start_date = datetime.datetime.strptime("2015-01-01", '%Y-%m-%d').date()
