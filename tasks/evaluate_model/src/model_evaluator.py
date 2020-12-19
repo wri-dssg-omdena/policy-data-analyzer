@@ -216,72 +216,40 @@ class ModelEvaluator:
 
         plt.show()
 
-    def plot_precision_recall_curve(self, y_true, y_pred, multi_class=False, store=False, exp_name=None):
+    def plot_precision_recall_curve(self, y_true, y_pred, bin_class=False, all_classes=False, store=False, exp_name=None):
+        """
+        Plots the precision-recall curve for either a binary or multi-class classification model.
 
-        y_true_bin = label_binarize(y_true, classes=range(self.n_classes))
-        y_pred_bin = label_binarize(y_pred, classes=range(self.n_classes))
+        Parameters:
+            y_true: (np.array[int]) The true labels for the dataset
+            y_pred: If binary_class is True, y_pred should be a numpy array of floats holding the prediction probabilities,
+                else y_pred should be a numpy array of ints holding the predictions themselves
+            bin_class: (boolean) Whether we should plot the curve for a binary classification setting
+            all_classes: (boolean) In a multi-class classification problem, whether we should plot the curve for all classes or just the average
+            store: (boolean) Whether we want to store this plot or not
+            exp_name: (str) The name of the experiment, used to name the file to store the plot. Requires store=True
+        """
 
-        precision = dict()
-        recall = dict()
-        average_precision = dict()
+        if bin_class:
+            if not isinstance(y_pred.flat[0], np.floating):
+                print("Error: Array of predictions should contain probabilities [0.3, 0.75] instead of labels [0, 1] for binary classification problems.")
+                return
 
-        for i in range(self.n_classes):
-            precision[i], recall[i], _ = precision_recall_curve(y_true_bin[:, i],
-                                                                y_pred_bin[:, i])
-            average_precision[i] = average_precision_score(y_true_bin[:, i], y_pred_bin[:, i])
+            random_pred_precision = y_true.mean()
 
-        # A "micro-average": quantifying score on all classes jointly
-        precision["micro"], recall["micro"], _ = precision_recall_curve(y_true_bin.ravel(),
-                                                                        y_pred_bin.ravel())
-        average_precision["micro"] = average_precision_score(y_true_bin, y_pred_bin,
-                                                             average="micro")
+            precision, recall, _ = precision_recall_curve(y_true, y_pred)
+            average_precision = average_precision_score(y_true, y_pred)
 
-        random_pred_precision = y_true_bin.mean()
+            plt.figure()
+            plt.plot([0, 1], [random_pred_precision, random_pred_precision], linestyle='--', label='Random Prediction')
+            plt.step(recall, precision, where='post')
 
-        if multi_class:
-
-            # Setup plot details
-            colors = cycle(list(mcolors.TABLEAU_COLORS.keys()))
-            plt.figure(figsize=(7, 8))
-            plt.style.use('seaborn-white')
-
-            # Plot f1 score lines
-            f_scores = np.linspace(0.2, 0.8, num=4)
-            lines = []
-            labels = []
-            for f_score in f_scores:
-                x = np.linspace(0.01, 1)
-                y = f_score * x / (2 * x - f_score)
-                l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
-                plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
-
-            # Plot precision-recall lines
-            lines.append(l)
-            labels.append('iso-f1 curves')
-            l, = plt.plot(recall["micro"], precision["micro"], color='gold', lw=2)
-            lines.append(l)
-            labels.append('Micro-average Precision-Recall (area = {0:0.2f})'
-                          ''.format(average_precision["micro"]))
-
-            for i, color in zip(range(self.n_classes), colors):
-                l, = plt.plot(recall[i], precision[i], color=color, lw=2)
-                lines.append(l)
-                labels.append('Precision-Recall for class {0} (area = {1:0.2f})'
-                              ''.format(i, average_precision[i]))
-
-            rand_l, = plt.plot([0, 1], [random_pred_precision, random_pred_precision], linestyle='--')
-            lines.append(rand_l)
-            labels.append("Precision-Recall for Random Classifier")
-
-            # Final touches on plot
-            fig = plt.gcf()
-            fig.subplots_adjust(bottom=0.25)
-            plt.xlim([0.0, 1.0])
-            plt.ylim([0.0, 1.05])
             plt.xlabel('Recall')
             plt.ylabel('Precision')
-            plt.title('Multiclass Precision-Recall Curve')
-            plt.legend(lines, labels, loc=(0, -.68), prop=dict(size=14))
+
+            plt.ylim([0.0, 1.05])
+            plt.xlim([0.0, 1.0])
+            plt.title('Precision-Recall Curve. Avg Precision=' + str(round(average_precision, 2)))
 
             if store:
                 if exp_name is None:
@@ -295,27 +263,104 @@ class ModelEvaluator:
             plt.show()
 
         else:
-            plt.figure()
-            plt.plot([0, 1], [random_pred_precision, random_pred_precision], linestyle='--', label='Random Prediction')
-            plt.step(recall["micro"], precision["micro"], where='post')
+            y_true_bin = label_binarize(y_true, classes=range(self.n_classes))
+            y_pred_bin = label_binarize(y_pred, classes=range(self.n_classes))
 
-            plt.xlabel('Recall')
-            plt.ylabel('Precision')
+            precision = dict()
+            recall = dict()
+            average_precision = dict()
 
-            plt.ylim([0.0, 1.05])
-            plt.xlim([0.0, 1.0])
-            plt.title('Averaged Precision-Recall Curve')
+            for i in range(self.n_classes):
+                precision[i], recall[i], _ = precision_recall_curve(y_true_bin[:, i],
+                                                                    y_pred_bin[:, i])
+                average_precision[i] = average_precision_score(y_true_bin[:, i], y_pred_bin[:, i])
 
-            if store:
-                if exp_name is None:
-                    print(
-                        "Couldn't save PR curve plot because experiment name was not given! Please provide exp_name in arguments.")
-                else:
-                    fname = f"{exp_name}_prc.png"
-                    plt.savefig(fname)
-                    print(f"Stored Precision-Recall Curve: {fname}")
+            # A "micro-average": quantifying score on all classes jointly
+            precision["micro"], recall["micro"], _ = precision_recall_curve(y_true_bin.ravel(),
+                                                                            y_pred_bin.ravel())
+            average_precision["micro"] = average_precision_score(y_true_bin, y_pred_bin,
+                                                                 average="micro")
 
-            plt.show()
+            random_pred_precision = y_true_bin.mean()
+
+            if all_classes:
+
+                # Setup plot details
+                colors = cycle(list(mcolors.TABLEAU_COLORS.keys()))
+                plt.figure(figsize=(7, 8))
+                plt.style.use('seaborn-white')
+
+                # Plot f1 score lines
+                f_scores = np.linspace(0.2, 0.8, num=4)
+                lines = []
+                labels = []
+                for f_score in f_scores:
+                    x = np.linspace(0.01, 1)
+                    y = f_score * x / (2 * x - f_score)
+                    l, = plt.plot(x[y >= 0], y[y >= 0], color='gray', alpha=0.2)
+                    plt.annotate('f1={0:0.1f}'.format(f_score), xy=(0.9, y[45] + 0.02))
+
+                # Plot precision-recall lines
+                lines.append(l)
+                labels.append('iso-f1 curves')
+                l, = plt.plot(recall["micro"], precision["micro"], color='gold', lw=2)
+                lines.append(l)
+                labels.append('Micro-average Precision-Recall (area = {0:0.2f})'
+                              ''.format(average_precision["micro"]))
+
+                for i, color in zip(range(self.n_classes), colors):
+                    l, = plt.plot(recall[i], precision[i], color=color, lw=2)
+                    lines.append(l)
+                    labels.append('Precision-Recall for class {0} (area = {1:0.2f})'
+                                  ''.format(i, average_precision[i]))
+
+                rand_l, = plt.plot([0, 1], [random_pred_precision, random_pred_precision], linestyle='--')
+                lines.append(rand_l)
+                labels.append("Precision-Recall for Random Classifier")
+
+                # Final touches on plot
+                fig = plt.gcf()
+                fig.subplots_adjust(bottom=0.25)
+                plt.xlim([0.0, 1.0])
+                plt.ylim([0.0, 1.05])
+                plt.xlabel('Recall')
+                plt.ylabel('Precision')
+                plt.title('Multiclass Precision-Recall Curve')
+                plt.legend(lines, labels, loc=(0, -.68), prop=dict(size=14))
+
+                if store:
+                    if exp_name is None:
+                        print(
+                            "Couldn't save PR curve plot because experiment name was not given! Please provide exp_name in arguments.")
+                    else:
+                        fname = f"{exp_name}_prc.png"
+                        plt.savefig(fname)
+                        print(f"Stored Precision-Recall Curve: {fname}")
+
+                plt.show()
+
+            else:
+                plt.figure()
+                plt.plot([0, 1], [random_pred_precision, random_pred_precision], linestyle='--', label='Random Prediction')
+                plt.step(recall["micro"], precision["micro"], where='post')
+
+                plt.xlabel('Recall')
+                plt.ylabel('Precision')
+
+                plt.ylim([0.0, 1.05])
+                plt.xlim([0.0, 1.0])
+                plt.title('Averaged Precision-Recall Curve')
+
+                if store:
+                    if exp_name is None:
+                        print(
+                            "Couldn't save PR curve plot because experiment name was not given! Please provide exp_name in arguments.")
+                    else:
+                        fname = f"{exp_name}_prc.png"
+                        plt.savefig(fname)
+                        print(f"Stored Precision-Recall Curve: {fname}")
+
+                plt.show()
 
     def plot_data_distribution(self, data, normalize=True):
         weights = np.array(self.get_counts_per_label(data))
