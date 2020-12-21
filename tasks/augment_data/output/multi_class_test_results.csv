@@ -1,0 +1,13 @@
+,Precision,Recall (Sensitivity),True negative rate (Specificity),F1-score
+Direct payment,0.89,0.08,1.0,0.15
+Tax deduction,0.25,1.0,0.99,0.4
+Credit,0.1,0.67,0.94,0.17
+Guarantee,0.03,0.33,0.87,0.05
+Technical assistance,0.27,0.36,0.86,0.31
+Supplies,0.62,0.23,0.96,0.33
+-----,-----,-----,-----,-----
+Fine,0.01,0.4,0.53,0.03
+Unknown,0.0,0.0,0.95,0
+Macro avg,0.27,0.38,0.89,0.18
+Weighted avg,0.47,0.14,0.95,0.17
+Accuracy,-----,-----,-----,0.14473684210526316
