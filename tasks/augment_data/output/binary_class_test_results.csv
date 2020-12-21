@@ -1,0 +1,7 @@
+,Precision,Recall (Sensitivity),True negative rate (Specificity),F1-score
+not incentives,0.07,0.01,0.94,0.02
+incentives,0.72,0.94,0.01,0.81
+Macro avg,0.39,0.48,0.48,0.42
+Weighted avg,0.54,0.69,0.27,0.6
+Accuracy,-----,-----,-----,0.6875
+-----,-----,-----,-----,-----
