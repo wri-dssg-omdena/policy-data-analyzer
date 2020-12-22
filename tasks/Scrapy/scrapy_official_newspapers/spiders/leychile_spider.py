@@ -21,7 +21,7 @@ class LeychileSpider(BaseSpider):
     with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
         negative_keyword_dict = json.load(dict)
 
-    def __init__(self, date = "2020-06-28"):
+    def __init__(self, date = "2000-01-01"):
         try:
             self.from_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
         except:
@@ -46,7 +46,7 @@ class LeychileSpider(BaseSpider):
                 norm_id = norm['IDNORMA']
                 norm_url = f'https://www.bcn.cl/leychile/navegar?idNorma={norm_id}'
                 doc_name = f'CHL/policy_{norm_id}'
-                doc_type = 'pdf'
+                doc_type = 'txt'
                 publication_date = norm['FECHA_PUBLICACION']
                 pub_date_format = parse(publication_date, ['es']).strftime('%Y-%m-%d')
                 doc_path = str(norm_id) + '.' + str(pub_date_format) + '.0.0%23'
@@ -58,7 +58,7 @@ class LeychileSpider(BaseSpider):
                 item['title'] = norm['TITULO_NORMA']
                 item['reference'] = norm_id
                 item['authorship'] = norm['ORGANISMO']
-                item['resume'] = norm['TITULO_NORMA']
+                item['resume'] = ""
                 item['publication_date'] = pub_date_format
                 item['enforcement_date'] = norm['FECHA_PROMULGACION']
                 item['url'] = norm_url

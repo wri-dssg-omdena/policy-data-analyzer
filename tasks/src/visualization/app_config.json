@@ -1,0 +1,47 @@
+{
+    "mx": {
+        "country_name": "México",
+        "parent_dir": "data/processed/2020-10-24/Mexico/",
+        "txt_dir": "data/processed/2020-10-24/Mexico/txt",
+        "json_dir": "data/processed/2020-10-24/Mexico/json_improved",
+        "pdf_dir": "data/processed/2020-10-24/Mexico/pdf",
+        "highlights_dir": "data/processed/2020-10-24/Mexico/highlights",
+        "coocurrences_file": "data/processed/2020-10-24/Mexico/coocurrences.csv"
+    },
+    "ch": {
+        "country_name": "Chile",
+        "parent_dir": "data/processed/2020-10-24/Chile/",
+        "txt_dir": "data/processed/2020-10-24/Chile/txt",
+        "json_dir": "data/processed/2020-10-24/Chile/json_improved",
+        "pdf_dir": "data/processed/2020-10-24/Chile/pdf",
+        "highlights_dir": "data/processed/2020-10-24/Chile/highlights",
+        "coocurrences_file": "data/processed/2020-10-24/Chile/coocurrences.csv"
+    },
+    "gu": {
+        "country_name": "Guatemala",
+        "parent_dir": "data/processed/2020-10-24/Guatemala/",
+        "txt_dir": "data/processed/2020-10-24/Guatemala/txt",
+        "json_dir": "data/processed/2020-10-24/Guatemala/json_improved",
+        "pdf_dir": "data/processed/2020-10-24/Guatemala/pdf",
+        "highlights_dir": "data/processed/2020-10-24/Guatemala/highlights",
+        "coocurrences_file": "data/processed/2020-10-24/Guatemala/coocurrences.csv"
+    },
+    "sv": {
+        "country_name": "El Salvador",
+        "parent_dir": "data/processed/2020-10-24/El Salvador/",
+        "txt_dir": "data/processed/2020-10-24/El Salvador/txt",
+        "json_dir": "data/processed/2020-10-24/El Salvador/json_improved",
+        "pdf_dir": "data/processed/2020-10-24/El Salvador/pdf",
+        "highlights_dir": "data/processed/2020-10-24/El Salvador/highlights",
+        "coocurrences_file": "data/processed/2020-10-24/El Salvador/coocurrences.csv"        
+    },
+    "pe": {
+        "country_name": "Perú",
+        "parent_dir": "data/processed/2020-10-24/Peru/",
+        "txt_dir": "data/processed/2020-10-24/Peru/txt",
+        "json_dir": "data/processed/2020-10-24/Peru/json_improved",
+        "pdf_dir": "data/processed/2020-10-24/Peru/pdf",
+        "highlights_dir": "data/processed/2020-10-24/Peru/highlights",
+        "coocurrences_file": "data/processed/2020-10-24/Peru/coocurrences.csv"
+    }
+}
