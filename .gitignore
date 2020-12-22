@@ -96,3 +96,4 @@ tasks/extract_text/notebooks/client_secret.json
 tasks/sBERT/models/uncased_L-12_H-768_A-12/bert_model.ckpt.data-00000-of-00001
 tasks/data_augmentation/models/uncased_L-12_H-768_A-12/bert_model.ckpt.data-00000-of-00001
 tasks/Scrapy/scrapy_official_newspapers/Scraped_Documents_local.csv
+
