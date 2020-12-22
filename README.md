@@ -46,6 +46,22 @@ Contribution Guidelines
 **To work on tasks**
 1. So far the tasks will be defined by the Roadmap and you can follow the structure described in [Project Organization](#project-organization) or see existing structure of current tasks.
 
+### Docker, reproducibility and development
+
+ - The project's Dockerfile can be used to set up a development environment which encapsulates all dependencies necessary to run each project component. The purpose of this environment is to facilitate collaboration and reproducibility, while being able to develop and work on the project locally.
+ - Future dependencies should be added either to the Dockerfile or the requirements.txt with a comment on the purpose of the specific package.
+
+**Build the Docker image:**
+
+    $ docker build -f Dockerfile -t policy_container . 
+**Create a Docker container by running the image:**
+
+    $ docker run -ti --rm -p 8888:8888 --mount source=$(pwd),target=/app,type=bind policy_container:latest  
+    # $(pwd) should give you the absolute path to the project directory
+**Launch a jupyter notebook from within the container**
+
+    $ jupyter notebook --port=8888 --no-browser --ip=0.0.0.0 --allow-root
+
 ### FAQs
 - _I want to create a new branch starting from an old branch, how do I do that?_
     - Say you want to create `branch_2` based on `branch_1` (in other words, with `branch_1` as a starting point), then you would:
