@@ -1,0 +1,68 @@
+{% extends "./index.html" %}
+{% block content %}
+
+<div class="container">
+  <div class="page-header col-12">
+    <h1 class="page-title">Document Extraction</h1>
+  </div>
+  <div class="row">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Extraction Timeline (Filtered Documents)</h3>
+        </div>
+        <!-- Card content -->
+        <div class="card-body o-auto" style="max-height: 5.5in">
+          {{ timeline_plot_html | safe }}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-9">
+      <div class="card" style="height: 250px;">
+        <div class="card-header">
+          <h3 class="card-title">Overview</h3>
+        </div>
+      </div>
+    </div>
+    <div class="col-3">
+      <div class="card p-3">
+        <div class="d-flex align-items-center">
+          <span class="stamp stamp-md bg-blue mr-3">
+            <i class="fe fe-globe"></i>
+          </span>
+          <div>
+            <h4 class="m-0">{{ n_countries }} <small>Countries</small></h4>
+            <small class="text-muted">Easily extensible</small>
+          </div>
+        </div>
+      </div>
+      <div class="card p-3">
+        <div class="d-flex align-items-center">
+          <span class="stamp stamp-md bg-green mr-3">
+            <i class="fe fe-file-text"></i>
+          </span>
+          <div>
+            <h4 class="m-0">{{ n_documents }} <small>Documents</small></h4>
+            <small class="text-muted">Updated weekly</small>
+          </div>
+        </div>
+      </div>
+      <div class="card p-3">
+        <div class="d-flex align-items-center">
+          <span class="stamp stamp-md bg-red mr-3">
+            <i class="fa fa-rocket"></i>
+          </span>
+          <div>
+            <h4 class="m-0"><small>Fully Automated Pipeline</small></h4>
+            <small class="text-muted">Server takes care of updates</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
