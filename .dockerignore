@@ -1,12 +1,16 @@
 # Custom
-input/
-Omdena_key_S3.json
+.git
+.gitignore
+LICENSE
+VERSION
+README.md
+Changelog.md
+Makefile
+docker-compose.yml
+docs
 Omdena_key.json
 tasks/preprocess_text/notebooks/client_secret.json
 tasks/extract_text/notebooks/client_secret.json
-tasks/sBERT/models/uncased_L-12_H-768_A-12/bert_model.ckpt.data-00000-of-00001
-tasks/data_augmentation/models/uncased_L-12_H-768_A-12/bert_model.ckpt.data-00000-of-00001
-tasks/Scrapy/scrapy_official_newspapers/Scraped_Documents_local.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -23,8 +27,7 @@ develop-eggs/
 dist/
 downloads/
 eggs/
-.eggs/on
-tasks
+.eggs/
 lib/
 lib64/
 parts/
@@ -98,4 +101,3 @@ target/
 
 # Mypy cache
 .mypy_cache/
-
