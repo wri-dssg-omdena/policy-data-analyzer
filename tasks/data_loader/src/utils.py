@@ -49,6 +49,17 @@ def sort_model_preds(dataset, model_preds):
     return ordered_preds
 
 
+def sentences_from_dataset(dataset):
+    sentences = []
+
+    for document in dataset.values():
+        for section in document.values():
+            for sentence in section['sentences'].values():
+                sentences.append(sentence['text'])
+
+    return sentences
+
+
 def labels_from_dataset(dataset):
     labels = []
 
@@ -58,6 +69,10 @@ def labels_from_dataset(dataset):
                 labels.append(sentence['labels'][0])
 
     return labels
+
+
+def sentences_from_model_output(model_preds):
+    return [preds["text"] for preds in model_preds.values()]
 
 
 def labels_from_model_output(model_preds):
