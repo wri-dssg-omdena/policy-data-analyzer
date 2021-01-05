@@ -9,7 +9,6 @@ from itertools import cycle
 import matplotlib.colors as mcolors
 
 import sys
-
 sys.path.append("../../")
 
 METRICS = ["Precision", "Recall (Sensitivity)", "True negative rate (Specificity)", "F1-score"]
@@ -76,9 +75,7 @@ class ModelEvaluator:
         self.FPR = self.FP / (self.FP + self.TN)  # Fall out or false positive rate
         self.FNR = self.FN / (self.TP + self.FN)  # False negative rate
 
-    def evaluate(self, y_true, y_pred,
-                 plot_cm=False, plot_prc=False, plot_prc_multi=False,
-                 normalize=False, store=False, exp_name=None):
+    def evaluate(self, y_true, y_pred, plot_cm=False, normalize=False, exp_name=None):
         """
         Given a set of true labels and model predictions, runs a series of selected evaluation metrics:
             - Precision
@@ -112,28 +109,14 @@ class ModelEvaluator:
         self.metrics_df = metrics_df.fillna(0)
 
         if plot_cm:
-            self.plot_confusion_matrix(self.cm,
-                                       self.label_names,
-                                       title='Confusion matrix',
-                                       color_map="Blues",
+            self.plot_confusion_matrix(color_map="Blues",
                                        normalize=normalize,
-                                       store=store,
-                                       exp_name=self.output_path + exp_name)
+                                       exp_name=f"{self.output_path}{exp_name}")
 
-        if plot_prc:
-            print(y_pred)
-            self.plot_precision_recall_curve(y_true, y_pred,
-                                             multi_class=plot_prc_multi,
-                                             store=store, exp_name=self.output_path + exp_name)
-
-        if store:
-            if exp_name is None:
-                print(
-                    "Couldn't save results because experiment name was not given! Please provide exp_name in arguments.")
-            else:
-                fname = f"{self.output_path + exp_name}_results.csv"
-                self.metrics_df.to_csv(fname)
-                print(f"Stored results: {fname}")
+        if exp_name:
+            fname = f"{self.output_path + exp_name}_results.csv"
+            self.metrics_df.to_csv(fname)
+            print(f"Stored results: {fname}")
 
         return self.metrics_df
 
@@ -163,13 +146,9 @@ class ModelEvaluator:
         weighted_metrics = sum(metric_array * weights)
         return weighted_metrics / len(y_true)
 
-    @staticmethod
-    def plot_confusion_matrix(cm,
-                              target_names,
-                              title='Confusion matrix',
+    def plot_confusion_matrix(self, title='Confusion matrix',
                               color_map=None,
                               normalize=True,
-                              store=False,
                               exp_name=None):
         """
         Adapted from: https://stackoverflow.com/questions/19233771/sklearn-plot-confusion-matrix-with-labels
@@ -178,45 +157,43 @@ class ModelEvaluator:
             color_map = plt.get_cmap('Blues')
 
         plt.figure(figsize=(8, 6))
-        plt.imshow(cm, interpolation='nearest', cmap=color_map)
+        plt.imshow(self.cm, interpolation='nearest', cmap=color_map)
         plt.title(title)
         plt.colorbar()
         plt.style.use('seaborn-white')
 
-        if target_names is not None:
-            tick_marks = np.arange(len(target_names))
-            plt.xticks(tick_marks, target_names, rotation=45)
-            plt.yticks(tick_marks, target_names)
+        if self.label_names:
+            tick_marks = np.arange(len(self.label_names))
+            plt.xticks(tick_marks, self.label_names, rotation=45)
+            plt.yticks(tick_marks, self.label_names)
 
         if normalize:
-            cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+            self.cm = self.cm.astype('float') / self.cm.sum(axis=1)[:, np.newaxis]
 
-        thresh = cm.max() / 1.5 if normalize else cm.max() / 2
-        for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        thresh = self.cm.max() / 1.5 if normalize else self.cm.max() / 2
+        for i, j in itertools.product(range(self.cm.shape[0]), range(self.cm.shape[1])):
             if normalize:
-                plt.text(j, i, "{:0.2f}".format(cm[i, j]),
+                plt.text(j, i, "{:0.2f}".format(self.cm[i, j]),
                          horizontalalignment="center",
-                         color="white" if cm[i, j] > thresh else "black")
+                         color="white" if self.cm[i, j] > thresh else "black")
             else:
-                plt.text(j, i, "{:,}".format(cm[i, j]),
+                plt.text(j, i, "{:,}".format(self.cm[i, j]),
                          horizontalalignment="center",
-                         color="white" if cm[i, j] > thresh else "black")
+                         color="white" if self.cm[i, j] > thresh else "black")
 
         plt.tight_layout()
         plt.xlabel('Predicted label')
         plt.ylabel('True label')
 
-        if store:
-            if exp_name is None:
-                print("Couldn't save plot because experiment name was not given! Please provide exp_name in arguments.")
-            else:
-                fname = f"{exp_name}_cm.png"
-                plt.savefig(fname)
-                print(f"Stored confusion matrix: {fname}")
+        if exp_name:
+            fname = f"{exp_name}_cm.png"
+            plt.savefig(fname)
+            print(f"Stored confusion matrix: {fname}")
 
         plt.show()
 
-    def plot_precision_recall_curve(self, y_true, y_pred, bin_class=False, all_classes=False, store=False, exp_name=None):
+    def plot_precision_recall_curve(self, y_true, y_pred, bin_class=False, all_classes=False,
+                                    exp_name=None):
         """
         Plots the precision-recall curve for either a binary or multi-class classification model.
 
@@ -251,14 +228,10 @@ class ModelEvaluator:
             plt.xlim([0.0, 1.0])
             plt.title('Precision-Recall Curve. Avg Precision=' + str(round(average_precision, 2)))
 
-            if store:
-                if exp_name is None:
-                    print(
-                        "Couldn't save PR curve plot because experiment name was not given! Please provide exp_name in arguments.")
-                else:
-                    fname = f"{exp_name}_prc.png"
-                    plt.savefig(fname)
-                    print(f"Stored Precision-Recall Curve: {fname}")
+            if exp_name:
+                fname = f"{self.output_path}{exp_name}_prc.png"
+                plt.savefig(fname)
+                print(f"Stored Precision-Recall Curve: {fname}")
 
             plt.show()
 
@@ -328,14 +301,10 @@ class ModelEvaluator:
                 plt.title('Multiclass Precision-Recall Curve')
                 plt.legend(lines, labels, loc=(0, -.68), prop=dict(size=14))
 
-                if store:
-                    if exp_name is None:
-                        print(
-                            "Couldn't save PR curve plot because experiment name was not given! Please provide exp_name in arguments.")
-                    else:
-                        fname = f"{exp_name}_prc.png"
-                        plt.savefig(fname)
-                        print(f"Stored Precision-Recall Curve: {fname}")
+                if exp_name:
+                    fname = f"{self.output_path}{exp_name}_prc.png"
+                    plt.savefig(fname)
+                    print(f"Stored Precision-Recall Curve: {fname}")
 
                 plt.show()
 
@@ -351,14 +320,10 @@ class ModelEvaluator:
                 plt.xlim([0.0, 1.0])
                 plt.title('Averaged Precision-Recall Curve')
 
-                if store:
-                    if exp_name is None:
-                        print(
-                            "Couldn't save PR curve plot because experiment name was not given! Please provide exp_name in arguments.")
-                    else:
-                        fname = f"{exp_name}_prc.png"
-                        plt.savefig(fname)
-                        print(f"Stored Precision-Recall Curve: {fname}")
+                if exp_name:
+                    fname = f"{self.output_path}{exp_name}_prc.png"
+                    plt.savefig(fname)
+                    print(f"Stored Precision-Recall Curve: {fname}")
 
                 plt.show()
 
