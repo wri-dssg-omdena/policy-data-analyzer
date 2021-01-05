@@ -30,10 +30,18 @@ def numeric_labels_from_dataset(dataset):
     return num_dataset_labels
 
 
-def labels_to_numeric(labels, label_names):
+def labels2numeric(labels, label_names):
     label_map = dict(zip(label_names, range(len(label_names))))
     num_dataset_labels = [label_map[label] for label in labels]
     return num_dataset_labels
+
+
+def unique_labels(all_labels):
+    return list(set(all_labels))
+
+
+def filter_out_labeled_sents(sents, labels_to_filter):
+    return [sent for sent in sents.values() if sent['labels'][0] not in labels_to_filter]
 
 
 def sort_model_preds(dataset, model_preds):
@@ -71,6 +79,41 @@ def labels_from_dataset(dataset):
     return labels
 
 
+def country_labeled_sentences(excel_map):
+    result = {}
+    sent_num = 0
+
+    for country, dataframe in excel_map.items():
+
+        new_sents_col = dataframe["Sentence"].dropna()
+        new_labels_col = dataframe["Primary Instrument"].dropna()
+
+        sentences = list(new_sents_col.apply(lambda x: x.replace("\n", "").strip()))
+        label_col = new_labels_col.apply(lambda x: x.replace("(PES)", "").replace("(Bond)", "").strip())
+        labels = [[string.strip() for string in label.split(", ")][0] for label in label_col]
+        result[country] = {}
+
+        for sent, label in zip(sentences, labels):
+            if sent_num not in result[country]:
+                result[country][sent_num] = {"text": sent, "labels": [label]}
+            else:
+                result[country][sent_num]["text"] = sent
+                result[country][sent_num]["labels"] = [label]
+
+            sent_num += 1
+
+    return result
+
+
+def labeled_sentences_from_excel(excel_map):
+    country2labeledsents = country_labeled_sentences(excel_map)
+    labeled_sents = dict()
+    for sents in country2labeledsents.values():
+        labeled_sents.update(sents)
+
+    return labeled_sents
+
+
 def sentences_from_model_output(model_preds):
     return [preds["text"] for preds in model_preds.values()]
 
@@ -91,6 +134,10 @@ def get_counts_per_label(y_true, n_classes):
     for label in y_true:
         label_counts[label] += 1
     return label_counts
+
+
+def merge_labels(all_labels, labels_to_merge):
+    return [f"{labels_to_merge[0]} & {labels_to_merge[1]}" if label in labels_to_merge else label for label in all_labels]
 
 
 def plot_data_distribution(data, label_names, normalize=True):
