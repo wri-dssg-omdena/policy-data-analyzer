@@ -9,6 +9,7 @@ from itertools import cycle
 import matplotlib.colors as mcolors
 
 import sys
+
 sys.path.append("../../")
 
 METRICS = ["Precision", "Recall (Sensitivity)", "True negative rate (Specificity)", "F1-score"]
@@ -75,6 +76,7 @@ class ModelEvaluator:
         self.FPR = self.FP / (self.FP + self.TN)  # Fall out or false positive rate
         self.FNR = self.FN / (self.TP + self.FN)  # False negative rate
 
+
     def evaluate(self, y_true, y_pred, plot_cm=False, normalize=False, exp_name=None):
         """
         Given a set of true labels and model predictions, runs a series of selected evaluation metrics:
@@ -105,7 +107,7 @@ class ModelEvaluator:
         metrics_df.loc['Accuracy'] = self.acc
 
         line = pd.DataFrame(dict(zip(METRICS, ["-----"] * len(METRICS))), index=["-----"])
-        metrics_df = pd.concat([metrics_df.iloc[:6], line, metrics_df.iloc[6:]])
+        metrics_df = pd.concat([metrics_df.iloc[:self.n_classes], line, metrics_df.iloc[self.n_classes:]])
         self.metrics_df = metrics_df.fillna(0)
 
         if plot_cm:
@@ -146,6 +148,7 @@ class ModelEvaluator:
         weighted_metrics = sum(metric_array * weights)
         return weighted_metrics / len(y_true)
 
+
     def plot_confusion_matrix(self, title='Confusion matrix',
                               color_map=None,
                               normalize=True,
@@ -158,6 +161,7 @@ class ModelEvaluator:
 
         plt.figure(figsize=(8, 6))
         plt.imshow(self.cm, interpolation='nearest', cmap=color_map)
+
         plt.title(title)
         plt.colorbar()
         plt.style.use('seaborn-white')
@@ -305,7 +309,6 @@ class ModelEvaluator:
                     fname = f"{self.output_path}{exp_name}_prc.png"
                     plt.savefig(fname)
                     print(f"Stored Precision-Recall Curve: {fname}")
-
                 plt.show()
 
             else:
