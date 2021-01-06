@@ -104,6 +104,6 @@ def classify_all_sentences(all_sents, label_names, sbert_model, proj_matrix):
 
 
 def encode_all_sents(all_sents, sbert_model, proj_matrix=None):
-    if not proj_matrix:
+    if proj_matrix is None:
         return np.vstack([sbert_model.encode(sent) for sent in all_sents])
     return np.vstack([encode_sentence(sent, sbert_model, proj_matrix) for sent in tqdm(all_sents)])
