@@ -1,3 +1,24 @@
+# Zero-Shot Learning
+
+In tasks/data_augmentation/notebooks/zero_shot_learning/ you will find the notebooks containing our experiments for both zero shot learning methods in here, as well as a notebook written by @DavidSilva98 to fine-tune SBERT.
+
+Currently using the LatentEmbeddings_ZeroShotLearningExperiments.ipynb notebook to run experiments, including fine-tuning the model. Feel free to play around with it!
+In tasks/data_augmentation/src/zero_shot_learning/ you will find all the supporting functions for the notebooks to work! They add quite a bit of abstraction so we can dive into experiments as soon as possible
+
+New task/methods collection! In tasks/data_visualization/src/plotting.py you will find the methods necessary to plot the embeddings from SBERT. Included PCA, t-SNE and PHATE.
+
+Bonus:
+
+Refactored the model evaluator a bit, examples in the notebooks from zero shot learninfg
+Added more functions for data loading in tasks/data_loader/src/utils.py, loading data has never been as easy :)
+TO DO:
+
+Change the import paths in the zero shot learning notebooks
+Update the requirements file, as well as the Docker file if necessary to be able to run all of the code
+
+# Semi-Automatic Labeling
+In tasks/data_augmentation/notebooks/Semi-Automatic Labeling/ you will find the notebook containing the code to perform experiments for the semi-automatic labelling method. You need to adjust the paths for data input and output.
+
 # sBERT Models
 
 On the 29th of November 2020 the folder was created and the files dealing with sBERT from the Omdena repo were transferred here. These files were:
