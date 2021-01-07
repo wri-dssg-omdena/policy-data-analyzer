@@ -15,13 +15,12 @@ Current Roadmap
 6. [ ] Build pipeline to create excel documents for manual reviewing/tagging
 7. [ ] Explore other models if needed
 
-==============================
 ### Phase 2: Modeling
 
 1. [ ] Develop a model to first identify whether a sentence contains an incentive instrument, or is an icentive at all
 2. [ ] Develop a model that classifies incentive instruments (direct payment, tax deduction, etc.)
 
-
+-------------------------------------
 
 Contribution Guidelines
 ==============================
