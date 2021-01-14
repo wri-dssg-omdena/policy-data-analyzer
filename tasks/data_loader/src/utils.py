@@ -68,13 +68,17 @@ def sentences_from_dataset(dataset):
     return sentences
 
 
-def labels_from_dataset(dataset):
+def labels_from_dataset(dataset, incentive = False):
     labels = []
-
+	if incentive:
+		label = 'labels'
+	else:
+		label = 'incentive'
+		
     for document in dataset.values():
         for section in document.values():
             for sentence in section['sentences'].values():
-                labels.append(sentence['labels'][0])
+                labels.append(sentence[label])
 
     return labels
 
