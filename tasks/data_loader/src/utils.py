@@ -78,6 +78,12 @@ def labels_from_dataset(dataset, label):
 
     return labels
 
+def select_labels(dataset, labels_to_be_retrieved):
+  new_dict = {}
+  for key, value in dataset.items():
+    if value['labels'] in labels_to_be_retrieved:
+      new_dict[key] = value
+  return new_dict
 
 def country_labeled_sentences(excel_map):
     result = {}
