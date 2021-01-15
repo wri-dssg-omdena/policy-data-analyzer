@@ -1,4 +1,5 @@
 from collections import Counter
+import cupy as cp
 import numpy as np
 import torch
 from torch.nn import functional as F
@@ -47,7 +48,10 @@ def top_k_sbert_embeddings(top_k_words, sbert_model):
 def least_squares_with_reg(X, y, lamda=0.01):
     # Help from: https://stackoverflow.com/questions/27476933/numpy-linear-regression-with-regularization and https://www.kdnuggets.com/2016/11/linear-regression-least-squares-matrix-multiplication-concise-technical-overview.html
     # Multiple Linear Regression with OLS parameter estimation with L2 regularization term. lambda = 0 is equivalent to OLS estimation without regularization
-    return np.linalg.inv(X.T.dot(X) + lamda * np.eye(X.shape[1])).dot(X.T).dot(y)
+    xp = cp.get_array_module(X, y)
+    # Ensure that the 2 arguments have the same data type
+    X, y = xp.array(X), xp.array(y)
+    return xp.linalg.inv(X.T.dot(X) + lamda * xp.eye(X.shape[1])).dot(X.T).dot(y)
 
 
 def calc_proj_matrix(sentences, k, spacy_model, sbert_model, lamda=0.01, include_labels=None):
