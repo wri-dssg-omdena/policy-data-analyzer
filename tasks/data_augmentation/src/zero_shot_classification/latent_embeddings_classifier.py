@@ -54,9 +54,7 @@ def calc_proj_matrix(sentences, k, spacy_model, sbert_model, lamda=0.01, include
     sents_as_str = ". ".join(sentences)
     top_words = top_k_words(k, sents_as_str, spacy_model, include_labels)
     word_emb = np.vstack(top_k_word_embeddings(top_words, spacy_model))
-    print(word_emb)
     sent_emb = np.vstack(top_k_sbert_embeddings(top_words, sbert_model))
-    print(sent_emb)
     proj_matrix = least_squares_with_reg(sent_emb, word_emb, lamda)
 
     return proj_matrix
