@@ -57,24 +57,37 @@ def sort_model_preds(dataset, model_preds):
     return ordered_preds
 
 
+# def sentences_from_dataset(dataset):
+    # sentences = []
+
+    # for document in dataset.values():
+        # for section in document.values():
+            # for sentence in section['sentences'].values():
+                # sentences.append(sentence['text'])
+
+    # return sentences
 def sentences_from_dataset(dataset):
     sentences = []
 
-    for document in dataset.values():
-        for section in document.values():
-            for sentence in section['sentences'].values():
-                sentences.append(sentence['text'])
+    for sentence in dataset.values():
+        sentences.append(sentence['text'])
 
     return sentences
 
+# def labels_from_dataset(dataset, label):
+    # labels = []
 
-def labels_from_dataset(dataset, label):
+    # for document in dataset.values():
+        # for section in document.values():
+            # for sentence in section['sentences'].values():
+                # labels.append(sentence[label])
+
+    # return labels
+def labels_from_dataset(dataset):
     labels = []
 
-    for document in dataset.values():
-        for section in document.values():
-            for sentence in section['sentences'].values():
-                labels.append(sentence[label])
+    for sentence in dataset.values():
+        sentences.append(sentence['labels'])
 
     return labels
 
