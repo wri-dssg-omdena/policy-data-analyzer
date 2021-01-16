@@ -87,7 +87,7 @@ def labels_from_dataset(dataset):
     labels = []
 
     for sentence in dataset.values():
-        sentences.append(sentence['labels'])
+        labels.append(sentence['labels'])
 
     return labels
 
