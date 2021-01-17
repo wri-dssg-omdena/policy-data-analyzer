@@ -83,11 +83,11 @@ def sentences_from_dataset(dataset):
                 # labels.append(sentence[label])
 
     # return labels
-def labels_from_dataset(dataset):
+def labels_from_dataset(dataset, label):
     labels = []
 
     for sentence in dataset.values():
-        labels.append(sentence['labels'])
+        labels.append(sentence[label])
 
     return labels
 
@@ -97,6 +97,8 @@ def select_labels(dataset, labels_to_be_retrieved):
     if value['labels'] in labels_to_be_retrieved:
       new_dict[key] = value
   return new_dict
+  
+
 
 def country_labeled_sentences(excel_map):
     result = {}
