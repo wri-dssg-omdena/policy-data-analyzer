@@ -7,18 +7,18 @@ Current Roadmap
 
 ### Phase 1: Augmenting training data
 
-1. [ ] Fine-tune S-BERT on existing labeled data from 5 countries (`WRI_Policy_Tags.xlsx` file)
-2. [ ] Find methods to improve performance of S-BERT for data augmentation purposes
+1. [X] Fine-tune S-BERT on existing labeled data from 5 countries (`WRI_Policy_Tags.xlsx` file)
+2. [X] Find methods to improve performance of S-BERT for data augmentation purposes
 3. [ ] Build pipeline for further fine tuning as we get more data
-4. [ ] Classify the policy instrument of new sentences from El Salvador and Chile policy documents 
-5. [ ] Manually review the model tags and tag more examples (2 reviewers)
-6. [ ] Build pipeline to create excel documents for manual reviewing/tagging
+4. [X] Classify the policy instrument of new sentences from El Salvador and Chile policy documents 
+5. [X] Manually review the model tags and tag more examples (2 reviewers)
+6. [X] Build pipeline to create excel documents for manual reviewing/tagging
 7. [ ] Explore other models if needed
 
 ### Phase 2: Modeling
 
-1. [ ] Develop a model to first identify whether a sentence contains an incentive instrument, or is an icentive at all
-2. [ ] Develop a model that classifies incentive instruments (direct payment, tax deduction, etc.)
+1. [X] Develop a model to first identify whether a sentence contains an incentive instrument, or is an icentive at all
+2. [X] Develop a model that classifies incentive instruments (direct payment, tax deduction, etc.)
 
 -------------------------------------
 
