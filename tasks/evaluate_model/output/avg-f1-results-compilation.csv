@@ -1,0 +1,7 @@
+,Experiment number,model,f1-score,epochs,test_perc
+0,0,paraphrase-xlm-r-multilingual-v1,0.59,8,0.15
+1,1,paraphrase-xlm-r-multilingual-v1,0.57,4,0.15
+2,3,paraphrase-xlm-r-multilingual-v1,0.55,6,0.3
+3,4,stsb-xlm-r-multilingual,0.72,4,0.3
+4,5,paraphrase-xlm-r-multilingual-v1,0.51,8,0.15
+5,2,paraphrase-xlm-r-multilingual-v1,0.79,10,0.25
