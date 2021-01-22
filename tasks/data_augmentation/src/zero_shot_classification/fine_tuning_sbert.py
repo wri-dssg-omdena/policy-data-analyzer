@@ -66,10 +66,12 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
     start_epochs = train_params["start_epochs"]
     max_num_epochs = train_params["max_num_epochs"]
     epochs_increment = train_params["epochs_increment"]
-    classifier = train_params["classifier"]
+    eval_classifier = train_params["eval_classifier"]
     numeric_labels = labels2numeric(test_labels, label_names)
 
-    print("Grid Search Fine tuning parameters:\n", json.dumps(train_params, sort_keys=True, indent=4))
+    if eval_classifier:
+        train_params["eval_classifier"] = train_params["eval_classifier"].__class__.__name__
+    print("Grid Search Fine tuning parameters:\n", json.dumps(train_params, indent=4))
 
     # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
     with open(f"{output_path}/{experiment}_FineTuningResults.json", "w") as fw:
@@ -145,8 +147,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 minutes, seconds = divmod(rem, 60)
                 print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-                if classifier:
-                    evaluate_using_sklearn(classifier, model, train_sents, train_labels, test_sents, test_labels,
+                if eval_classifier:
+                    evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents, test_labels,
                                            label_names, experiment, model_deets, model_name, num_epochs, output,
                                            test_perc, output_path)
                 else:
@@ -161,10 +163,12 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     test_perc = train_params["test_perc"]
     model_name = train_params["model_names"]
     num_epochs = train_params["num_epochs"]
-    classifier = train_params["classifier"]
+    eval_classifier = train_params["eval_classifier"]
     numeric_labels = labels2numeric(test_labels, label_names)
 
-    print("Fine tuning parameters:\n", json.dumps(train_params, sort_keys=True, indent=4))
+    if eval_classifier:
+        train_params["eval_classifier"] = train_params["eval_classifier"].__class__.__name__
+    print("Fine tuning parameters:\n", json.dumps(train_params, indent=4))
 
     output = {f"test_perc={test_perc}": {}}
     X_train, X_test, y_train, y_test = train_test_split(train_sents, train_labels, test_size=test_perc,
@@ -219,8 +223,8 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     minutes, seconds = divmod(rem, 60)
     print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-    if classifier:
-        evaluate_using_sklearn(classifier, model, train_sents, train_labels, test_sents, test_labels,
+    if eval_classifier:
+        evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents, test_labels,
                                label_names, experiment, model_deets, model_name, num_epochs, output,
                                test_perc, output_path)
     else:
@@ -284,3 +288,4 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
         json.dump(output, fw)
 
     evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
+
