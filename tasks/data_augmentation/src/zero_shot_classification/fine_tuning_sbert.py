@@ -66,7 +66,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
     start_epochs = train_params["start_epochs"]
     max_num_epochs = train_params["max_num_epochs"]
     epochs_increment = train_params["epochs_increment"]
-    sklearn_classifier = train_params["sklearn_classifier"]
+    classifier = train_params["classifier"]
     numeric_labels = labels2numeric(test_labels, label_names)
 
     print("Grid Search Fine tuning parameters:\n", json.dumps(train_params, sort_keys=True, indent=4))
@@ -145,8 +145,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 minutes, seconds = divmod(rem, 60)
                 print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-                if sklearn_classifier:
-                    evaluate_using_sklearn(sklearn_classifier, model, train_sents, train_labels, test_sents, test_labels,
+                if classifier:
+                    evaluate_using_sklearn(classifier, model, train_sents, train_labels, test_sents, test_labels,
                                            label_names, experiment, model_deets, model_name, num_epochs, output,
                                            test_perc, output_path)
                 else:
@@ -161,7 +161,7 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     test_perc = train_params["test_perc"]
     model_name = train_params["model_names"]
     num_epochs = train_params["num_epochs"]
-    sklearn_classifier = train_params["sklearn_classifier"]
+    classifier = train_params["classifier"]
     numeric_labels = labels2numeric(test_labels, label_names)
 
     print("Fine tuning parameters:\n", json.dumps(train_params, sort_keys=True, indent=4))
@@ -219,8 +219,8 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     minutes, seconds = divmod(rem, 60)
     print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-    if sklearn_classifier:
-        evaluate_using_sklearn(sklearn_classifier, model, train_sents, train_labels, test_sents, test_labels,
+    if classifier:
+        evaluate_using_sklearn(classifier, model, train_sents, train_labels, test_sents, test_labels,
                                label_names, experiment, model_deets, model_name, num_epochs, output,
                                test_perc, output_path)
     else:
