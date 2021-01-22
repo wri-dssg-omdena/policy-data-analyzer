@@ -58,7 +58,8 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names, eval_classifier=None):
+def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names,
+                                eval_classifier=None):
     output_path = train_params["output_path"]
     experiment = train_params["experiment"]
     all_test_perc = train_params["all_test_perc"]
@@ -143,16 +144,19 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
                 if eval_classifier:
-                    evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents, test_labels,
-                                           label_names, experiment, model_deets, model_name, num_epochs, output,
-                                           test_perc, output_path)
+                    output = evaluate_using_classifier(eval_classifier, model, train_sents, train_labels, test_sents,
+                                                       test_labels,
+                                                       label_names, experiment, model_deets, model_name, num_epochs,
+                                                       output,
+                                                       test_perc, output_path)
                 else:
-                    evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
-                                         model_deets, model_name, num_epochs, numeric_labels, output,
-                                         output_path, test_perc)
+                    output = evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
+                                                  model_deets, model_name, num_epochs, numeric_labels, output,
+                                                  output_path, test_perc)
 
 
-def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names, eval_classifier=None):
+def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names,
+                    eval_classifier=None):
     output_path = train_params["output_path"]
     experiment = train_params["experiment"]
     test_perc = train_params["test_perc"]
@@ -216,19 +220,18 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
     if eval_classifier:
-        evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents, test_labels,
-                               label_names, experiment, model_deets, model_name, num_epochs, output,
-                               test_perc, output_path)
+        output = evaluate_using_classifier(eval_classifier, model, train_sents, train_labels, test_sents, test_labels,
+                                           label_names, experiment, model_deets, model_name, num_epochs, output,
+                                           test_perc, output_path)
     else:
-        evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
-                             model_deets, model_name, num_epochs, numeric_labels, output,
-                             output_path, test_perc)
+        output = evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
+                                      model_deets, model_name, num_epochs, numeric_labels, output,
+                                      output_path, test_perc)
 
 
 def evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
                          model_deets, model_name, num_epochs, numeric_labels, output,
                          output_path, test_perc):
-
     # Projection matrix Z low-dim projection
     print("Classifying sentences...")
     proj_matrix = cp.asnumpy(calc_proj_matrix(test_sents, 50, es_nlp, model, 0.01))
@@ -242,19 +245,20 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment
     numeric_preds = labels2numeric(model_preds, label_names)
     evaluator = ModelEvaluator(label_names, y_true=numeric_labels, y_pred=numeric_preds)
     output[f"test_perc={test_perc}"][model_name].append(
-            {"num_epochs": num_epochs,
-             "avg_f1": evaluator.avg_f1.tolist()})
+        {"num_epochs": num_epochs,
+         "avg_f1": evaluator.avg_f1.tolist()})
 
     with open(f"{output_path}/{experiment}_FineTuningResults.json", "w") as fw:
         json.dump(output, fw)
     evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
+    return output
 
-def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels,
-                           label_names, experiment, model_deets, model_name, num_epochs, output,
-                        test_perc, output_path):
 
+def evaluate_using_classifier(clf, model, train_sents, train_labels, test_sents, test_labels,
+                              label_names, experiment, model_deets, model_name, num_epochs, output,
+                              test_perc, output_path):
     # Sentence encoding
     print("Classifying sentences...")
     train_embs = encode_all_sents(train_sents, model)
@@ -269,15 +273,17 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     # Classifier predictions
     clf_preds = [clf.predict([sent_emb])[0] for sent_emb in test_embs]
 
-    # Evaluation
+    print("Evaluating predictions...")
     print(classification_report(test_labels, clf_preds))
     numeric_preds = labels2numeric(clf_preds, label_names)
     numeric_test_labels = labels2numeric(test_labels, label_names)
     evaluator = ModelEvaluator(label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
 
     output[f"test_perc={test_perc}"][model_name].append({"num_epochs": num_epochs, "avg_f1": evaluator.avg_f1.tolist()})
-    with open(f"{output_path}{experiment}_FineTuningResults.json", "w") as fw:
+    with open(f"{output_path}/{experiment}_FineTuningResults.json", "w") as fw:
         json.dump(output, fw)
 
     evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{clf.__class__.__name__}_{model_deets}")
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
+
+    return output
