@@ -57,26 +57,47 @@ def sort_model_preds(dataset, model_preds):
     return ordered_preds
 
 
+# def sentences_from_dataset(dataset):
+    # sentences = []
+
+    # for document in dataset.values():
+        # for section in document.values():
+            # for sentence in section['sentences'].values():
+                # sentences.append(sentence['text'])
+
+    # return sentences
 def sentences_from_dataset(dataset):
     sentences = []
 
-    for document in dataset.values():
-        for section in document.values():
-            for sentence in section['sentences'].values():
-                sentences.append(sentence['text'])
+    for sentence in dataset.values():
+        sentences.append(sentence['text'])
 
     return sentences
 
+# def labels_from_dataset(dataset, label):
+    # labels = []
 
-def labels_from_dataset(dataset):
+    # for document in dataset.values():
+        # for section in document.values():
+            # for sentence in section['sentences'].values():
+                # labels.append(sentence[label])
+
+    # return labels
+def labels_from_dataset(dataset, label):
     labels = []
 
-    for document in dataset.values():
-        for section in document.values():
-            for sentence in section['sentences'].values():
-                labels.append(sentence['labels'][0])
+    for sentence in dataset.values():
+        labels.append(sentence[label])
 
     return labels
+
+def select_labels(dataset, labels_to_be_retrieved):
+  new_dict = {}
+  for key, value in dataset.items():
+    if value['labels'] in labels_to_be_retrieved:
+      new_dict[key] = value
+  return new_dict
+  
 
 
 def country_labeled_sentences(excel_map):

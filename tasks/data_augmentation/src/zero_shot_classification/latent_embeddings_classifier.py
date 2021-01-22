@@ -1,4 +1,5 @@
 from collections import Counter
+import cupy as cp
 import numpy as np
 import torch
 from torch.nn import functional as F
@@ -47,7 +48,10 @@ def top_k_sbert_embeddings(top_k_words, sbert_model):
 def least_squares_with_reg(X, y, lamda=0.01):
     # Help from: https://stackoverflow.com/questions/27476933/numpy-linear-regression-with-regularization and https://www.kdnuggets.com/2016/11/linear-regression-least-squares-matrix-multiplication-concise-technical-overview.html
     # Multiple Linear Regression with OLS parameter estimation with L2 regularization term. lambda = 0 is equivalent to OLS estimation without regularization
-    return np.linalg.inv(X.T.dot(X) + lamda * np.eye(X.shape[1])).dot(X.T).dot(y)
+    xp = cp.get_array_module(X, y)
+    # Ensure that the 2 arguments have the same data type
+    X, y = xp.array(X), xp.array(y)
+    return xp.linalg.inv(X.T.dot(X) + lamda * xp.eye(X.shape[1])).dot(X.T).dot(y)
 
 
 def calc_proj_matrix(sentences, k, spacy_model, sbert_model, lamda=0.01, include_labels=None):
@@ -62,7 +66,7 @@ def calc_proj_matrix(sentences, k, spacy_model, sbert_model, lamda=0.01, include
 
 def encode_sentence(sentence, model, Z):
     sentence_rep = torch.from_numpy(np.matmul(model.encode(sentence), Z))
-    sentence_rep = sentence_rep.reshape(1, sentence_rep.shape[0])
+    sentence_rep = sentence_rep.reshape((1, sentence_rep.shape[0]))
     return sentence_rep
 
 
@@ -70,25 +74,35 @@ def encode_labels(labels, model, Z):
     return torch.from_numpy(np.matmul(model.encode(labels), Z))
 
 
-def classify_sentence(sentence, labels, model, Z):
+def classify_sentence(sentence, label_names, model, Z):
     sentence_rep = encode_sentence(sentence, model, Z)
-    label_reps = encode_labels(labels, model, Z)
+    label_reps = encode_labels(label_names, model, Z)
 
-    similarities = F.cosine_similarity(sentence_rep, label_reps)
-    closest = similarities.argsort(descending=True)
-
-    top_index = closest[0]
-    return labels[top_index], similarities[top_index]
+    return calc_cos_similarity(sentence_rep, label_reps, label_names)
 
 
-def classify_sentence_given_label_reps(sentence, label_names, label_reps, model, Z):
-    sentence_rep = encode_sentence(sentence, model, Z)
-
+def calc_cos_similarity(sentence_rep, label_reps, label_names):
     similarities = F.cosine_similarity(sentence_rep, label_reps)
     closest = similarities.argsort(descending=True)
 
     top_index = closest[0]
     return label_names[top_index], similarities[top_index]
+
+
+def classify_sentence_given_label_reps(sentence, label_names, label_reps, model, Z):
+    sentence_rep = encode_sentence(sentence, model, Z)
+
+    return calc_cos_similarity(sentence_rep, label_reps, label_names)
+
+
+def calc_all_cos_similarity(all_sents_reps, label_reps, label_names):
+    model_preds, model_scores = [], []
+    for sent_rep in tqdm(all_sents_reps):
+        pred, score = calc_cos_similarity(sent_rep, label_reps, label_names)
+        model_preds.append(pred)
+        model_scores.append(score)
+
+    return model_preds, model_scores
 
 
 def classify_all_sentences(all_sents, label_names, sbert_model, proj_matrix):
@@ -105,5 +119,7 @@ def classify_all_sentences(all_sents, label_names, sbert_model, proj_matrix):
 
 def encode_all_sents(all_sents, sbert_model, proj_matrix=None):
     if proj_matrix is None:
-        return np.vstack([sbert_model.encode(sent) for sent in all_sents])
-    return np.vstack([encode_sentence(sent, sbert_model, proj_matrix) for sent in tqdm(all_sents)])
+        stacked = np.vstack([sbert_model.encode(sent) for sent in tqdm(all_sents)])
+    else:
+        stacked = np.vstack([encode_sentence(sent, sbert_model, proj_matrix) for sent in tqdm(all_sents)])
+    return [torch.from_numpy(element).reshape((1, element.shape[0])) for element in stacked]

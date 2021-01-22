@@ -7,10 +7,10 @@ import matplotlib.pyplot as plt
 import scprep
 import phate
 
-def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=69420):
+
+def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=69420, store_name=None):
     df = pd.DataFrame()
     df["y"] = np.array(numeric_labels)
-    num_labels = len(set(numeric_labels))
 
     # Data for plot 1
     pca = PCA(n_components=2, random_state=seed)
@@ -66,6 +66,9 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
         ).set(title="t-SNE on PCA projection")
 
     plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
+    
+    if store_name:
+        plt.savefig(store_name + "_viz.png")
 
 
 def visualize_PCA_embeddings_3D(embs, labels, fname=None, seed=69420):
