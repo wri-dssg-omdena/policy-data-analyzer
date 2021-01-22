@@ -58,7 +58,7 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names):
+def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names, eval_classifier=None):
     output_path = train_params["output_path"]
     experiment = train_params["experiment"]
     all_test_perc = train_params["all_test_perc"]
@@ -66,11 +66,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
     start_epochs = train_params["start_epochs"]
     max_num_epochs = train_params["max_num_epochs"]
     epochs_increment = train_params["epochs_increment"]
-    eval_classifier = train_params["eval_classifier"]
     numeric_labels = labels2numeric(test_labels, label_names)
-
-    if eval_classifier:
-        train_params["eval_classifier"] = train_params["eval_classifier"].__class__.__name__
+    train_params["eval_classifier"] = eval_classifier.__class__.__name__
     print("Grid Search Fine tuning parameters:\n", json.dumps(train_params, indent=4))
 
     # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
@@ -119,8 +116,6 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
             dev_evaluator = LabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier, name='lae-dev')
 
             for num_epochs in range(start_epochs, max_num_epochs + 2, epochs_increment):
-                print("Num epochs:", num_epochs)
-
                 warmup_steps = math.ceil(
                     len(train_dataset) * num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
                 model_deets = f"model={model_name}_test-perc={test_perc}_n-epoch={num_epochs}"
@@ -157,17 +152,14 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                                          output_path, test_perc)
 
 
-def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names):
+def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names, eval_classifier=None):
     output_path = train_params["output_path"]
     experiment = train_params["experiment"]
     test_perc = train_params["test_perc"]
     model_name = train_params["model_names"]
     num_epochs = train_params["num_epochs"]
-    eval_classifier = train_params["eval_classifier"]
     numeric_labels = labels2numeric(test_labels, label_names)
-
-    if eval_classifier:
-        train_params["eval_classifier"] = train_params["eval_classifier"].__class__.__name__
+    train_params["eval_classifier"] = eval_classifier.__class__.__name__
     print("Fine tuning parameters:\n", json.dumps(train_params, indent=4))
 
     output = {f"test_perc={test_perc}": {}}
@@ -275,7 +267,7 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     clf.fit(np.vstack(train_embs), train_labels)
 
     # Classifier predictions
-    clf_preds = [clf.predict(sent_emb)[0] for sent_emb in test_embs]
+    clf_preds = [clf.predict([sent_emb])[0] for sent_emb in test_embs]
 
     # Evaluation
     print(classification_report(test_labels, clf_preds))
@@ -287,5 +279,5 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     with open(f"{output_path}{experiment}_FineTuningResults.json", "w") as fw:
         json.dump(output, fw)
 
-    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
-
+    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{clf.__class__.__name__}_{model_deets}")
+    print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
