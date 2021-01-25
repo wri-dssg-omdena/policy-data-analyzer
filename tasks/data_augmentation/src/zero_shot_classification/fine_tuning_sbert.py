@@ -6,6 +6,7 @@ import cupy as cp
 import spacy
 from sentence_transformers import SentencesDataset, SentenceTransformer, InputExample
 from sentence_transformers.evaluation import LabelAccuracyEvaluator
+from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from torch import nn, Tensor
 from torch.utils.data import DataLoader
@@ -57,7 +58,8 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names):
+def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names,
+                                eval_classifier=None):
     output_path = train_params["output_path"]
     experiment = train_params["experiment"]
     all_test_perc = train_params["all_test_perc"]
@@ -66,8 +68,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
     max_num_epochs = train_params["max_num_epochs"]
     epochs_increment = train_params["epochs_increment"]
     numeric_labels = labels2numeric(test_labels, label_names)
-
-    print("Grid Search Fine tuning parameters:\n", json.dumps(train_params, sort_keys=True, indent=4))
+    train_params["eval_classifier"] = eval_classifier.__class__.__name__
+    print("Grid Search Fine tuning parameters:\n", json.dumps(train_params, indent=4))
 
     # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
     with open(f"{output_path}/{experiment}_FineTuningResults.json", "w") as fw:
@@ -115,8 +117,6 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
             dev_evaluator = LabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier, name='lae-dev')
 
             for num_epochs in range(start_epochs, max_num_epochs + 2, epochs_increment):
-                print("Num epochs:", num_epochs)
-
                 warmup_steps = math.ceil(
                     len(train_dataset) * num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
                 model_deets = f"model={model_name}_test-perc={test_perc}_n-epoch={num_epochs}"
@@ -143,38 +143,28 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 minutes, seconds = divmod(rem, 60)
                 print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-                ### Classify sentences
-                # Projection matrix Z low-dim projection
-                print("Classifying sentences...")
-                proj_matrix = cp.asnumpy(calc_proj_matrix(test_sents, 50, es_nlp, model, 0.01))
-                all_sent_embs = encode_all_sents(test_sents, model, proj_matrix)
-                all_label_embs = encode_labels(label_names, model, proj_matrix)
-                visualize_embeddings_2D(np.vstack(all_sent_embs), test_labels, tsne_perplexity=50,
-                                        store_name=f"{output_path}/{model_deets}")
-                model_preds, model_scores = calc_all_cos_similarity(all_sent_embs, all_label_embs, label_names)
-
-                ### Evaluate the model
-                numeric_preds = labels2numeric(model_preds, label_names)
-                evaluator = ModelEvaluator(label_names, y_true=numeric_labels, y_pred=numeric_preds)
-
-                output[f"test_perc={test_perc}"][model_name].append(
-                    {"num_epochs": num_epochs, "avg_f1": evaluator.avg_f1.tolist()})
-                with open(f"{output_path}/{experiment}_FineTuningResults.json", "w") as fw:
-                    json.dump(output, fw)
-
-                evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
-                print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
+                if eval_classifier:
+                    output = evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents,
+                                                    test_labels,
+                                                    label_names, experiment, model_deets, model_name, num_epochs,
+                                                    output,
+                                                    test_perc, output_path)
+                else:
+                    output = evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
+                                                  model_deets, model_name, num_epochs, numeric_labels, output,
+                                                  output_path, test_perc)
 
 
-def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names):
+def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names,
+                    eval_classifier=None):
     output_path = train_params["output_path"]
     experiment = train_params["experiment"]
     test_perc = train_params["test_perc"]
     model_name = train_params["model_names"]
     num_epochs = train_params["num_epochs"]
     numeric_labels = labels2numeric(test_labels, label_names)
-
-    print("Fine tuning parameters:\n", json.dumps(train_params, sort_keys=True, indent=4))
+    train_params["eval_classifier"] = eval_classifier.__class__.__name__
+    print("Fine tuning parameters:\n", json.dumps(train_params, indent=4))
 
     output = {f"test_perc={test_perc}": {}}
     X_train, X_test, y_train, y_test = train_test_split(train_sents, train_labels, test_size=test_perc,
@@ -229,24 +219,93 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     minutes, seconds = divmod(rem, 60)
     print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-    ### Classify sentences
+    if eval_classifier:
+        output = evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents, test_labels,
+                                        label_names, experiment, model_deets, model_name, num_epochs, output,
+                                        test_perc, output_path)
+    else:
+        output = evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
+                                      model_deets, model_name, num_epochs, numeric_labels, output,
+                                      output_path, test_perc)
+
+
+def evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
+                         model_deets, model_name, num_epochs, numeric_labels, output,
+                         output_path, test_perc):
     # Projection matrix Z low-dim projection
     print("Classifying sentences...")
     proj_matrix = cp.asnumpy(calc_proj_matrix(test_sents, 50, es_nlp, model, 0.01))
-    all_sent_embs = encode_all_sents(test_sents, model, proj_matrix)
-    all_label_embs = encode_labels(label_names, model, proj_matrix)
-    visualize_embeddings_2D(np.vstack(all_sent_embs), test_labels, tsne_perplexity=50,
+    test_embs = encode_all_sents(test_sents, model, proj_matrix)
+    label_embs = encode_labels(label_names, model, proj_matrix)
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
                             store_name=f"{output_path}/{model_deets}")
-    model_preds, model_scores = calc_all_cos_similarity(all_sent_embs, all_label_embs, label_names)
+    model_preds, model_scores = calc_all_cos_similarity(test_embs, label_embs, label_names)
 
-    ### Evaluate the model
+    print("Evaluating predictions...")
     numeric_preds = labels2numeric(model_preds, label_names)
     evaluator = ModelEvaluator(label_names, y_true=numeric_labels, y_pred=numeric_preds)
-
     output[f"test_perc={test_perc}"][model_name].append(
-        {"num_epochs": num_epochs, "avg_f1": evaluator.avg_f1.tolist()})
+        {"num_epochs": num_epochs,
+         "avg_f1": evaluator.avg_f1.tolist()})
+
+    with open(f"{output_path}/{experiment}_FineTuningResults.json", "w") as fw:
+        json.dump(output, fw)
+    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
+    print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
+
+    return output
+
+
+def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels,
+                           label_names, experiment, model_deets, model_name, num_epochs, output,
+                           test_perc, output_path):
+    # Sentence encoding
+    print("Classifying sentences...")
+    train_embs = encode_all_sents(train_sents, model)
+    test_embs = encode_all_sents(test_sents, model)
+
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
+                            store_name=f"{output_path}/{model_deets}")
+
+    # Classifier training
+    clf.fit(np.vstack(train_embs), train_labels)
+
+    # Classifier predictions
+    clf_preds = list(clf.predict(np.vstack(test_embs)))
+
+    print("Evaluating predictions...")
+    print(classification_report(test_labels, clf_preds))
+    numeric_preds = labels2numeric(clf_preds, label_names)
+    numeric_test_labels = labels2numeric(test_labels, label_names)
+    evaluator = ModelEvaluator(label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
+
+    output[f"test_perc={test_perc}"][model_name].append({"num_epochs": num_epochs, "avg_f1": evaluator.avg_f1.tolist()})
     with open(f"{output_path}/{experiment}_FineTuningResults.json", "w") as fw:
         json.dump(output, fw)
 
-    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
+    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{clf.__class__.__name__}_{model_deets}")
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
+
+    return output
+
+
+def load_dataset(data_path, rater, set_of_labels_string):
+    """
+    Return the train data, train labels, test data, and test labels
+    """
+    dataset = []
+
+    for dataset_type in ["train", "test"]:
+        for file_type in ["sentences", "labels"]:
+            filename = dataset_type + "_" + rater + "_" + set_of_labels_string + "_" + file_type + ".csv"
+            file = data_path + "/" + filename
+            try:
+                data = pd.read_csv(file, index_col=False, header=None)
+            except Exception as e:
+                if "can't decode byte" in str(e):
+                    data = pd.read_csv(file, index_col=False, header=None, encoding="ISO-8859-1")
+                else:
+                    raise Exception("Couldn't read file:", file)
+            dataset.append(data[0].tolist())  # The data is always the entire first column
+
+    return dataset[0], dataset[1], dataset[2], dataset[3]
