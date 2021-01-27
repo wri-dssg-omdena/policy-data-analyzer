@@ -264,14 +264,14 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     train_embs = encode_all_sents(train_sents, model)
     test_embs = encode_all_sents(test_sents, model)
 
-    visualize_embeddings_2D(np.vstack(train_embs), train_labels, tsne_perplexity=50,
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
                             store_name=f"{output_path}/{model_deets}")
 
     # Classifier training
     clf.fit(np.vstack(train_embs), train_labels)
 
     # Classifier predictions
-    clf_preds = [clf.predict([sent_emb])[0] for sent_emb in test_embs]
+    clf_preds = list(clf.predict(np.vstack(test_embs)))
 
     print("Evaluating predictions...")
     print(classification_report(test_labels, clf_preds))
