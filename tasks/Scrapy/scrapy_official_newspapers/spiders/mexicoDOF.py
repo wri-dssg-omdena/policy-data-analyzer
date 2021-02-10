@@ -24,10 +24,10 @@ class MexicoDOF(BaseSpider):
     allowed_domains = ["dof.gob.mx"]
     doc_name = None
     doc_type = 'HTML'
-    with open('./keywords_knowledge_domain.json', 'r') as dict:
-        keyword_dict = json.load(dict)
-    with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
-        negative_keyword_dict = json.load(dict)
+    # with open('./keywords_knowledge_domain.json', 'r') as dict:
+        # keyword_dict = json.load(dict)
+    # with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
+        # negative_keyword_dict = json.load(dict)
 
     def __init__(self, date = datetime.datetime(2020,9,1)):
         if type(date) == str:
