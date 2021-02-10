@@ -23,10 +23,10 @@ class ElSalvador(BaseSpider):
 	start_date = datetime.datetime.strptime("2015-01-01", '%Y-%m-%d').date()
 	end_date = datetime.date.today().strftime('%Y-%m-%d')
 	serch_results = 0
-	with open('./keywords_knowledge_domain.json', 'r') as dict:
-		keyword_dict = json.load(dict)
-	with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
-		negative_keyword_dict = json.load(dict)
+	# with open('./keywords_and_dictionaries/keywords_knowledge_domain.json', 'r') as dict:
+		# keyword_dict = json.load(dict)
+	# with open('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json', 'r') as dict:
+		# negative_keyword_dict = json.load(dict)
 	url_dict = {}
 
 	def __init__(self, date="2020-01-01"):

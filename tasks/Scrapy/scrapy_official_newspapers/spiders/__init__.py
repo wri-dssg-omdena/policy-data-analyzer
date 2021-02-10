@@ -37,6 +37,13 @@ class BaseSpider(Spider):
 			num = str(number)
 		return (num)
 
+    def import_filtering_keywords(self):
+        with open('./keywords_and_dictionaries/keywords_knowledge_domain.json', 'r') as dict:
+	        keyword_dict = json.load(dict)
+	    with open('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json', 'r') as dict:
+		    negative_keyword_dict = json.load(dict)
+		return keyword_dict, negative_keyword_dict
+
 	def search_keywords(self,string, keyword_dict, negative_keyword_dict):
 		string = string.lower()
 		for word in keyword_dict:

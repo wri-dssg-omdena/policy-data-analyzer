@@ -13,12 +13,12 @@ class LeychileSpider(BaseSpider):
     geo_code = "CHL-000-00000-0000000"
     level = "0"
     source = "LeyChile"
-    collector = "Ignacio Fernandez"
+    collector = "Ignacio Fernandez & Jordi Planas"
     scrapper_name = "Ignacio Fernandez"
     scrapable = "True"
-    with open('./keywords_knowledge_domain.json', 'r') as dict:
+    with open('./keywords_and_dictionaries/keywords_knowledge_domain.json', 'r') as dict:
         keyword_dict = json.load(dict)
-    with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
+    with open('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json', 'r') as dict:
         negative_keyword_dict = json.load(dict)
 
     def __init__(self, date = "2000-01-01"):
