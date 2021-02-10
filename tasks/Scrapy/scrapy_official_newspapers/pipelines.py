@@ -51,11 +51,11 @@ from scrapy.exporters import CsvItemExporter
 
 class ScrapyOfficialNewspapersPipeline:
 	def __init__(self):
-		hello_world()
-		dir = "./"
-		file_name = "Scraped_Documents_local.csv"
-		file = dir + file_name
-		self.file = open(file, 'ab')
+		self.files = {}
+		
+	def open_spider(self, spider):
+		dir = "../output/"
+		self.file = open(dir+"%s.csv" % (spider.name), 'ab')
 		self.exporter_1 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'Latin1')
 		self.exporter_2 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'utf-8')		
 		self.exporter_1.start_exporting()
@@ -67,6 +67,7 @@ class ScrapyOfficialNewspapersPipeline:
 		self.file.close()
 
 	def process_item(self, item, spider):
+		print("\n\n +++++++++ SPIDER ++++++++\n\n")
 		try:
 			self.exporter_1.export_item(item)
 		except:

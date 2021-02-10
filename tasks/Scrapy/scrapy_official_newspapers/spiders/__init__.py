@@ -2,11 +2,13 @@
 #
 # Please refer to the documentation for information on how to create and manage
 # your spiders.
-from scrapy.spiders import Spider
-import re
-import json
-from dateutil.relativedelta import relativedelta
 import datetime
+from dateparser import parse
+from dateutil import relativedelta
+import json
+import locale
+import re
+from scrapy.spiders import Spider
 
 
 class BaseSpider(Spider):
@@ -23,7 +25,11 @@ class BaseSpider(Spider):
 			return date_text
 		except ValueError as err:
 			return err
-			
+
+	def transform_spanish_date(self, date):
+		return parse(date, ['es']).strftime('%Y-%m-%d')
+		
+		
 	def create_date_span(self, fromDate):
 		try:
 			from_date = datetime.datetime.strptime(fromDate, '%Y-%m-%d').date()
