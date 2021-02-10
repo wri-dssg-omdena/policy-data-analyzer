@@ -9,7 +9,7 @@ from scrapy.utils.python import to_bytes
 from scrapy.exporters import CsvItemExporter
 from sqlalchemy.orm import sessionmaker
 from scrapy_official_newspapers.models import Policy, Processing, db_connect, create_table
-
+from scrapy_official_newspapers.__init__ import hello_world
 
 class ScrapyOfficialNewspapersMySQLPipeline:
     def __init__(self):
@@ -51,6 +51,7 @@ from scrapy.exporters import CsvItemExporter
 
 class ScrapyOfficialNewspapersPipeline:
 	def __init__(self):
+		hello_world()
 		dir = "./"
 		file_name = "Scraped_Documents_local.csv"
 		file = dir + file_name

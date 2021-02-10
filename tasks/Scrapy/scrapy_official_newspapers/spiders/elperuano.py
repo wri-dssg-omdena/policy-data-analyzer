@@ -1,5 +1,4 @@
 import scrapy
-import json
 import datetime
 import math
 from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
@@ -15,20 +14,11 @@ class ElPeruano(BaseSpider):
     collector = "Ignacio Fernandez"
     scrapper_name = "Ignacio Fernandez"
     scrapable = "True"
-    # with open('./keywords_and_dictionaries/keywords_knowledge_domain.json', 'r') as dict:
-        # keyword_dict = json.load(dict)
-    # with open('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json', 'r') as dict:
-        # negative_keyword_dict = json.load(dict)
 
 
     def __init__(self, date="2020-09-01"):
-        try:
-            self.from_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-        except:
-            self.from_date = datetime.datetime.strptime(date, '%d-%m-%Y').date()
-        self.from_date = self.from_date.strftime('%d-%m-%Y')
-        date_today = datetime.date.today()
-        self.today = date_today.strftime('%d-%m-%Y')
+        self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
+        self.from_date, self.today = self.create_date_span(date)
         self.start_urls = [
             f'https://busquedas.elperuano.pe/api/v1/elvis?from_date={self.from_date}&page=0&scope=false&to_date={self.today}']
 

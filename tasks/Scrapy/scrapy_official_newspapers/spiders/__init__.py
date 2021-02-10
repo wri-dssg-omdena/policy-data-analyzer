@@ -4,6 +4,7 @@
 # your spiders.
 from scrapy.spiders import Spider
 import re
+import json
 from dateutil.relativedelta import relativedelta
 import datetime
 
@@ -22,11 +23,24 @@ class BaseSpider(Spider):
 			return date_text
 		except ValueError as err:
 			return err
-	def create_date_range(self, stop_year):
-		to_date = datetime.date.today()
+			
+	def create_date_span(self, fromDate):
+		try:
+			from_date = datetime.datetime.strptime(fromDate, '%Y-%m-%d').date()
+		except:
+			from_date = datetime.datetime.strptime(fromDate, '%d-%m-%Y').date()
+		from_date = from_date.strftime('%Y-%m-%d')
+		date_today = datetime.date.today()
+		today = date_today.strftime('%Y-%m-%d')
+		return from_date, today
+
+	def create_date_range(self, stop_date, to_date, time_span):
+		# to_date = datetime.date.today()
+		stop_date = datetime.datetime.strptime(stop_date, '%Y-%m-%d').date()
+		to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
 		dates = []
-		while stop_year < to_date.year:
-			from_date = to_date + relativedelta(years = -3)
+		while stop_date.year < to_date.year:
+			from_date = to_date + relativedelta(years = -time_span)
 			dates.append([from_date.strftime('%Y-%m-%d'), to_date.strftime('%Y-%m-%d')])
 			to_date = from_date
 		return dates

@@ -3,7 +3,6 @@ from scrapy import Request
 from scrapy.selector import Selector
 from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
 import time
-import json
 import re
 import datetime
 from dateutil.rrule import rrule, DAILY
@@ -24,12 +23,9 @@ class MexicoDOF(BaseSpider):
     allowed_domains = ["dof.gob.mx"]
     doc_name = None
     doc_type = 'HTML'
-    # with open('./keywords_knowledge_domain.json', 'r') as dict:
-        # keyword_dict = json.load(dict)
-    # with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
-        # negative_keyword_dict = json.load(dict)
 
     def __init__(self, date = datetime.datetime(2020,9,1)):
+        self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
         if type(date) == str:
             try:
                 self.from_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()

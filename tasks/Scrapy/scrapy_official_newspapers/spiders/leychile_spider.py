@@ -16,18 +16,10 @@ class LeychileSpider(BaseSpider):
     collector = "Ignacio Fernandez & Jordi Planas"
     scrapper_name = "Ignacio Fernandez"
     scrapable = "True"
-    # with open('./keywords_and_dictionaries/keywords_knowledge_domain.json', 'r') as dict:
-        # keyword_dict = json.load(dict)
-    # with open('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json', 'r') as dict:
-        # negative_keyword_dict = json.load(dict)
 
     def __init__(self, date = "2000-01-01"):
-        try:
-            self.from_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-        except:
-            self.from_date = datetime.datetime.strptime(date, '%d-%m-%Y').date()
-        date_today = datetime.date.today()
-        self.today = date_today.strftime('%Y-%m-%d')
+        self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
+        self.from_date, self.today = self.create_date_span(date)
         self.start_urls = [f'https://nuevo.leychile.cl/servicios/Consulta/listaresultadosavanzada?stringBusqueda=-1%23normal%23on%7C%7C4%23normal%23{self.from_date}%23{self.today}%7C%7C117%23normal%23on%7C%7C48%23normal%23on&tipoNormaBA=&npagina=1&itemsporpagina=10&orden=2&tipoviene=4&totalitems=&seleccionado=0&taxonomia=&valor_taxonomia=&o=experta&r=']
 
     def parse(self, response):

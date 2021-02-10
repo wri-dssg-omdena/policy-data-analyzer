@@ -1,5 +1,4 @@
 import scrapy
-import json
 import datetime
 import math
 from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
@@ -23,25 +22,15 @@ class ElSalvador(BaseSpider):
 	start_date = datetime.datetime.strptime("2015-01-01", '%Y-%m-%d').date()
 	end_date = datetime.date.today().strftime('%Y-%m-%d')
 	serch_results = 0
-	# with open('./keywords_and_dictionaries/keywords_knowledge_domain.json', 'r') as dict:
-		# keyword_dict = json.load(dict)
-	# with open('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json', 'r') as dict
-		# negative_keyword_dict = json.load(dict)
-		
+
 	url_dict = {}
 
 	def __init__(self, date="2020-01-01"):
-		keyword_dict, negative_keyword_dict = self.import_filtering_keywords()
-		try:
-			self.from_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
-		except:
-			self.from_date = datetime.datetime.strptime(date, '%d-%m-%Y').date()
-		self.from_date = self.from_date.strftime('%Y-%m-%d')
-		date_today = datetime.date.today()
-		self.today = date_today.strftime('%Y-%m-%d')
+		self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
+		self.from_date, self.today = self.create_date_span(date)
 
 	def start_requests(self):
-		for date in self.create_date_range(1990):
+		for date in self.create_date_range(self.from_date, self.today, 3):
 			for keyword in self.keywords:
 				request = f"curl 'https://www.jurisprudencia.gob.sv/busqueda/result.php' -H 'Connection: keep-alive' -H 'Accept: */*' -H 'X-Requested-With: XMLHttpRequest' -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36' -H 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8' -H 'Origin: https://www.jurisprudencia.gob.sv' -H 'Sec-Fetch-Site: same-origin' -H 'Sec-Fetch-Mode: cors' -H 'Sec-Fetch-Dest: empty' -H 'Referer: https://www.jurisprudencia.gob.sv/busqueda/busquedaLeg.php?id=2' -H 'Accept-Language: ca,en;q=0.9' -H 'Cookie: _ga=GA1.3.499250194.1605023569; _gid=GA1.3.1562076103.1605176978; wplc_chat_status=5; _icl_current_language=es; nc_status=browsing; PHPSESSID=emkambpjvphadn3r7lracuqvg6' --data-raw 'libre=true&txtBusquedaLibre={keyword}&baseDatos=2&nivel1=0&nivel2=0&nivel3=0&nivel4=0&maximo=300&inicio={date[0]}&fin={date[1]}&tipoBusquedaFrasePalabra=1' --compressed"
 				yield Request.from_curl(request, callback = self.parse)
