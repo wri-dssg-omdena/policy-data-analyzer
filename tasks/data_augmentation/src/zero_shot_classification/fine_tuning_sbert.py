@@ -68,7 +68,10 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
     max_num_epochs = train_params["max_num_epochs"]
     epochs_increment = train_params["epochs_increment"]
     numeric_labels = labels2numeric(test_labels, label_names)
-    train_params["eval_classifier"] = eval_classifier.__class__.__name__
+    if eval_classifier is None:
+        train_params["eval_classifier"] = "SBERT"
+    else:
+        train_params["eval_classifier"] = eval_classifier.__class__.__name__
     print("Grid Search Fine tuning parameters:\n", json.dumps(train_params, indent=4))
     json_output_fname = f"{output_path}/{experiment}_FineTuningResults.json"
 
@@ -145,15 +148,13 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
                 if eval_classifier is None:
-                    output = evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
-                                                  model_deets, model_name, num_epochs, numeric_labels, output,
-                                                  output_path, test_perc, json_output_fname)
+                    evaluate_using_sbert(model, test_sents, test_labels, label_names,
+                                         model_deets, model_name, num_epochs, numeric_labels, output,
+                                         output_path, test_perc, json_output_fname)
                 else:
-                    output = evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents,
-                                                    test_labels,
-                                                    label_names, experiment, model_deets, model_name, num_epochs,
-                                                    output,
-                                                    test_perc, output_path, json_output_fname)
+                    evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents,
+                                           test_labels, label_names, model_deets, model_name, num_epochs,
+                                           output, test_perc, output_path, json_output_fname)
 
 
 def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names,
@@ -164,7 +165,10 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     model_name = train_params["model_names"]
     num_epochs = train_params["num_epochs"]
     numeric_labels = labels2numeric(test_labels, label_names)
-    train_params["eval_classifier"] = eval_classifier.__class__.__name__
+    if eval_classifier is None:
+        train_params["eval_classifier"] = "SBERT"
+    else:
+        train_params["eval_classifier"] = eval_classifier.__class__.__name__
     print("Fine tuning parameters:\n", json.dumps(train_params, indent=4))
     json_output_fname = f"{output_path}/{experiment}_FineTuningResults.json"
 
@@ -222,13 +226,13 @@ def fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_la
     print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
     if eval_classifier is None:
-        evaluate_using_sbert(model, test_sents, test_labels, label_names, experiment,
-                                      model_deets, model_name, num_epochs, numeric_labels, output,
-                                      output_path, test_perc, json_output_fname)
+        evaluate_using_sbert(model, test_sents, test_labels, label_names,
+                             model_deets, model_name, num_epochs, numeric_labels, output,
+                             output_path, test_perc, json_output_fname)
     else:
         evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents, test_labels,
-                                        label_names, experiment, model_deets, model_name, num_epochs, output,
-                                        test_perc, output_path, json_output_fname)
+                               label_names, model_deets, model_name, num_epochs, output,
+                               test_perc, output_path, json_output_fname)
 
 
 def evaluate_using_sbert(model, test_sents, test_labels, label_names,
@@ -285,26 +289,3 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
 
     evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
-
-
-def load_dataset(data_path, rater, set_of_labels_string):
-    """
-    Return the train data, train labels, test data, and test labels
-    """
-    dataset = []
-
-    for dataset_type in ["train", "test"]:
-        for file_type in ["sentences", "labels"]:
-            filename = dataset_type + "_" + rater + "_" + set_of_labels_string + "_" + file_type + ".csv"
-            file = data_path + "/" + filename
-            try:
-                data = pd.read_csv(file, index_col=False, header=None)
-            except Exception as e:
-                if "can't decode byte" in str(e):
-                    data = pd.read_csv(file, index_col=False, header=None, encoding="ISO-8859-1")
-                else:
-                    raise Exception("Couldn't read file:", file)
-            dataset.append(data[0].tolist())  # The data is always the entire first column
-
-    return dataset[0], dataset[1], dataset[2], dataset[3]
-
