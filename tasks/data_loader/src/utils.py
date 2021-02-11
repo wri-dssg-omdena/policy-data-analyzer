@@ -1,7 +1,7 @@
 import json
 import numpy as np
 import matplotlib.pyplot as plt
-
+import pandas as pd
 
 def load_file(file_name):
     with open(file_name, "r") as f:
@@ -57,26 +57,47 @@ def sort_model_preds(dataset, model_preds):
     return ordered_preds
 
 
+# def sentences_from_dataset(dataset):
+    # sentences = []
+
+    # for document in dataset.values():
+        # for section in document.values():
+            # for sentence in section['sentences'].values():
+                # sentences.append(sentence['text'])
+
+    # return sentences
 def sentences_from_dataset(dataset):
     sentences = []
 
-    for document in dataset.values():
-        for section in document.values():
-            for sentence in section['sentences'].values():
-                sentences.append(sentence['text'])
+    for sentence in dataset.values():
+        sentences.append(sentence['text'])
 
     return sentences
 
+# def labels_from_dataset(dataset, label):
+    # labels = []
 
-def labels_from_dataset(dataset):
+    # for document in dataset.values():
+        # for section in document.values():
+            # for sentence in section['sentences'].values():
+                # labels.append(sentence[label])
+
+    # return labels
+def labels_from_dataset(dataset, label):
     labels = []
 
-    for document in dataset.values():
-        for section in document.values():
-            for sentence in section['sentences'].values():
-                labels.append(sentence['labels'][0])
+    for sentence in dataset.values():
+        labels.append(sentence[label])
 
     return labels
+
+def select_labels(dataset, labels_to_be_retrieved):
+  new_dict = {}
+  for key, value in dataset.items():
+    if value['labels'] in labels_to_be_retrieved:
+      new_dict[key] = value
+  return new_dict
+  
 
 
 def country_labeled_sentences(excel_map):
@@ -154,3 +175,24 @@ def plot_data_distribution(data, label_names, normalize=True):
 
     print("Label counts:")
     print(dict(zip(label_names, weights)))
+
+
+def load_dataset(data_path, experiment):
+    """
+    Return the train data, train labels, test data, and test labels
+    """
+    dataset = []
+    for dataset_type in ["train", "test"]:
+        for file_type in ["sentences", "labels"]:
+            filename = experiment + "_" + dataset_type + "_" + file_type + ".csv"
+            f = data_path + "/" + filename
+            try:
+                data = pd.read_csv(f, index_col=False, header=None)
+            except Exception as e:
+                if "can't decode byte" in str(e):
+                    data = pd.read_csv(f, index_col=False, header=None, encoding="ISO-8859-1")
+                else:
+                    raise Exception("Couldn't read file:", f)
+            dataset.append(data[0].tolist())  # The data is always the entire first column
+
+    return dataset[0], dataset[1], dataset[2], dataset[3]
