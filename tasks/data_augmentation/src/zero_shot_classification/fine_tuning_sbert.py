@@ -12,9 +12,9 @@ from torch import nn, Tensor
 from torch.utils.data import DataLoader
 
 from tasks.data_augmentation.src.zero_shot_classification.latent_embeddings_classifier import *
-from tasks.data_loader.src.utils import *
+from tasks.data_loading.src.utils import *
 from tasks.data_visualization.src.plotting import *
-from tasks.evaluate_model.src.model_evaluator import *
+from tasks.model_evaluation.src.model_evaluator import *
 
 if spacy.prefer_gpu():
     print("Using the GPU")

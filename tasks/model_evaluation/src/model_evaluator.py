@@ -92,7 +92,7 @@ class ModelEvaluator:
             `plot_prc`: (boolean) Plot precision-recall curve (averaged for all classes)
             `plot_prc_multi`: (boolean) Plot the multi-class version of the precision-recall curve (`plot_prc` MUST be `True` if this is set to `True`)
             `normalize`: (boolean) Normalize the confusion matrix content
-            `store`: (boolean) Store the plots and the results dataframe. If this is set to `True`, then `exp_name` MUST have a value and it can't be None. The files will be stored in the `evaluate_model/output/` folder.
+            `store`: (boolean) Store the plots and the results dataframe. If this is set to `True`, then `exp_name` MUST have a value and it can't be None. The files will be stored in the `model_evaluation/output/` folder.
             `exp_name`: (str) The name of the model or the experiment, useful if we will want to store files (e.g `test_BETO_1`).
         """
 
