@@ -2,6 +2,8 @@
 #
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
+import datetime
+from datetime import date
 import hashlib
 import os
 from scrapy.utils.python import to_bytes
@@ -50,25 +52,27 @@ from scrapy.exporters import CsvItemExporter
 
 
 class ScrapyOfficialNewspapersPipeline:
-	def __init__(self):
-		hello_world()
-		dir = "./"
-		file_name = "Scraped_Documents_local.csv"
-		file = dir + file_name
-		self.file = open(file, 'ab')
-		self.exporter_1 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'Latin1')
-		self.exporter_2 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'utf-8')		
-		self.exporter_1.start_exporting()
-		self.exporter_2.start_exporting()
+    def __init__(self):
+        self.files = ()
+        today = datetime.date.today()
+        self.today = today.strftime('%Y%m%d')
 
-	def close_spider(self, spider):
-		self.exporter_1.finish_exporting()
-		self.exporter_2.finish_exporting()
-		self.file.close()
+    def open_spider(self, spider):
+        dir = "./output/"
+        self.file = open(dir + "%s_%s.csv" % (spider.name, self.today), 'ab')
+        self.exporter_1 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'Latin1')
+        self.exporter_2 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'utf-8')		
+        self.exporter_1.start_exporting()
+        self.exporter_2.start_exporting()
 
-	def process_item(self, item, spider):
-		try:
-			self.exporter_1.export_item(item)
-		except:
-			self.exporter_1.export_item(item)
-		return item
+    def close_spider(self, spider):
+        self.exporter_1.finish_exporting()
+        self.exporter_2.finish_exporting()
+        self.file.close()
+
+    def process_item(self, item, spider):
+        try:
+            self.exporter_1.export_item(item)
+        except:
+            self.exporter_1.export_item(item)
+        return item
