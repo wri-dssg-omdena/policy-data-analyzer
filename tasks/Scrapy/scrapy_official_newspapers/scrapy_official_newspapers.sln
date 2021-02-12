@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31005.135
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "scrapy_official_newspapers", "scrapy_official_newspapers.pyproj", "{23AB727A-ED1A-4074-A6D1-17F90D3C50B3}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{23AB727A-ED1A-4074-A6D1-17F90D3C50B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23AB727A-ED1A-4074-A6D1-17F90D3C50B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5B6A9208-515C-4E59-AA21-9158C06E31D3}
+	EndGlobalSection
+EndGlobal

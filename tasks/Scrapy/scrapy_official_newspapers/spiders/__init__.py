@@ -7,6 +7,7 @@ import re
 import json
 from dateutil.relativedelta import relativedelta
 import datetime
+import holidays
 
 
 class BaseSpider(Spider):
@@ -34,16 +35,34 @@ class BaseSpider(Spider):
 		today = date_today.strftime('%Y-%m-%d')
 		return from_date, today
 
-	def create_date_range(self, stop_date, to_date, time_span):
+	def create_date_range(self, start_date, to_date, time_span):
 		# to_date = datetime.date.today()
-		stop_date = datetime.datetime.strptime(stop_date, '%Y-%m-%d').date()
+		start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
 		to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
 		dates = []
-		while stop_date.year < to_date.year:
+		while start_date.year < to_date.year:
 			from_date = to_date + relativedelta(years = -time_span)
 			dates.append([from_date.strftime('%Y-%m-%d'), to_date.strftime('%Y-%m-%d')])
 			to_date = from_date
 		return dates
+
+	def create_date_list(self, start_date, to_date, time_span, time_unit):
+		dates = []
+		start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
+		to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
+		while start_date < to_date:
+			start_date = self.next_business_day(start_date, time_span, time_unit)
+			dates.append(start_date)
+		return dates
+
+	def next_business_day(self, date, time_span, time_unit):
+		ONE_DAY = datetime.timedelta(days=1)
+		HOLIDAYS_US = holidays.US()
+		next_day = date + ONE_DAY
+		while next_day.weekday() in holidays.WEEKEND or next_day in HOLIDAYS_US:
+		   next_day += ONE_DAY
+		return next_day
+
 	def add_leading_zero_two_digits(self, number):
 		if number < 10:
 			num = "0" + str(number)

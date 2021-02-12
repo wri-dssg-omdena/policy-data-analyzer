@@ -11,7 +11,6 @@ import scrapy
 class ScrapyOfficialNewspapersItem(scrapy.Item):
 	# define the fields for your item here like:
 	country = scrapy.Field()
-	geo_code = scrapy.Field()
 	level = scrapy.Field()
 	data_source = scrapy.Field()
 	title = scrapy.Field()
