@@ -49,7 +49,7 @@ class LeyChile(BaseSpider):
                 item['title'] = norm['TITULO_NORMA']
                 item['reference'] = norm_id
                 item['authorship'] = norm['ORGANISMO']
-                item['resume'] = ""
+                item['summary'] = ""
                 item['publication_date'] = pub_date_format
                 item['enforcement_date'] = norm['FECHA_PROMULGACION']
                 item['url'] = norm_url

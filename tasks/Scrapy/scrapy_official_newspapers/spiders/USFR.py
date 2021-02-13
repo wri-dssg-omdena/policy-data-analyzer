@@ -1,8 +1,6 @@
 import scrapy
 import json
 import datetime
-import math
-from dateparser import parse
 from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
 from scrapy_official_newspapers.spiders import BaseSpider
 
@@ -17,7 +15,7 @@ class USFR(BaseSpider):
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
 
-    def __init__(self, date = "2021-02-10"):
+    def __init__(self, date = "2021-02-11"):
         self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
         self.from_date, self.today = self.create_date_span(date)
     
@@ -29,18 +27,13 @@ class USFR(BaseSpider):
             yield scrapy.Request(start_urls, dont_filter=True, callback=self.parse)
 
     def parse(self, response):
-        #print(json.loads(response.text))
         for granule in json.loads(response.text)["granules"]:
-            print(granule['granuleLink'])
-        #hits = int(json.loads(response.text)[1]['count'])
-        #hits = math.ceil(hits/100) + 1
-        #URLs = [f'https://nuevo.leychile.cl/servicios/Consulta/listaresultadosavanzada?stringBusqueda=-1%23normal%23on%7C%7C4%23normal%23{self.from_date}%23{self.today}%7C%7C117%23normal%23on%7C%7C48%23normal%23on&tipoNormaBA=&npagina={i}&itemsporpagina=100&orden=2&tipoviene=4&totalitems=&seleccionado=0&taxonomia=&valor_taxonomia=&o=experta&r=' for i in range(1, hits)]
-    #    for url in URLs:
-    #        yield scrapy.Request(url, dont_filter=True, callback=self.parse_other)
+            yield scrapy.Request(granule["granuleLink"]+'?api_key=pA4uH8buEXSjCdh0LfCj0R2kilPWZPakPzn5JANL', dont_filter=True, callback=self.parse_other)
 
-
-    #def parse_other(self, response):
-    #    item = ScrapyOfficialNewspapersItem()
+    def parse_other(self, response):
+        summary = response.json()
+        print(summary, "\n\n")
+        #item = ScrapyOfficialNewspapersItem()
     #    for norm in json.loads(response.text)[0]:
     #        text_to_search = self.clean_text(norm['TITULO_NORMA']) + self.clean_text( norm['DESCRIPCION'])
     #        if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict):

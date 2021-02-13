@@ -49,7 +49,7 @@ class ElPeruano(BaseSpider):
                     item['level'] = self.level
                     item['data_source'] = self.source
                     item['authorship'] = norm['metadata']['editionName']
-                    item['resume'] = self.clean_text(norm['metadata']['description'])
+                    item['summary'] = self.clean_text(norm['metadata']['description'])
                     item['title'] = self.clean_text(norm['metadata']['description'])
                     item['publication_date'] = norm['metadata']['publicationDate']['formatted']
                     item['enforcement_date'] = item['publication_date']

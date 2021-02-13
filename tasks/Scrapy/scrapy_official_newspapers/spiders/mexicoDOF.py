@@ -75,12 +75,11 @@ class MexicoDOF(BaseSpider):
                         doc_url = self.url + url_aux + "&print=true"
                         reference = doc_url.split("codigo=")[1][:7]
                         item['country'] = self.country
-                        item['level'] = self.level
                         item['data_source'] = self.source
                         item['title'] = resume
                         item['reference'] = reference
                         item['authorship'] = str(authorship)
-                        item['resume'] = resume
+                        item['summary'] = resume
                         item['publication_date'] = date
                         item['enforcement_date'] = date
                         item['url'] = self.url

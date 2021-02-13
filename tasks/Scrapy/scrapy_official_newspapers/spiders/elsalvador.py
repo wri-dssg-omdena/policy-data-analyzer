@@ -110,7 +110,7 @@ class ElSalvador(BaseSpider):
 				item_object['authorship'] = self.remove_html_tags(items[1]).strip()
 			if "Consideraciones sobre el documento" in items[0]:
 				resume = self.remove_html_tags(items[1]).strip()
-				item_object['resume'] = self.remove_html_tags(items[1]).strip()
+				item_object['summary'] = self.remove_html_tags(items[1]).strip()
 			if "Vigencia" in items[0]:
 				if self.remove_html_tags(items[1]).strip() == "Vigente":
 					item_object['enforcement_check'] = datetime.date.today().strftime('%d-%m-%y')
