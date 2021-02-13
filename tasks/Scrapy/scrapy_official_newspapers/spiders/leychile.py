@@ -11,7 +11,6 @@ from scrapy_official_newspapers.spiders import BaseSpider
 class LeyChile(BaseSpider):
     name = "LeyChile"
     country = "Chile"
-    geo_code = "CHL-000-00000-0000000"
     level = "0"
     source = "LeyChile"
     collector = "Ignacio Fernandez & Jordi Planas"
@@ -45,7 +44,6 @@ class LeyChile(BaseSpider):
                 doc_path = str(norm_id) + '.' + str(pub_date_format) + '.0.0%23'
                 doc_url = f'https://nuevo.leychile.cl/servicios/Consulta/Exportar?radioExportar=Normas&exportar_formato={doc_type}&nombrearchivo={doc_name}&exportar_con_notas_bcn=False&exportar_con_notas_originales=False&exportar_con_notas_al_pie=False&hddResultadoExportar={doc_path}'
                 item['country'] = self.country
-                item['geo_code'] = self.geo_code
                 item['level'] = self.level
                 item['data_source'] = self.source
                 item['title'] = norm['TITULO_NORMA']

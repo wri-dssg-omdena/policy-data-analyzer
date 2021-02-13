@@ -9,8 +9,7 @@ from scrapy_official_newspapers.spiders import BaseSpider
 
 class USFR(BaseSpider):
     name = "USFR"
-    country = "Chile"
-    geo_code = "USA-000-00000-0000000"
+    country = "USA"
     level = "0"
     source = "Federal Register"
     collector = "Jordi Planas"
@@ -18,20 +17,24 @@ class USFR(BaseSpider):
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
 
-    def __init__(self, date = "2021-02-08"):
+    def __init__(self, date = "2021-02-10"):
         self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
-        from_date, today = self.create_date_span(date)
-        #print("\n\n********", self.next_business_day(from_date, 1, "days"))
-        for day in self.create_date_list(from_date, today, 1, "days"):
-            print(day)
-            start_urls = [f'https://api.govinfo.gov/packages/FR-{day}/granules?offset=0&pageSize=300&api_key=pA4uH8buEXSjCdh0LfCj0R2kilPWZPakPzn5JANL']
+        self.from_date, self.today = self.create_date_span(date)
+    
+    def start_requests(self):
+        for day in self.create_date_list(self.from_date, self.today, 1, "days"):
+            #print(day)
+            start_urls = f'https://api.govinfo.gov/packages/FR-{day}/granules?offset=0&pageSize=300&api_key=pA4uH8buEXSjCdh0LfCj0R2kilPWZPakPzn5JANL'
+            #print(start_urls)
             yield scrapy.Request(start_urls, dont_filter=True, callback=self.parse)
 
     def parse(self, response):
-        print(response)
-        hits = int(json.loads(response.text)[1]['count'])
-        hits = math.ceil(hits/100) + 1
-        URLs = [f'https://nuevo.leychile.cl/servicios/Consulta/listaresultadosavanzada?stringBusqueda=-1%23normal%23on%7C%7C4%23normal%23{self.from_date}%23{self.today}%7C%7C117%23normal%23on%7C%7C48%23normal%23on&tipoNormaBA=&npagina={i}&itemsporpagina=100&orden=2&tipoviene=4&totalitems=&seleccionado=0&taxonomia=&valor_taxonomia=&o=experta&r=' for i in range(1, hits)]
+        #print(json.loads(response.text))
+        for granule in json.loads(response.text)["granules"]:
+            print(granule['granuleLink'])
+        #hits = int(json.loads(response.text)[1]['count'])
+        #hits = math.ceil(hits/100) + 1
+        #URLs = [f'https://nuevo.leychile.cl/servicios/Consulta/listaresultadosavanzada?stringBusqueda=-1%23normal%23on%7C%7C4%23normal%23{self.from_date}%23{self.today}%7C%7C117%23normal%23on%7C%7C48%23normal%23on&tipoNormaBA=&npagina={i}&itemsporpagina=100&orden=2&tipoviene=4&totalitems=&seleccionado=0&taxonomia=&valor_taxonomia=&o=experta&r=' for i in range(1, hits)]
     #    for url in URLs:
     #        yield scrapy.Request(url, dont_filter=True, callback=self.parse_other)
 
@@ -50,7 +53,6 @@ class USFR(BaseSpider):
     #            doc_path = str(norm_id) + '.' + str(pub_date_format) + '.0.0%23'
     #            doc_url = f'https://nuevo.leychile.cl/servicios/Consulta/Exportar?radioExportar=Normas&exportar_formato={doc_type}&nombrearchivo={doc_name}&exportar_con_notas_bcn=False&exportar_con_notas_originales=False&exportar_con_notas_al_pie=False&hddResultadoExportar={doc_path}'
     #            item['country'] = self.country
-    #            item['geo_code'] = self.geo_code
     #            item['level'] = self.level
     #            item['data_source'] = self.source
     #            item['title'] = norm['TITULO_NORMA']

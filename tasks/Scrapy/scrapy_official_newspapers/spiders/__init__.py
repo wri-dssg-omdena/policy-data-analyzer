@@ -12,7 +12,6 @@ import holidays
 
 class BaseSpider(Spider):
 	def parse_date(self, raw_date):
-		import re
 		date = re.search(r'(\d+/\d+/\d+)', raw_date)
 		date = date.group(0)
 		return (self.validate_date(date))

@@ -11,7 +11,6 @@ from dateutil.rrule import rrule, DAILY
 class MexicoDOF(BaseSpider):
     name = "MexicoDOF"
     country = "Mexico"
-    geo_code = "MEX-000-00000-0000000"
     level = "0"
     source = "Diario Oficial de la Federacion"
     title = "None"
@@ -76,7 +75,6 @@ class MexicoDOF(BaseSpider):
                         doc_url = self.url + url_aux + "&print=true"
                         reference = doc_url.split("codigo=")[1][:7]
                         item['country'] = self.country
-                        item['geo_code'] = self.geo_code
                         item['level'] = self.level
                         item['data_source'] = self.source
                         item['title'] = resume

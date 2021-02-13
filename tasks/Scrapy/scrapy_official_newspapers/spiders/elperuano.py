@@ -8,7 +8,6 @@ from scrapy_official_newspapers.spiders import BaseSpider
 class ElPeruano(BaseSpider):
     name = "ElPeruano"
     country = "Peru"
-    geo_code = "PER-000-00000-0000000"
     level = "0"
     source = "busquedas.elperuano.pe"
     collector = "Ignacio Fernandez"
@@ -47,7 +46,6 @@ class ElPeruano(BaseSpider):
                     norm['metadata']['slug']) + " " + self.clean_text(norm['highlightedText'])
                 if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict):
                     item['country'] = self.country
-                    item['geo_code'] = self.geo_code
                     item['level'] = self.level
                     item['data_source'] = self.source
                     item['authorship'] = norm['metadata']['editionName']

@@ -9,7 +9,6 @@ from scrapy import Request
 class ElSalvador(BaseSpider):
 	name = "ElSalvador"
 	country = "El Salvador"
-	geo_code = "SLV-000-00000-0000000"
 	level = "0"
 	source = "https://www.jurisprudencia.gob.sv/busqueda/busquedaLeg.php?id=2"
 	collector = "Jordi Planas"
@@ -56,7 +55,6 @@ class ElSalvador(BaseSpider):
 		# print("\n----- Reccord processed succesfully\n\n", response.xpath('//*[@id="menu1"]/table').get(), "\n")
 		item = ScrapyOfficialNewspapersItem()
 		item['country'] = self.country
-		item['geo_code'] = self.geo_code
 		item['level'] = self.level
 		item['data_source'] = self.source
 		item['url'] = response.url
