@@ -9,8 +9,7 @@ from scrapy import Request
 class ElSalvador(BaseSpider):
 	name = "ElSalvador"
 	country = "El Salvador"
-	level = "0"
-	source = "https://www.jurisprudencia.gob.sv/busqueda/busquedaLeg.php?id=2"
+	source = "Diario Oficial"
 	collector = "Jordi Planas"
 	scrapper_name = "Jordi Planas"
 	scrapable = "True"
@@ -55,22 +54,17 @@ class ElSalvador(BaseSpider):
 		# print("\n----- Reccord processed succesfully\n\n", response.xpath('//*[@id="menu1"]/table').get(), "\n")
 		item = ScrapyOfficialNewspapersItem()
 		item['country'] = self.country
-		item['level'] = self.level
+		item['state'] = "Federal"
 		item['data_source'] = self.source
 		item['url'] = response.url
-		# print("\n--- ", response.url)
-		item['doc_type'] = 'pdf'
-		item['doc_class'] = ""
 		
 		table = response.xpath('//*[@id="menu1"]/table').get()
-		
-		# print(response)
+
 		item, good = self.parse_table(item, table)
 		
 		doc_url = response.xpath('//*[@id="menu2"]/comment()[2]').get().split("\"")[1]
-		# print("\n+++++ ", doc_url, " +++++\n")
-		item['file_urls'] = [doc_url]
 		item['doc_url'] = doc_url
+		item['doc_name'] = HSA1_encoding(doc_url)
 		if good:
 			return item
 		else:
@@ -81,39 +75,29 @@ class ElSalvador(BaseSpider):
 		municipio = ""
 		num_documento = "-"
 		tipo_documento = ""
-		resume = ""
+		summary = ""
 		valid = True
 		for cell in cells:
-			# print("\n----- Reccord processed succesfully\n\n", cell, "\n")
-			items = cell.split("</td>")
-			if "Naturaleza [Legislación]" in items[0]:
-				# print(self.remove_html_tags(items[1]).strip())
-				tipo_documento = self.remove_html_tags(items[1]).strip()
-			if "Número de decreto" in items[0]:
-				# print(self.remove_html_tags(items[1]).strip())
-				num_documento = num_documento + self.remove_html_tags(items[1]).strip()
-			if "Tipo de documento" in items[0]:
-				# print(self.remove_html_tags(items[1]).strip())
-				tipo_1_documento = self.remove_html_tags(items[1]).strip()
-			if "Municipio" in items[0]:
-				# print(self.remove_html_tags(items[1]).strip())
-				municipio = self.remove_html_tags(items[1]).strip()
-			if "Nombre" in items[0]:
-				# print(self.remove_html_tags(items[1]).strip())
-				item_object['title'] = self.remove_html_tags(items[1]).strip().replace("”", "").replace("“","").replace("\"","")
-			if "Fecha de Publicación en D. O." in items[0]:
-				# print(self.remove_html_tags(items[1]).strip())
-				item_object['publication_date'] = self.remove_html_tags(items[1]).strip()
-				item_object['enforcement_date'] = self.remove_html_tags(items[1]).strip()
-			if "Origen" in items[0]:
-				# print(self.remove_html_tags(items[1]).strip())
-				item_object['authorship'] = self.remove_html_tags(items[1]).strip()
-			if "Consideraciones sobre el documento" in items[0]:
-				resume = self.remove_html_tags(items[1]).strip()
-				item_object['summary'] = self.remove_html_tags(items[1]).strip()
-			if "Vigencia" in items[0]:
-				if self.remove_html_tags(items[1]).strip() == "Vigente":
-					item_object['enforcement_check'] = datetime.date.today().strftime('%d-%m-%y')
+			rows = cell.split("</td>")
+			if "Naturaleza [Legislación]" in rows[0]:
+				tipo_documento = self.remove_html_tags(rows[1]).strip()
+			if "Número de decreto" in rows[0]:
+				num_documento = num_documento + self.remove_html_tags(rows[1]).strip()
+			if "Tipo de documento" in rows[0]:
+				tipo_1_documento = self.remove_html_tags(rows[1]).strip()
+			if "Municipio" in rows[0]:
+				municipio = self.remove_html_tags(rows[1]).strip()
+			if "Nombre" in rows[0]:
+				item_object['title'] = self.remove_html_tags(rows[1]).strip().replace("”", "").replace("“","").replace("\"","")
+			if "Fecha de Publicación en D. O." in rows[0]:
+				item_object['publication_date'] = self.remove_html_tags(rows[1]).strip()
+			if "Origen" in rows[0]:
+				item_object['authorship'] = self.remove_html_tags(rows[1]).strip()
+			if "Consideraciones sobre el documento" in rows[0]:
+				item_object['summary'] = self.remove_html_tags(rows[1]).strip()
+			if "Vigencia" in rows[0]:
+				if self.remove_html_tags(rows[1]).strip() == "Vigente":
+					valid = True
 				else:
 					valid = False
 		# print(tipo_documento + "-" + num_documento)
@@ -123,10 +107,8 @@ class ElSalvador(BaseSpider):
 			num_documento = ""
 		if municipio != "":
 			item_object['reference'] = tipo_documento + "-" + municipio + num_documento
-			item_object['doc_name'] = "slv-" + tipo_documento + "-" + municipio + num_documento
 		else:
 			item_object['reference'] = tipo_documento + num_documento
-			item_object['doc_name'] = "slv-" + tipo_documento + num_documento
 		if self.search_keywords(resume, self.keyword_dict, self.negative_keyword_dict) and valid:
 			return item_object, True
 		else:

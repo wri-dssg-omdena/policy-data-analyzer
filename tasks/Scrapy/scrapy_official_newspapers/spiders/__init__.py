@@ -7,6 +7,7 @@ import re
 import json
 from dateutil.relativedelta import relativedelta
 import datetime
+import hashlib
 import holidays
 
 
@@ -104,5 +105,9 @@ class BaseSpider(Spider):
 		"""Remove html tags from a string"""
 		clean = re.compile('<.*?>')
 		return re.sub(clean, '', text)
+
+	def HSA1_encoding(string):
+		hash_object = hashlib.sha1(string.encode())
+		return hash_object.hexdigest()
 
 

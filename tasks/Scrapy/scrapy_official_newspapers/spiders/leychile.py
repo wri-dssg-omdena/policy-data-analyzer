@@ -44,20 +44,16 @@ class LeyChile(BaseSpider):
                 doc_path = str(norm_id) + '.' + str(pub_date_format) + '.0.0%23'
                 doc_url = f'https://nuevo.leychile.cl/servicios/Consulta/Exportar?radioExportar=Normas&exportar_formato={doc_type}&nombrearchivo={doc_name}&exportar_con_notas_bcn=False&exportar_con_notas_originales=False&exportar_con_notas_al_pie=False&hddResultadoExportar={doc_path}'
                 item['country'] = self.country
-                item['level'] = self.level
+                item['state'] = "Federal"
                 item['data_source'] = self.source
                 item['title'] = norm['TITULO_NORMA']
                 item['reference'] = norm_id
                 item['authorship'] = norm['ORGANISMO']
-                item['summary'] = ""
+                item['summary'] = norm['DESCRIPCION']
                 item['publication_date'] = pub_date_format
-                item['enforcement_date'] = norm['FECHA_PROMULGACION']
                 item['url'] = norm_url
                 item['doc_url'] = doc_url
-                item['doc_name'] = doc_name + '.' + doc_type
-                item['doc_class'] = norm['DESCRIPCION']
-                item['file_urls'] = [doc_url]
-                item['doc_type'] = doc_type
+                item['doc_name'] = HSA1_encoding(doc_url)
                 for column in item:
                     item[column] = item[column] or False
                 yield item
