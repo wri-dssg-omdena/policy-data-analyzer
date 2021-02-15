@@ -11,7 +11,7 @@ from dateutil.rrule import rrule, DAILY
 class MexicoDOF(BaseSpider):
     name = "MexicoDOF"
     country = "Mexico"
-    level = "0"
+    state = "Federal"
     source = "Diario Oficial de la Federacion"
     title = "None"
     url = "https://dof.gob.mx"
@@ -64,30 +64,27 @@ class MexicoDOF(BaseSpider):
             authorship = None
             for tr in trs:
                 authorship_new = tr.xpath('td[@class = "subtitle_azul"]/text()').get()
-                resume_aux = tr.xpath('td/a[@class = "enlaces"]/text()').get()
+                summary_aux = tr.xpath('td/a[@class = "enlaces"]/text()').get()
                 url_aux = tr.xpath('td/a[@class = "enlaces"]/@href').get()
 
                 if authorship != authorship_new and authorship_new != None:
                     authorship = authorship_new
-                if resume_aux and resume_aux != "Ver más":
-                    resume = resume_aux.replace('\t', '').replace('\n', '')
-                    if self.search_keywords(resume, self.keyword_dict, self.negative_keyword_dict):
+                if summary_aux and summary_aux != "Ver más":
+                    text_to_search = summary_aux.replace('\t', '').replace('\n', '')
+                    if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict):
                         doc_url = self.url + url_aux + "&print=true"
                         reference = doc_url.split("codigo=")[1][:7]
                         item['country'] = self.country
+                        item['state'] = self.state
                         item['data_source'] = self.source
-                        item['title'] = resume
+                        item["law_class"] = ""
+                        item['title'] = text_to_search
                         item['reference'] = reference
                         item['authorship'] = str(authorship)
                         item['summary'] = resume
                         item['publication_date'] = date
-                        item['enforcement_date'] = date
                         item['url'] = self.url
                         item['doc_url'] = doc_url
-                        item['doc_name'] = reference+'html'
-                        item['doc_type'] = self.doc_type
-                        item['doc_class'] = ''
-                        item['file_urls'] = [doc_url]
-                        yield item
+                        item['doc_name'] = self.HSA1_encoding(doc_url)
 
 

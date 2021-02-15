@@ -7,8 +7,8 @@ from scrapy_official_newspapers.spiders import BaseSpider
 
 class ElPeruano(BaseSpider):
     name = "ElPeruano"
-    country = "Peru"
-    level = "0"
+    country = "El Peruano, Diario oficial del Perú"
+    state = "Federal"
     source = "busquedas.elperuano.pe"
     collector = "Ignacio Fernandez"
     scrapper_name = "Ignacio Fernandez"
@@ -46,7 +46,8 @@ class ElPeruano(BaseSpider):
                     norm['metadata']['slug']) + " " + self.clean_text(norm['highlightedText'])
                 if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict):
                     item['country'] = self.country
-                    item['level'] = self.level
+                    item['state'] = self.state
+                    item["law_class"] = "" #TODO: look at the right field when adjusted.
                     item['data_source'] = self.source
                     item['authorship'] = norm['metadata']['editionName']
                     item['summary'] = self.clean_text(norm['metadata']['description'])
@@ -54,10 +55,7 @@ class ElPeruano(BaseSpider):
                     item['publication_date'] = norm['metadata']['publicationDate']['formatted']
                     item['enforcement_date'] = item['publication_date']
                     item['url'] = 'https://busquedas.elperuano.pe' + str(norm['url_link'])
-                    item['doc_name'] = ('PER/policy_' + norm['metadata']['name'])
-                    item['doc_type'] = 'pdf'
-                    item['doc_class'] = norm['metadata']['industry']
-                    item['file_urls'] = [item['doc_url']]
+                    item['doc_name'] = self.HSA1_encoding(doc_url)
                     yield item
             except Exception as e:
                 print(e)

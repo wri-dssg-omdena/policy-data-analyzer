@@ -9,6 +9,7 @@ from scrapy import Request
 class ElSalvador(BaseSpider):
 	name = "ElSalvador"
 	country = "El Salvador"
+	state = "Federal"
 	source = "Diario Oficial"
 	collector = "Jordi Planas"
 	scrapper_name = "Jordi Planas"
@@ -54,7 +55,7 @@ class ElSalvador(BaseSpider):
 		# print("\n----- Reccord processed succesfully\n\n", response.xpath('//*[@id="menu1"]/table').get(), "\n")
 		item = ScrapyOfficialNewspapersItem()
 		item['country'] = self.country
-		item['state'] = "Federal"
+		item['state'] = self.state
 		item['data_source'] = self.source
 		item['url'] = response.url
 		
@@ -64,9 +65,9 @@ class ElSalvador(BaseSpider):
 		
 		doc_url = response.xpath('//*[@id="menu2"]/comment()[2]').get().split("\"")[1]
 		item['doc_url'] = doc_url
-		item['doc_name'] = HSA1_encoding(doc_url)
+		item['doc_name'] = self.HSA1_encoding(doc_url)
 		if good:
-			return item
+			yield item
 		else:
 			pass
 
@@ -88,13 +89,16 @@ class ElSalvador(BaseSpider):
 			if "Municipio" in rows[0]:
 				municipio = self.remove_html_tags(rows[1]).strip()
 			if "Nombre" in rows[0]:
-				item_object['title'] = self.remove_html_tags(rows[1]).strip().replace("”", "").replace("“","").replace("\"","")
+				title = self.remove_html_tags(rows[1]).strip().replace("”", "").replace("“","").replace("\"","")
+				item_object['title'] = title
 			if "Fecha de Publicación en D. O." in rows[0]:
 				item_object['publication_date'] = self.remove_html_tags(rows[1]).strip()
 			if "Origen" in rows[0]:
 				item_object['authorship'] = self.remove_html_tags(rows[1]).strip()
 			if "Consideraciones sobre el documento" in rows[0]:
-				item_object['summary'] = self.remove_html_tags(rows[1]).strip()
+				summary = self.remove_html_tags(rows[1]).strip()
+				text_to_search = title + " " + summary
+				item_object['summary'] = summary
 			if "Vigencia" in rows[0]:
 				if self.remove_html_tags(rows[1]).strip() == "Vigente":
 					valid = True
@@ -103,13 +107,14 @@ class ElSalvador(BaseSpider):
 		# print(tipo_documento + "-" + num_documento)
 		if tipo_documento == "":
 			tipo_documento = tipo_1_documento
+		item_object["law_class"] = tipo_documento
 		if num_documento == "-":
 			num_documento = ""
 		if municipio != "":
 			item_object['reference'] = tipo_documento + "-" + municipio + num_documento
 		else:
 			item_object['reference'] = tipo_documento + num_documento
-		if self.search_keywords(resume, self.keyword_dict, self.negative_keyword_dict) and valid:
+		if self.search_keywords(texttext_to_search, self.keyword_dict, self.negative_keyword_dict) and valid:
 			return item_object, True
 		else:
 			return item_object, False

@@ -7,11 +7,15 @@ import re
 import json
 from dateutil.relativedelta import relativedelta
 import datetime
+from icecream import ic
 import hashlib
 import holidays
 
 
 class BaseSpider(Spider):
+	def debug(self, to_debug):
+		ic(to_debug)
+
 	def parse_date(self, raw_date):
 		date = re.search(r'(\d+/\d+/\d+)', raw_date)
 		date = date.group(0)
@@ -70,12 +74,10 @@ class BaseSpider(Spider):
 			num = str(number)
 		return (num)
 
-	def import_filtering_keywords(self):
-		with open('./keywords_and_dictionaries/keywords_knowledge_domain.json', 'r') as dict:
-			keyword_dict = json.load(dict)
-		with open('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json', 'r') as dict:
-			negative_keyword_dict = json.load(dict)
-		return keyword_dict, negative_keyword_dict
+	def import_json(self, filename):
+		with open(filename, 'r') as dict:
+			json_dict = json.load(dict)
+		return json_dict
 
 	def search_keywords(self,string, keyword_dict, negative_keyword_dict):
 		string = string.lower()
@@ -106,7 +108,7 @@ class BaseSpider(Spider):
 		clean = re.compile('<.*?>')
 		return re.sub(clean, '', text)
 
-	def HSA1_encoding(string):
+	def HSA1_encoding(self, string):
 		hash_object = hashlib.sha1(string.encode())
 		return hash_object.hexdigest()
 
