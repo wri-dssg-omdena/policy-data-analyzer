@@ -4,7 +4,6 @@ import datetime
 from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
 from scrapy_official_newspapers.spiders import BaseSpider
 
-
 class USFR(BaseSpider):
     name = "USFR"
     country = "USA"
