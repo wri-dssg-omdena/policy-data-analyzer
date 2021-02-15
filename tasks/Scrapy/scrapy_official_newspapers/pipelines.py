@@ -15,6 +15,8 @@ from scrapy_official_newspapers.__init__ import hello_world
 
 class ScrapyOfficialNewspapersMySQLPipeline:
     def __init__(self):
+        API_key_file = 'C:/Users/jordi/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
+        self.API_key = self.import_json(self.API_key_file)["us gov apikey jp"]
         engine = db_connect()
         create_table(engine)
         self.session = sessionmaker(bind=engine)
@@ -26,24 +28,21 @@ class ScrapyOfficialNewspapersMySQLPipeline:
 
         policy = Policy(
             country=item['country'],
-            geo_code=item['geo_code'],
-            level=item['level'],
+            state = item['state'],
             data_source=item['data_source'],
+            law_class = item['law_class'],
             title=item['title'],
             reference=item['reference'],
             authorship=item['authorship'],
-            resume=item['resume'],
+            resume=item['summary'],
             publication_date=item['publication_date'],
-            enforcement_date=item['enforcement_date'],
             url=item['url'],
-            doc_url=item['doc_url'],
+            doc_url=item['doc_url'] + self.API_key,
             doc_name=item['doc_name'],
-            doc_type=item['doc_type'],
-            doc_class=item['doc_class'],
             processing = processing
         )
         session.merge(policy)
-        print(policy)
+        #print(policy)
         session.commit()
 
 

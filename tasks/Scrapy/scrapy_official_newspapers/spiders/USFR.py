@@ -31,8 +31,8 @@ class USFR(BaseSpider):
 
     def parse(self, response):
         for granule in json.loads(response.text)["granules"]:
-            self.url = granule["granuleLink"] + f'?api_key={self.API_key}'
-            yield scrapy.Request(self.url, dont_filter=True, callback=self.parse_other)
+            url = granule["granuleLink"] + f'?api_key={self.API_key}'
+            yield scrapy.Request(url, dont_filter=True, callback=self.parse_other)
 
     def parse_other(self, response):
         summary_full = response.json()
@@ -48,16 +48,16 @@ class USFR(BaseSpider):
             item['country'] = self.country
             item['state'] = self.state
             item['data_source'] = self.source
+            item['law_class'] = summary_full['category']
             item['title'] = summary_full['title']
             item['reference'] = summary_full['granuleId']
             item['authorship'] = summary_full['agencies'][0]['name']
             item['summary'] = summary
             item['publication_date'] = summary_full['dateIssued']
-            item['url'] = self.url
-            item['doc_url'] = summary_full['download']['txtLink']
-            item['doc_name'] = self.HSA1_encoding(summary_full['download']['txtLink'])
-            for column in item:
-                item[column] = item[column] or False
+            item['url'] = summary_full['download']['txtLink'].replace('htm', 'summary?api_key=')
+            item['doc_url'] = summary_full['download']['txtLink'] + '?api_key='
+            item['doc_name'] = self.HSA1_encoding(summary_full['download']['txtLink'] + f'?api_key={self.API_key}')
+
             yield item
 
 
