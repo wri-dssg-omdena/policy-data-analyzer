@@ -44,6 +44,7 @@
     <Compile Include="spiders\elperuano.py" />
     <Compile Include="spiders\elsalvador.py" />
     <Compile Include="spiders\leychile.py" />
+    <Compile Include="spiders\oregon.py" />
     <Compile Include="spiders\USFR.py" />
     <Compile Include="spiders\mexicoDOF.py" />
     <Compile Include="spiders\__init__.py" />

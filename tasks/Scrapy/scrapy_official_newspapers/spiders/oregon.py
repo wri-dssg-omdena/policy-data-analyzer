@@ -21,64 +21,65 @@ from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
 import scrapy
 
 
-class OregonSpider(scrapy.Spider):
-    name = 'oregon'
+class OregonSpider(BaseSpider):
+    name = 'Oregon'
     allowed_domains = ['secure.sos.state.or.us']
     start_urls = ['https://secure.sos.state.or.us/oard/displayBulletins.action']
-    country = "Oregon"
-    # geo_code = "MEX-000-00000-0000000"
-    # level = "0"
+    country = "USA"
+    #state = "Oregon"
     data_source = "The Oregon Bulletin"
-    # title = "None"
     # years = [year for year in range(2018, 2020)]
-    # collector = "Francisco Canales"
-    # scrapper_name = "Francisco Canales"
-    # scrapable = "True"
-    # allowed_domains = ["dof.gob.mx"]
-    # doc_name = None
-    # doc_type = 'HTML'
-   
+    spider_builder = "David Silva"
+
+    def __init__(self, date = "2021-02-11"):
+        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain.json')
+        self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json')
+        self.from_date, self.today = self.create_date_span(date)
+
     def parse(self, response):        
         # Iterate over URLs
-        for href in response.css('div#accordion').css('a::attr(href)'):
+        i = 0
+        for href in response.css('div#accordion').css('a::text'):#attr(href)
+            i += 1
             url = response.urljoin(href.extract())
-            yield scrapy.Request(url, callback=self.parse_month_bulletin)
+            self.debug(url)
+            #yield scrapy.Request(url, callback=self.parse_month_bulletin)
     
-    def parse_month_bulletin(self, response):
-        # Get all table headers of the web page
-        total_headers = response.css('table').css('thead').css('th::text').extract()
-        # item = ScrapyOfficialNewspapersItem()
-        item = defaultdict.fromkeys(total_headers)
+    #def parse_month_bulletin(self, response):
+    #    # Get all table headers of the web page
+    #    total_headers = response.css('table').css('thead').css('th::text').extract()
+    #    # item = ScrapyOfficialNewspapersItem()
+    #    item = defaultdict.fromkeys(total_headers)
 
-        # Iterate over tables
-        for table in response.css('table'):
-            id = table.attrib['id']  # Notices or filings
-            table_headers = table.css('thead').css('th::text').extract()
-            # Iterate over table rows
-            for tr in table.css('tbody').css('tr'):
-                # Get all text in a single row of the table
-                row_values = tr.css('td::text').getall()
-                row_values = list(filter(None, map(lambda x: " ".join(x.split()), row_values)))
-                assert len(table_headers) == len(row_values), 'More row values than table headers!'
-                # Get the link of a single row of the table
-                doc_url = response.urljoin(tr.css('a::attr(href)').extract_first())
-                # Populate item dictionary
-                item['id'] = id
-                item.update(dict(zip(table_headers, row_values)))
-                item['country'] = self.country
-                # item['geo_code'] = self.geo_code
-                # item['level'] = self.level
-                item['data_source'] = self.data_source
-                # item['title'] = resume
-                # item['reference'] = reference
-                # item['authorship'] = str(authorship)
-                # item['resume'] = resume
-                # item['publication_date'] = date
-                # item['enforcement_date'] = date
-                # item['url'] = response.url
-                item['doc_url'] = doc_url
-                # item['doc_name'] = reference+'html'
-                # item['doc_type'] = self.doc_type
-                # item['doc_class'] = ''
-                # item['file_urls'] = [doc_url]
-                yield item
+    #    # Iterate over tables
+    #    for table in response.css('table'):
+    #        id = table.attrib['id']  # Notices or filings
+    #        table_headers = table.css('thead').css('th::text').extract()
+    #        # Iterate over table rows
+    #        for tr in table.css('tbody').css('tr'):
+    #            # Get all text in a single row of the table
+    #            row_values = tr.css('td::text').getall()
+    #            row_values = list(filter(None, map(lambda x: " ".join(x.split()), row_values)))
+    #            assert len(table_headers) == len(row_values), 'More row values than table headers!'
+    #            # Get the link of a single row of the table
+    #            doc_url = response.urljoin(tr.css('a::attr(href)').extract_first())
+    #            # Populate item dictionary
+    #            item['id'] = id
+    #            item.update(dict(zip(table_headers, row_values)))
+    #            item['country'] = self.country
+    #            # item['geo_code'] = self.geo_code
+    #            # item['level'] = self.level
+    #            item['data_source'] = self.data_source
+    #            # item['title'] = resume
+    #            # item['reference'] = reference
+    #            # item['authorship'] = str(authorship)
+    #            # item['resume'] = resume
+    #            # item['publication_date'] = date
+    #            # item['enforcement_date'] = date
+    #            # item['url'] = response.url
+    #            item['doc_url'] = doc_url
+    #            # item['doc_name'] = reference+'html'
+    #            # item['doc_type'] = self.doc_type
+    #            # item['doc_class'] = ''
+    #            # item['file_urls'] = [doc_url]
+    #            yield item

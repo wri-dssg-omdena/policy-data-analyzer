@@ -9,8 +9,7 @@ class USFR(BaseSpider):
     country = "USA"
     state = "Federal"
     source = "Federal Register"
-    collector = "Jordi Planas"
-    scrapper_name = "Jordi Planas"
+    spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
     API_key_file = 'C:/Users/jordi/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
