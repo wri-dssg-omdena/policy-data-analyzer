@@ -69,5 +69,5 @@ class ScrapyOfficialNewspapersPipeline:
 		try:
 			self.exporter_1.export_item(item)
 		except:
-			self.exporter_1.export_item(item)
+			self.exporter_2.export_item(item)
 		return item
