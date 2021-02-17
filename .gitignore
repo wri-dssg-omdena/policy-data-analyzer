@@ -79,6 +79,9 @@ target/
 # VS Code
 .vscode/
 
+# Visual Studio
+.vs
+
 # Spyder
 .spyproject/
 
