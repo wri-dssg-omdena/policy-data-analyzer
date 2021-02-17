@@ -3,7 +3,6 @@ from scrapy import Request
 from scrapy.selector import Selector
 from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
 import time
-import json
 import re
 import datetime
 from dateutil.rrule import rrule, DAILY
@@ -12,8 +11,7 @@ from dateutil.rrule import rrule, DAILY
 class MexicoDOF(BaseSpider):
     name = "MexicoDOF"
     country = "Mexico"
-    geo_code = "MEX-000-00000-0000000"
-    level = "0"
+    state = "Federal"
     source = "Diario Oficial de la Federacion"
     title = "None"
     url = "https://dof.gob.mx"
@@ -24,12 +22,9 @@ class MexicoDOF(BaseSpider):
     allowed_domains = ["dof.gob.mx"]
     doc_name = None
     doc_type = 'HTML'
-    with open('./keywords_knowledge_domain.json', 'r') as dict:
-        keyword_dict = json.load(dict)
-    with open('./negative_keywords_knowledge_domain.json', 'r') as dict:
-        negative_keyword_dict = json.load(dict)
 
     def __init__(self, date = datetime.datetime(2020,9,1)):
+        self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
         if type(date) == str:
             try:
                 self.from_date = datetime.datetime.strptime(date, '%Y-%m-%d').date()
@@ -69,32 +64,27 @@ class MexicoDOF(BaseSpider):
             authorship = None
             for tr in trs:
                 authorship_new = tr.xpath('td[@class = "subtitle_azul"]/text()').get()
-                resume_aux = tr.xpath('td/a[@class = "enlaces"]/text()').get()
+                summary_aux = tr.xpath('td/a[@class = "enlaces"]/text()').get()
                 url_aux = tr.xpath('td/a[@class = "enlaces"]/@href').get()
 
                 if authorship != authorship_new and authorship_new != None:
                     authorship = authorship_new
-                if resume_aux and resume_aux != "Ver más":
-                    resume = resume_aux.replace('\t', '').replace('\n', '')
-                    if self.search_keywords(resume, self.keyword_dict, self.negative_keyword_dict):
+                if summary_aux and summary_aux != "Ver más":
+                    text_to_search = summary_aux.replace('\t', '').replace('\n', '')
+                    if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict):
                         doc_url = self.url + url_aux + "&print=true"
                         reference = doc_url.split("codigo=")[1][:7]
                         item['country'] = self.country
-                        item['geo_code'] = self.geo_code
-                        item['level'] = self.level
+                        item['state'] = self.state
                         item['data_source'] = self.source
-                        item['title'] = resume
+                        item["law_class"] = ""
+                        item['title'] = text_to_search
                         item['reference'] = reference
                         item['authorship'] = str(authorship)
-                        item['resume'] = resume
+                        item['summary'] = resume
                         item['publication_date'] = date
-                        item['enforcement_date'] = date
                         item['url'] = self.url
                         item['doc_url'] = doc_url
-                        item['doc_name'] = reference+'html'
-                        item['doc_type'] = self.doc_type
-                        item['doc_class'] = ''
-                        item['file_urls'] = [doc_url]
-                        yield item
+                        item['doc_name'] = self.HSA1_encoding(doc_url)
 
 
