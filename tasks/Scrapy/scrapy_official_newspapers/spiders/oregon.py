@@ -43,7 +43,7 @@ class OregonSpider(BaseSpider):
         # Iterate over URLs
         i = 0
         for bulletin in response.css('div#accordion').css('a'):
-            # Get the url and the text of the element, the textbeing the publication date
+            # Get the url and the text of the element, the text being the publication date
             self.url = response.urljoin(bulletin.css('::attr(href)').get())
             publication_date = bulletin.css('::text').get().replace("\xa0\xa0", "-")
             # Filter by date and request
@@ -54,13 +54,13 @@ class OregonSpider(BaseSpider):
     def parse_month_bulletin(self, response):
         # Get all table headers of the web page
         #total_headers = response.css('table').css('thead').css('th::text').extract_first()
-        item = ScrapyOfficialNewspapersItem()
         #item = defaultdict.fromkeys(total_headers)
+        item = ScrapyOfficialNewspapersItem()
 
-        # We take only the first table and we could loop through the two tables if there is a need to get the information of the second table
-        table = response.css('table')[0]
+        # We take only the first table, we could loop through the two tables if there is a need to get the information of the second table
         #id = table.attrib['id']  # Notices or filings
         #table_headers = table.css('thead').css('th::text').extract()
+        table = response.css('table')[0]
         ## Iterate over table rows
         for tr in table.css('tbody').css('tr'):
             # Get all text in a single row of the table
