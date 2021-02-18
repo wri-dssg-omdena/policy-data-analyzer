@@ -53,26 +53,25 @@ class OregonSpider(BaseSpider):
     
     def parse_month_bulletin(self, response):
         # Get all table headers of the web page
-        total_headers = response.css('table').css('thead').css('th::text').extract_first()
+        #total_headers = response.css('table').css('thead').css('th::text').extract_first()
         item = ScrapyOfficialNewspapersItem()
         #item = defaultdict.fromkeys(total_headers)
 
         # We take only the first table and we could loop through the two tables if there is a need to get the information of the second table
         table = response.css('table')[0]
-        id = table.attrib['id']  # Notices or filings
-        table_headers = table.css('thead').css('th::text').extract()
-        self.debug(table_headers)
+        #id = table.attrib['id']  # Notices or filings
+        #table_headers = table.css('thead').css('th::text').extract()
         ## Iterate over table rows
         for tr in table.css('tbody').css('tr'):
             # Get all text in a single row of the table
             row_values = tr.css('td::text').getall()
             row_values = list(filter(None, map(lambda x: " ".join(x.split()), row_values)))
-            assert len(table_headers) == len(row_values), 'More row values than table headers!'
+            #assert len(table_headers) == len(row_values), 'More row values than table headers!'
             # Get the link of a single row of the table
             doc_url = response.urljoin(tr.css('a::attr(href)').extract_first())
             # Populate item dictionary
             #item.update(dict(zip(table_headers, row_values)))
-            self.debug(row_values)
+            #self.debug(row_values)
             text_to_search = row_values[3]
             if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) or self.scrapable == "True":
                 item['country'] = self.country
@@ -83,7 +82,7 @@ class OregonSpider(BaseSpider):
                 item['reference'] = ''
                 item['authorship'] = row_values[1]
                 item['summary'] = ''
-                item['publication_date'] = row_values[2].split(' ')[0]
+                item['publication_date'] = parse(row_values[2].split(' ')[0]).strftime('%Y-%m-%d')
                 item['url'] = response.url
                 item['doc_url'] = doc_url
                 item['doc_name'] = self.HSA1_encoding(doc_url)
