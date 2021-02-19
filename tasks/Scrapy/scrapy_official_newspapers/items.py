@@ -13,7 +13,7 @@ class ScrapyOfficialNewspapersItem(scrapy.Item):
 	country = scrapy.Field()
 	state = scrapy.Field()
 	data_source = scrapy.Field() # Here we keep the name of the official newspaper
-	law_class = scrapy.Field()
+	law_class = scrapy.Field()# Some times the policies are categorized on whether they are laws, decrees, rules etc.
 	title = scrapy.Field() # The title of the policy
 	reference = scrapy.Field() # The reference of the policy. We need to explain how we determine it in each spider
 	authorship = scrapy.Field() # It is important to find which is the admiistrative body, whether a ministry, the office of the president etc.

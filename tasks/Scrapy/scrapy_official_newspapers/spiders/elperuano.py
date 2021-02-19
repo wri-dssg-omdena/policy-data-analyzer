@@ -8,16 +8,19 @@ from scrapy_official_newspapers.spiders import BaseSpider
 class ElPeruano(BaseSpider):
     name = "ElPeruano"
     country = "El Peruano, Diario oficial del Perú"
+    country_code = "PE" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
     state = "Federal"
-    source = "busquedas.elperuano.pe"
-    collector = "Ignacio Fernandez"
-    scrapper_name = "Ignacio Fernandez"
+    state_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
+    source = "El peruano"
+    spider_builder = "Ignacio Fernandez"
     scrapable = "True"
+    allowed_domains = ["elperuano.pe"]
+    start_date = "2020-09-01"
 
 
-    def __init__(self, date="2020-09-01"):
+    def __init__(self, start_date):
         self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
-        self.from_date, self.today = self.create_date_span(date)
+        self.from_date, self.today = self.create_date_span(start_date)
         self.start_urls = [
             f'https://busquedas.elperuano.pe/api/v1/elvis?from_date={self.from_date}&page=0&scope=false&to_date={self.today}']
 

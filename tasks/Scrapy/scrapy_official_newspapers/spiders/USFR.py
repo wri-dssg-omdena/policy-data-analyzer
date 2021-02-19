@@ -7,25 +7,28 @@ from scrapy_official_newspapers.spiders import BaseSpider
 class USFR(BaseSpider):
     name = "USFR"
     country = "USA"
+    country_code = "US" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
     state = "Federal"
+    satate_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
     source = "Federal Register"
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
+    start_date = "2021-02-11"
     API_key_file = 'C:/Users/jordi/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
 
-    def __init__(self, date = "2021-02-11"):
+    def __init__(self, start_date):
         self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain.json')
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json')
         self.API_key = self.import_json(self.API_key_file)["us gov apikey jp"]
-        self.from_date, self.today = self.create_date_span(date)
+        self.from_date, self.today = self.create_date_span(start_date)
     
     def start_requests(self):
         for day in self.create_date_list(self.from_date, self.today, 1, "days"):
             #print(day)
-            start_urls = f'https://api.govinfo.gov/packages/FR-{day}/granules?offset=0&pageSize=300&api_key={self.API_key}'
+            start_url = f'https://api.govinfo.gov/packages/FR-{day}/granules?offset=0&pageSize=300&api_key={self.API_key}'
             #print(start_urls)
-            yield scrapy.Request(start_urls, dont_filter=True, callback=self.parse)
+            yield scrapy.Request(start_url, dont_filter=True, callback=self.parse)
 
     def parse(self, response):
         for granule in json.loads(response.text)["granules"]:

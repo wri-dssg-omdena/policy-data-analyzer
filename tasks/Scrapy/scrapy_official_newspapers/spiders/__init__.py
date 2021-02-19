@@ -50,20 +50,20 @@ class BaseSpider(Spider):
 			to_date = from_date
 		return dates
 
-	def create_date_list(self, start_date, to_date, time_span, time_unit):
+	def create_date_list(self, start_date, to_date, time_span, time_unit, country_code):
 		dates = []
 		start_date = datetime.datetime.strptime(start_date, '%Y-%m-%d').date()
 		to_date = datetime.datetime.strptime(to_date, '%Y-%m-%d').date()
 		while start_date < to_date:
-			start_date = self.next_business_day(start_date, time_span, time_unit)
+			start_date = self.next_business_day(start_date, time_span, time_unit, country_code)
 			dates.append(start_date)
 		return dates
 
-	def next_business_day(self, date, time_span, time_unit):
+	def next_business_day(self, date, time_span, time_unit, country_code):
 		ONE_DAY = datetime.timedelta(days=1)
-		HOLIDAYS_US = holidays.US()
+		HOLIDAYS = holidays.CountryHoliday(country_code)
 		next_day = date + ONE_DAY
-		while next_day.weekday() in holidays.WEEKEND or next_day in HOLIDAYS_US:
+		while next_day.weekday() in holidays.WEEKEND or next_day in HOLIDAYS:
 		   next_day += ONE_DAY
 		return next_day
 

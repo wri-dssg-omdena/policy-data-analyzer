@@ -9,24 +9,24 @@ from scrapy import Request
 class ElSalvador(BaseSpider):
 	name = "ElSalvador"
 	country = "El Salvador"
+	country_code = "SV" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
 	state = "Federal"
+	state_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
 	source = "Diario Oficial"
-	collector = "Jordi Planas"
-	scrapper_name = "Jordi Planas"
+	spider_builder = "Jordi Planas"
 	scrapable = "True"
 	allowed_domains = ["jurisprudencia.gob.sv"]
 	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola"]#["forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
 	info_url = ""
 	counter = 0
-	start_date = datetime.datetime.strptime("2015-01-01", '%Y-%m-%d').date()
-	end_date = datetime.date.today().strftime('%Y-%m-%d')
+	start_date = "2020-01-01"
 	serch_results = 0
 
 	url_dict = {}
 
-	def __init__(self, date="2020-01-01"):
+	def __init__(self, start_date):
 		self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
-		self.from_date, self.today = self.create_date_span(date)
+		self.from_date, self.today = self.create_date_span(start_date)
 
 	def start_requests(self):
 		for date in self.create_date_range(self.from_date, self.today, 3):

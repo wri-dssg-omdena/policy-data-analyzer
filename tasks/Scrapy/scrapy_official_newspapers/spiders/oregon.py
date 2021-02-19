@@ -24,19 +24,22 @@ from dateutil.parser import parse
 
 class OregonSpider(BaseSpider):
     name = 'Oregon'
-    allowed_domains = ['secure.sos.state.or.us']
-    start_urls = ['https://secure.sos.state.or.us/oard/displayBulletins.action']
     country = "USA"
+    country_code = "US" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
     state = "Oregon"
-    data_source = "The Oregon Bulletin"
-    scrapable = "True"
-    # years = [year for year in range(2018, 2020)]
+    state_code = 'OR' # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
+    source = "The Oregon Bulletin"
     spider_builder = "David Silva"
+    scrapable = "True"
+    allowed_domains = ['secure.sos.state.or.us']
+    start_date = "2020-12-11"
+    start_urls = ['https://secure.sos.state.or.us/oard/displayBulletins.action']
+    # years = [year for year in range(2018, 2020)]
 
-    def __init__(self, date = "2020-12-11"):
+    def __init__(self, start_date):
         self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain.json')
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json')
-        self.from_date, self.today = self.create_date_span(date)
+        self.from_date, self.today = self.create_date_span(start_date)
 
 
     def parse(self, response):        
@@ -76,7 +79,7 @@ class OregonSpider(BaseSpider):
             if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) or self.scrapable == "True":
                 item['country'] = self.country
                 item['state'] = self.state
-                item['data_source'] = self.data_source
+                item['data_source'] = self.source
                 item['law_class'] = ''
                 item['title'] = row_values[3]
                 item['reference'] = ''

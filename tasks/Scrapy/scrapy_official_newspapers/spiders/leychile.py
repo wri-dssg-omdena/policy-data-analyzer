@@ -11,15 +11,18 @@ from scrapy_official_newspapers.spiders import BaseSpider
 class LeyChile(BaseSpider):
     name = "LeyChile"
     country = "Chile"
+    country_code = "SV" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
     state = "Federal"
+    state_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
     source = "LeyChile"
-    collector = "Ignacio Fernandez & Jordi Planas"
-    scrapper_name = "Ignacio Fernandez"
+    spider_builder = "Ignacio Fernandez & Jordi Planas"
     scrapable = "True"
+    allowed_domains = ['bcn.cl/leychile']
+    start_date = "2000-01-01"
 
-    def __init__(self, date = "2000-01-01"):
+    def __init__(self, start_date):
         self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
-        self.from_date, self.today = self.create_date_span(date)
+        self.from_date, self.today = self.create_date_span(start_date)
         self.start_urls = [f'https://nuevo.leychile.cl/servicios/Consulta/listaresultadosavanzada?stringBusqueda=-1%23normal%23on%7C%7C4%23normal%23{self.from_date}%23{self.today}%7C%7C117%23normal%23on%7C%7C48%23normal%23on&tipoNormaBA=&npagina=1&itemsporpagina=10&orden=2&tipoviene=4&totalitems=&seleccionado=0&taxonomia=&valor_taxonomia=&o=experta&r=']
 
     def parse(self, response):

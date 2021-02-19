@@ -46,7 +46,7 @@
     <Compile Include="spiders\leychile.py" />
     <Compile Include="spiders\oregon.py" />
     <Compile Include="spiders\USFR.py" />
-    <Compile Include="spiders\mexicoDOF.py" />
+    <Compile Include="spiders\mexico.py" />
     <Compile Include="spiders\__init__.py" />
     <Compile Include="__init__.py" />
   </ItemGroup>
