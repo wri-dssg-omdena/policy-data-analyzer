@@ -8,23 +8,26 @@ class USFR(BaseSpider):
     name = "USFR"
     country = "USA"
     country_code = "US" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
-    state = "Federal"
+    state_name = "Federal"
     satate_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
     source = "Federal Register"
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
-    start_date = "2021-02-11"
-    API_key_file = 'C:/Users/jordi/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
+    start_date = "2010-01-01"
+    API_key_file = 'C:/Users/user/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
 
-    def __init__(self, start_date):
-        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain.json')
-        self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json')
+    def __init__(self):
+        # First we import the two dictionaries that we are going to use to filter the policies.
+        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_EN.json')
+        self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
+        # We upload the credentials to access the API
         self.API_key = self.import_json(self.API_key_file)["us gov apikey jp"]
-        self.from_date, self.today = self.create_date_span(start_date)
+        # This is to set the time span variables. 
+        self.from_date, self.today = self.create_date_span(self.start_date)
     
     def start_requests(self):
-        for day in self.create_date_list(self.from_date, self.today, 1, "days"):
+        for day in self.create_date_list(self.from_date, self.today, 1, "days", self.country_code):
             #print(day)
             start_url = f'https://api.govinfo.gov/packages/FR-{day}/granules?offset=0&pageSize=300&api_key={self.API_key}'
             #print(start_urls)
@@ -37,17 +40,17 @@ class USFR(BaseSpider):
 
     def parse_other(self, response):
         summary_full = response.json()
-        self.debug(summary_full)
-        item = ScrapyOfficialNewspapersItem()
+        #self.debug(summary_full)
         title = summary_full["title"]
         if "summary" in summary_full:
             summary = summary_full["summary"]
         else:
             summary = ""
         text_to_search = summary_full["title"] + " " + summary
-        if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) or self.scrapable == "True":
+        if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict):
+            item = ScrapyOfficialNewspapersItem()
             item['country'] = self.country
-            item['state'] = self.state
+            item['state'] = self.state_name
             item['data_source'] = self.source
             item['law_class'] = summary_full['category']
             item['title'] = summary_full['title']

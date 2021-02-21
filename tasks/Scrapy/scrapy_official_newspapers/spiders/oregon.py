@@ -26,7 +26,7 @@ class OregonSpider(BaseSpider):
     name = 'Oregon'
     country = "USA"
     country_code = "US" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
-    state = "Oregon"
+    state_name = "Oregon"
     state_code = 'OR' # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
     source = "The Oregon Bulletin"
     spider_builder = "David Silva"
@@ -36,10 +36,12 @@ class OregonSpider(BaseSpider):
     start_urls = ['https://secure.sos.state.or.us/oard/displayBulletins.action']
     # years = [year for year in range(2018, 2020)]
 
-    def __init__(self, start_date):
-        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain.json')
+    def __init__(self):
+        # First we import the two dictionaries that we are going to use to filter the policies.
+        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_EN.json')
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain.json')
-        self.from_date, self.today = self.create_date_span(start_date)
+        # This is to set the time span variables. 
+        self.from_date, self.today = self.create_date_span(self.start_date)
 
 
     def parse(self, response):        
@@ -78,7 +80,7 @@ class OregonSpider(BaseSpider):
             text_to_search = row_values[3]
             if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) or self.scrapable == "True":
                 item['country'] = self.country
-                item['state'] = self.state
+                item['state'] = self.state_name
                 item['data_source'] = self.source
                 item['law_class'] = ''
                 item['title'] = row_values[3]

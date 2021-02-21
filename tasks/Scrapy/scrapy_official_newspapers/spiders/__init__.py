@@ -10,9 +10,11 @@ import datetime
 from icecream import ic
 import hashlib
 import holidays
+import logging
 
 
 class BaseSpider(Spider):
+	logging.getLogger('scrapy.core.scraper').addFilter(lambda x: not x.getMessage().startswith('Scraped from')) #To avoid printing item in the terminal prompt
 	def debug(self, to_debug):
 		ic(to_debug)
 
@@ -79,13 +81,16 @@ class BaseSpider(Spider):
 			json_dict = json.load(dict)
 		return json_dict
 
+	def findWholeWord(self, word):
+		return re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search
+
 	def search_keywords(self,string, keyword_dict, negative_keyword_dict):
 		string = string.lower()
-		for word in keyword_dict:
-			if word.lower() in string:
+		for positive_word in keyword_dict:
+			if self.findWholeWord(positive_word)(string) != None:
 				flag = False
-				for negative in negative_keyword_dict:
-					if negative.lower() in string:
+				for negative_word in negative_keyword_dict:
+					if self.findWholeWord(negative_word)(string) != None:
 						resp = False
 						flag = False
 						break

@@ -12,7 +12,7 @@ class LeyChile(BaseSpider):
     name = "LeyChile"
     country = "Chile"
     country_code = "SV" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
-    state = "Federal"
+    state_name = "Federal"
     state_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
     source = "LeyChile"
     spider_builder = "Ignacio Fernandez & Jordi Planas"
@@ -20,9 +20,9 @@ class LeyChile(BaseSpider):
     allowed_domains = ['bcn.cl/leychile']
     start_date = "2000-01-01"
 
-    def __init__(self, start_date):
-        self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
-        self.from_date, self.today = self.create_date_span(start_date)
+    def __init__(self):
+        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain.json')
+        self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
         self.start_urls = [f'https://nuevo.leychile.cl/servicios/Consulta/listaresultadosavanzada?stringBusqueda=-1%23normal%23on%7C%7C4%23normal%23{self.from_date}%23{self.today}%7C%7C117%23normal%23on%7C%7C48%23normal%23on&tipoNormaBA=&npagina=1&itemsporpagina=10&orden=2&tipoviene=4&totalitems=&seleccionado=0&taxonomia=&valor_taxonomia=&o=experta&r=']
 
     def parse(self, response):
@@ -47,7 +47,7 @@ class LeyChile(BaseSpider):
                 doc_path = str(norm_id) + '.' + str(pub_date_format) + '.0.0%23'
                 doc_url = f'https://nuevo.leychile.cl/servicios/Consulta/Exportar?radioExportar=Normas&exportar_formato={doc_type}&nombrearchivo={doc_name}&exportar_con_notas_bcn=False&exportar_con_notas_originales=False&exportar_con_notas_al_pie=False&hddResultadoExportar={doc_path}'
                 item['country'] = self.country
-                item['state'] = self.state
+                item['state'] = self.state_name
                 item['data_source'] = self.source
                 item["law_class"] = norm['NORMA']
                 item['title'] = norm['TITULO_NORMA']
