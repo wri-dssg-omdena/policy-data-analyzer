@@ -23,12 +23,12 @@ class BaseSpider(Spider):
 			num = str(number)
 		return (num)
 	
-	def build_query(keyword_dict, start_keyword, end_keyword):
+	def build_query(self, keyword_dict, start_keyword, end_keyword):
 		i = 0
 		k = 0
+		query = ""
 		for item in keyword_dict:
-			if k < 20:
-				k += 1
+			if start_keyword < k < end_keyword:
 				item = item.replace("-" ,"")
 				j = 0
 				if len(item.split()) > 1:
@@ -51,6 +51,8 @@ class BaseSpider(Spider):
 						i = 1
 					else:
 						query = query + "+OR+" + item
+			k += 1
+		return query
 
 
 	def clean_text(self, string):
