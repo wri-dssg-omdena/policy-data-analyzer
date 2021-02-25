@@ -15,22 +15,49 @@ import logging
 
 class BaseSpider(Spider):
 	logging.getLogger('scrapy.core.scraper').addFilter(lambda x: not x.getMessage().startswith('Scraped from')) #To avoid printing item in the terminal prompt
-	def debug(self, to_debug):
-		ic(to_debug)
 
-	def parse_date(self, raw_date):
-		date = re.search(r'(\d+/\d+/\d+)', raw_date)
-		date = date.group(0)
-		return (self.validate_date(date))
+	def add_leading_zero_two_digits(self, number):
+		if number < 10:
+			num = "0" + str(number)
+		else:
+			num = str(number)
+		return (num)
+	
+	def build_query(keyword_dict, start_keyword, end_keyword):
+		i = 0
+		k = 0
+		for item in keyword_dict:
+			if k < 20:
+				k += 1
+				item = item.replace("-" ,"")
+				j = 0
+				if len(item.split()) > 1:
+					combined = "%28"
+					for keyword in item.split():
+						if j==0 :
+							combined = combined + keyword
+							j = 1
+						else:
+							combined = combined + "+" + keyword
+					combined = combined + "%29"
+					if i == 0:
+						query = combined
+						i = 1
+					else:
+						query = query + "+OR+" + combined
+				else:
+					if i == 0:
+						query = item
+						i = 1
+					else:
+						query = query + "+OR+" + item
 
-	def validate_date(self, date_text):
-		from dateutil.parser import parse
-		try:
-			parse(date_text, dayfirst=True)
-			return date_text
-		except ValueError as err:
-			return err
-			
+
+	def clean_text(self, string):
+		string = string.replace("\n", " ")
+		string = string.replace("-", " ")
+		return(string)
+
 	def create_date_span(self, fromDate):
 		try:
 			from_date = datetime.datetime.strptime(fromDate, '%Y-%m-%d').date()
@@ -61,6 +88,21 @@ class BaseSpider(Spider):
 			dates.append(start_date)
 		return dates
 
+	def debug(self, to_debug):
+		ic(to_debug)
+
+	def findWholeWord(self, word):
+		return re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search
+
+	def HSA1_encoding(self, string):
+		hash_object = hashlib.sha1(string.encode())
+		return hash_object.hexdigest()
+
+	def import_json(self, filename):
+		with open(filename, 'r') as dict:
+			json_dict = json.load(dict)
+		return json_dict
+
 	def next_business_day(self, date, time_span, time_unit, country_code):
 		ONE_DAY = datetime.timedelta(days=1)
 		HOLIDAYS = holidays.CountryHoliday(country_code)
@@ -69,20 +111,15 @@ class BaseSpider(Spider):
 		   next_day += ONE_DAY
 		return next_day
 
-	def add_leading_zero_two_digits(self, number):
-		if number < 10:
-			num = "0" + str(number)
-		else:
-			num = str(number)
-		return (num)
+	def parse_date(self, raw_date):
+		date = re.search(r'(\d+/\d+/\d+)', raw_date)
+		date = date.group(0)
+		return (self.validate_date(date))
 
-	def import_json(self, filename):
-		with open(filename, 'r') as dict:
-			json_dict = json.load(dict)
-		return json_dict
-
-	def findWholeWord(self, word):
-		return re.compile(r'\b({0})\b'.format(word), flags=re.IGNORECASE).search
+	def remove_html_tags(self, text):
+		"""Remove html tags from a string"""
+		clean = re.compile('<.*?>')
+		return re.sub(clean, '', text)
 
 	def search_keywords(self,string, keyword_dict, negative_keyword_dict):
 		string = string.lower()
@@ -103,18 +140,12 @@ class BaseSpider(Spider):
 				resp = False
 		return(resp)
 
-	def clean_text(self, string):
-		string = string.replace("\n", " ")
-		string = string.replace("-", " ")
-		return(string)
-		
-	def remove_html_tags(self, text):
-		"""Remove html tags from a string"""
-		clean = re.compile('<.*?>')
-		return re.sub(clean, '', text)
-
-	def HSA1_encoding(self, string):
-		hash_object = hashlib.sha1(string.encode())
-		return hash_object.hexdigest()
+	def validate_date(self, date_text):
+		from dateutil.parser import parse
+		try:
+			parse(date_text, dayfirst=True)
+			return date_text
+		except ValueError as err:
+			return err
 
 
