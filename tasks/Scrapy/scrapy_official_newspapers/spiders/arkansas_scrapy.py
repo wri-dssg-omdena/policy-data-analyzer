@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import scrapy
-from arkansas_policy_scrapy.items import ArkanasaPolicyScrapyItem
+from arkansas_policy_scrapy.items import ArkansasPolicyScrapyItem
 from scrapy.selector import Selector
 from scrapy.http import HtmlResponse
 from scrapy.http import Request
