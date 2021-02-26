@@ -8,7 +8,7 @@ import re
 import request
 
 class ArkansasScrapySpider(scrapy.Spider):
-    name = 'arkansas_scrapy_1'
+    name = 'arkansas_scrapy'
        
     
     country = "USA"
