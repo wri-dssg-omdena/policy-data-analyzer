@@ -38,10 +38,8 @@ CHILE
 - NLTK
 	- Total identified sentences: 192
 	- Many badly split sentences here --> this time one sentence got split into multiple ones because of things like "ord." and "Sra." and "Corp." and "U.T.M."
-
-
-TODO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!:
---> Find a way of evaluating the sentences in terms of the document
+	- Also that weird sentence with the V48 and V50... coordinates?
+	- Score: 20/26
 
 
 >>> General patterns to take in account for preprocessing:
