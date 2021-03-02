@@ -11,7 +11,7 @@
 ----------------------------------
 ### Chile
 
->>> Chile1.txt
+*Chile1.txt*
 
 -> Evaluation substring:from the beginning until "Párrafo II"
 
@@ -33,7 +33,7 @@
 	- Similar to NLTK, the first bullets (like a)) can be appended to the heading, unnecessarily
 	- Score: 21/21
 
->>> Chile2.txt
+*Chile2.txt*
 
 -> Evaluation substring:from the beginning until "Lote 4 (b) de 1.171,08 hectáreas."
 
@@ -75,7 +75,7 @@
 			- Sentence_3
 			- Sentence_26
 
->>> Chile3.txt
+*Chile3.txt*
 
 -> Evaluation substring:from the beginning until "(vi) panaderías que operen con combustible sólido y/o combustibles líquidos."
 
@@ -103,7 +103,7 @@
 		- The rest...? There are bulet points that are joint together until sentence 9), Sentence_57-61
 
 
->>> General patterns to take in account for preprocessing:
+*General patterns to take in account for preprocessing*:
 - Get rid of law numbers (Ley No 12.345) - splitting by space, identifying element next to No. and replacing with "Numero" and a random number.
 - (PRIORITY) We need to do something about the bullet points like "a)"... Maybe we add a new line to the back, so it gets considered as a new sentence? Or we deal with them after the initial sentence splitting 
 - Get rid of patterns like ".-" which are only confusing
@@ -114,7 +114,36 @@
 	- When considering ";", we should check whether the next character is lowercase or not
 
 ----------------------------------
-USA
+### USA
+
+*USA_Sept302020.txt*
+
+-> Evaluation substring:from the beginning until "Final Rule Issued Under Section 4(d) of the Act"
+
+- NLTK
+	- Total identified sentences: 244
+	- Main errors come from confuesing docket numbers: "inspection at http://www.regulations.gov under Docket No. FWS-R4-ES-2018-0074."
+	- Score: 41/43
+	- Error sentences:
+		- Half:
+			- Sentence_7
+			- Sentence_8
+			- Sentence_9
+			- Sentence_24
+
+
+*General patterns to take in account for preprocessing:*
+- Can filter out anything up to "ACTION: Final rule." or "-------------------" 
+- We need to figure out how laws and docket numbers are represented, congressmen ("Cong."), sessions ("Sess."), district ("Dist.") numbers, etc.
+- To figure out common patterns, we should grab everyting that comes before a "." and see if we can build them
+
+----------------------------------
+### El Salvador
+
+*ElSalvador1.txt*
+
+
+----------------------------------
 
 INDIA
 
