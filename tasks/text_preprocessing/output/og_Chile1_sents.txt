@@ -43,7 +43,9 @@ c) Oferta de servicios turísticos de calidad: Conjunto de servicios turísticos
 
 d) Plan de Manejo: Instrumento de gestión, que se fundamenta en un proceso de planificación participativa, y que comprende aspectos técnicos, normativos y orientadores, destinados a garantizar la conservación de un Área Silvestre Protegida, a través del ordenamiento de uso de su espacio, estableciendo una zonificación, objetivos, programas y normativa que orienten los usos potenciales y prohibiciones del territorio que comprenden.
 
-e) Área de Uso Público. Parte del Área Silvestre Protegida del Estado que según su Plan de Manejo, permite el uso, entre otros, para fines turísticos sustentables.
+e) Área de Uso Público. 
+
+Parte del Área Silvestre Protegida del Estado que según su Plan de Manejo, permite el uso, entre otros, para fines turísticos sustentables.
 
 f) Concesión Turística: Otorgamiento de un derecho especial de uso y goce de un Área de Uso Público de un Área Silvestre Protegida Priorizada con un fin preestablecido, y en las condiciones que para cada caso se determine, para realizar un proyecto de desarrollo turístico, a personas jurídicas de nacionalidad chilena públicas y privadas, con o sin fines de lucro, por un plazo no superior a cincuenta años.
 
@@ -59,6 +61,8 @@ k) Subsecretaría: Subsecretaría de Turismo.
 
 l) Subsecretario: Subsecretario de Turismo.
 
+>>>>>>>>>>>> Evaluation ends here
+----------------------------------
 Párrafo II
 
 Principios o Directrices
@@ -330,7 +334,9 @@ Disposición Transitoria
 
 Artículo 1° Transitorio.- La Mesa Técnica a que se refiere el artículo 14 del presente reglamento, estará integrada, además, por un representante del Ministerio del Medio Ambiente, en tanto no entre en funcionamiento el Servicio de Biodiversidad y Áreas Protegidas a que se refiere el artículo 8° Transitorio de la ley N° 20.417.
 
-Anótese, tómese razón y publíquese.- SEBASTIÁN PIÑERA ECHENIQUE, Presidente de la República.- Juan Andrés Fontaine Talavera, Ministro de Economía, Fomento y Turismo.- Rodrigo Hinzpeter Kirberg, Ministro del Interior y Seguridad Pública.- José Antonio Galilea Vidaurre, Ministro de Agricultura.- Catalina Parot Donoso, Ministra de Bienes Nacionales.- María Ignacia Benítez Pereira, Ministra del Medio Ambiente. Lo que transcribe para su conocimiento.- Saluda atentamente a usted, Tomás Flores Jaña, Subsecretario de Economía y Empresas de Menor Tamaño.
+Anótese, tómese razón y publíquese.- SEBASTIÁN PIÑERA ECHENIQUE, Presidente de la República.- Juan Andrés Fontaine Talavera, Ministro de Economía, Fomento y Turismo.- Rodrigo Hinzpeter Kirberg, Ministro del Interior y Seguridad Pública.- José Antonio Galilea Vidaurre, Ministro de Agricultura.- Catalina Parot Donoso, Ministra de Bienes Nacionales.- María Ignacia Benítez Pereira, Ministra del Medio Ambiente. 
+
+Lo que transcribe para su conocimiento.- Saluda atentamente a usted, Tomás Flores Jaña, Subsecretario de Economía y Empresas de Menor Tamaño.
 
 
 
