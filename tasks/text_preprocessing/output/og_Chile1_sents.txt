@@ -1,5 +1,6 @@
- Biblioteca del Congreso Nacional
- --------------------------------
+>>> Any grouping/subsentences work for this one
+- "/Sentence_1": Biblioteca del Congreso Nacional
+--------------------------------
 
 Tipo Norma               :Decreto 50
 Fecha Publicación        :28-04-2012
@@ -14,16 +15,17 @@ Inicio Vigencia          :28-04-2012
 Id Norma                 :1039477
 URL                      :https://www.leychile.cl/N?i=1039477&f=2012-04-28
 
+>>> 2 and 3 can be together
+- "/Sentence_2": APRUEBA REGLAMENTO QUE FIJA PROCEDIMIENTO PARA OTORGAMIENTO DE CONCESIONES TURÍSTICAS EN ÁREAS SILVESTRES PROTEGIDAS DEL ESTADO
 
-APRUEBA REGLAMENTO QUE FIJA PROCEDIMIENTO PARA OTORGAMIENTO DE CONCESIONES TURÍSTICAS EN ÁREAS SILVESTRES PROTEGIDAS DEL ESTADO
+- "/Sentence_3": Núm. 50.- Santiago, 25 de marzo de 2011.- Visto: El artículo 32, N° 6 de la Constitución Política de la República de Chile; el decreto con fuerza de ley N° 1/19.653, de 2000, del Ministerio Secretaría General de la Presidencia, que fijó el texto refundido, coordinado y sistematizado de la ley N° 18.575, Orgánica Constitucional de Bases Generales de la Administración del Estado; el decreto ley N° 1.939, de 1977, que estableció Normas sobre Adquisición, Administración y Disposición de Bienes del Estado; la Ley N° 20.417, que creó el Ministerio, el Servicio de Evaluación Ambiental y la Superintendencia del Medio Ambiente; los artículos 18 y siguientes de la ley N° 20.423, de 2010, del Sistema Institucional para el Desarrollo del Turismo; la resolución N° 1.600, de 2008, de la Contraloría General de la República.
 
-Núm. 50.- Santiago, 25 de marzo de 2011.- Visto: El artículo 32, N° 6 de la Constitución Política de la República de Chile; el decreto con fuerza de ley N° 1/19.653, de 2000, del Ministerio Secretaría General de la Presidencia, que fijó el texto refundido, coordinado y sistematizado de la ley N° 18.575, Orgánica Constitucional de Bases Generales de la Administración del Estado; el decreto ley N° 1.939, de 1977, que estableció Normas sobre Adquisición, Administración y Disposición de Bienes del Estado; la Ley N° 20.417, que creó el Ministerio, el Servicio de Evaluación Ambiental y la Superintendencia del Medio Ambiente; los artículos 18 y siguientes de la ley N° 20.423, de 2010, del Sistema Institucional para el Desarrollo del Turismo; la resolución N° 1.600, de 2008, de la Contraloría General de la República.
+- "Sentence_4": Considerando: Que con fecha 12 de febrero de 2010, se publicó en el Diario Oficial la ley N° 20.423, del Sistema Institucional para el Desarrollo del Turismo, en adelante "Ley N° 20.423", la que, en su Título V, denominado "Del Desarrollo Turístico en las Áreas Silvestres Protegidas del Estado", remite a un reglamento conjunto de los Ministerios de Economía, Fomento y Turismo, de Bienes Nacionales y de aquél bajo cuya tutela se administren las Áreas Silvestres Protegidas del Estado, la determinación de las condiciones y del procedimiento de adjudicación de las concesiones, como asimismo, de los derechos y obligaciones de los concesionarios para el desarrollo de actividades e infraestructura de turismo.
 
-Considerando: Que con fecha 12 de febrero de 2010, se publicó en el Diario Oficial la ley N° 20.423, del Sistema Institucional para el Desarrollo del Turismo, en adelante "Ley N° 20.423", la que, en su Título V, denominado "Del Desarrollo Turístico en las Áreas Silvestres Protegidas del Estado", remite a un reglamento conjunto de los Ministerios de Economía, Fomento y Turismo, de Bienes Nacionales y de aquél bajo cuya tutela se administren las Áreas Silvestres Protegidas del Estado, la determinación de las condiciones y del procedimiento de adjudicación de las concesiones, como asimismo, de los derechos y obligaciones de los concesionarios para el desarrollo de actividades e infraestructura de turismo.
+>>> Understandable if 5, 6 and 7 are together
+- "Sentence_5": Decreto: Apruébase el siguiente reglamento que fija el procedimiento para otorgar concesiones turísticas en Áreas Silvestres Protegidas del Estado, que sean priorizadas de acuerdo al Título V de la ley 20.423:  
 
-Decreto: Apruébase el siguiente reglamento que fija el procedimiento para otorgar concesiones turísticas en Áreas Silvestres Protegidas del Estado, que sean priorizadas de acuerdo al Título V de la ley 20.423:  
-
-TÍTULO I
+- "Sentence_6": TÍTULO I
 
 Disposiciones Generales
 
@@ -31,35 +33,35 @@ Párrafo I
 
 Ámbito de Aplicación y Definiciones
 
-Artículo 1.- El presente reglamento establece el procedimiento y condiciones para el otorgamiento de concesiones turísticas en aquellas Áreas Silvestres Protegidas del Estado, que sean priorizadas de acuerdo a las normas del Título V de la ley N° 20.423 y a las disposiciones que más adelante se establecen.
+- "Sentence_7": Artículo 1.- El presente reglamento establece el procedimiento y condiciones para el otorgamiento de concesiones turísticas en aquellas Áreas Silvestres Protegidas del Estado, que sean priorizadas de acuerdo a las normas del Título V de la ley N° 20.423 y a las disposiciones que más adelante se establecen.
 
-Artículo 2.- Para los efectos de este reglamento, se entenderá por:
+- "Sentence_8": Artículo 2.- Para los efectos de este reglamento, se entenderá por:
 
-a) Área Silvestre Protegida Priorizada: Son las Áreas Silvestres Protegidas del Estado que disponen de Plan de Manejo y que han sido priorizadas para el desarrollo turístico por el Comité de Ministros del Turismo.
+- "Sentence_9": a) Área Silvestre Protegida Priorizada: Son las Áreas Silvestres Protegidas del Estado que disponen de Plan de Manejo y que han sido priorizadas para el desarrollo turístico por el Comité de Ministros del Turismo.
 
-b) Desarrollo Turístico en Áreas Silvestres Protegidas Priorizadas: Proceso de generación y desarrollo de iniciativas turísticas sustentables, consistente en la provisión de una oferta de servicios turísticos de calidad, al interior de las Áreas Silvestres Protegidas Priorizadas, de conformidad a los respectivos planes de manejo.
+- "Sentence_10": b) Desarrollo Turístico en Áreas Silvestres Protegidas Priorizadas: Proceso de generación y desarrollo de iniciativas turísticas sustentables, consistente en la provisión de una oferta de servicios turísticos de calidad, al interior de las Áreas Silvestres Protegidas Priorizadas, de conformidad a los respectivos planes de manejo.
 
-c) Oferta de servicios turísticos de calidad: Conjunto de servicios turísticos compatibles entre sí, unidos por una relación contractual o de negocios, ejecutados al interior de un Área Silvestre Protegida Priorizada, y que se encuentren registrados, clasificados y certificados, según corresponda, de conformidad lo dispone el Título VII de la ley N° 20.423, y su respectivo reglamento.
+- "Sentence_11": c) Oferta de servicios turísticos de calidad: Conjunto de servicios turísticos compatibles entre sí, unidos por una relación contractual o de negocios, ejecutados al interior de un Área Silvestre Protegida Priorizada, y que se encuentren registrados, clasificados y certificados, según corresponda, de conformidad lo dispone el Título VII de la ley N° 20.423, y su respectivo reglamento.
 
-d) Plan de Manejo: Instrumento de gestión, que se fundamenta en un proceso de planificación participativa, y que comprende aspectos técnicos, normativos y orientadores, destinados a garantizar la conservación de un Área Silvestre Protegida, a través del ordenamiento de uso de su espacio, estableciendo una zonificación, objetivos, programas y normativa que orienten los usos potenciales y prohibiciones del territorio que comprenden.
+- "Sentence_12": d) Plan de Manejo: Instrumento de gestión, que se fundamenta en un proceso de planificación participativa, y que comprende aspectos técnicos, normativos y orientadores, destinados a garantizar la conservación de un Área Silvestre Protegida, a través del ordenamiento de uso de su espacio, estableciendo una zonificación, objetivos, programas y normativa que orienten los usos potenciales y prohibiciones del territorio que comprenden.
 
-e) Área de Uso Público. 
+- "Sentence_13": e) Área de Uso Público. 
 
-Parte del Área Silvestre Protegida del Estado que según su Plan de Manejo, permite el uso, entre otros, para fines turísticos sustentables.
+- "Sentence_14": Parte del Área Silvestre Protegida del Estado que según su Plan de Manejo, permite el uso, entre otros, para fines turísticos sustentables.
 
-f) Concesión Turística: Otorgamiento de un derecho especial de uso y goce de un Área de Uso Público de un Área Silvestre Protegida Priorizada con un fin preestablecido, y en las condiciones que para cada caso se determine, para realizar un proyecto de desarrollo turístico, a personas jurídicas de nacionalidad chilena públicas y privadas, con o sin fines de lucro, por un plazo no superior a cincuenta años.
+- "Sentence_15": f) Concesión Turística: Otorgamiento de un derecho especial de uso y goce de un Área de Uso Público de un Área Silvestre Protegida Priorizada con un fin preestablecido, y en las condiciones que para cada caso se determine, para realizar un proyecto de desarrollo turístico, a personas jurídicas de nacionalidad chilena públicas y privadas, con o sin fines de lucro, por un plazo no superior a cincuenta años.
 
-g) Renta concesional: Suma, expresada en unidades de Fomento o la unidad que la reemplace, que deberá pagar el concesionario al Ministerio de Bienes Nacionales por el uso y goce de un inmueble fiscal otorgado en Concesión Turística, conforme lo dispuesto en el inciso cuarto del artículo 61 del decreto ley N° 1.939, de 1977 ,y su legislación complementaria.
+- "Sentence_16": g) Renta concesional: Suma, expresada en unidades de Fomento o la unidad que la reemplace, que deberá pagar el concesionario al Ministerio de Bienes Nacionales por el uso y goce de un inmueble fiscal otorgado en Concesión Turística, conforme lo dispuesto en el inciso cuarto del artículo 61 del decreto ley N° 1.939, de 1977 ,y su legislación complementaria.
 
-h) Ley N°20.423: Ley N° 20.423, del Sistema Institucional para el Desarrollo del Turismo.
+- "Sentence_17": h) Ley N°20.423: Ley N° 20.423, del Sistema Institucional para el Desarrollo del Turismo.
 
-i) Comité de Ministros: Comité de Ministros del Turismo.
+- "Sentence_18": i) Comité de Ministros: Comité de Ministros del Turismo.
 
-j) Dirección Nacional: Dirección Nacional del Servicio Nacional de Turismo.
+- "Sentence_19": j) Dirección Nacional: Dirección Nacional del Servicio Nacional de Turismo.
 
-k) Subsecretaría: Subsecretaría de Turismo.
+- "Sentence_20": k) Subsecretaría: Subsecretaría de Turismo.
 
-l) Subsecretario: Subsecretario de Turismo.
+- "Sentence_21": l) Subsecretario: Subsecretario de Turismo.
 
 >>>>>>>>>>>> Evaluation ends here
 ----------------------------------
