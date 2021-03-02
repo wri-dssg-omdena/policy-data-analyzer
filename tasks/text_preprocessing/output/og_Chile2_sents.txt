@@ -1,4 +1,5 @@
-- "Sentence_1": Biblioteca del Congreso Nacional
+>>> Any grouping/subsentences work for this one
+- "-/Sentence_1": Biblioteca del Congreso Nacional
 --------------------------------
 
 Tipo Norma               :Decreto 60
@@ -16,57 +17,64 @@ URL                      :https://www.leychile.cl/N?i=1060445&f=2014-03-22
 
 
 
-- "Sentence_2": DESAFECTA EL MONUMENTO NATURAL ALERCE COSTERO Y AMPLÍA EL PARQUE NACIONAL ALERCE COSTERO, EN LAS COMUNAS DE CORRAL Y LA UNIÓN, PROVINCIAS DE VALDIVIA Y DEL RANCO, REGIÓN DE LOS RÍOS
+- "-Sentence_2": DESAFECTA EL MONUMENTO NATURAL ALERCE COSTERO Y AMPLÍA EL PARQUE NACIONAL ALERCE COSTERO, EN LAS COMUNAS DE CORRAL Y LA UNIÓN, PROVINCIAS DE VALDIVIA Y DEL RANCO, REGIÓN DE LOS RÍOS
       
-- "Sentence_3": Núm. 60.- Santiago, 7 de junio de 2013.- Vistos: Estos antecedentes, lo solicitado por la Sra. Ministra de Bienes Nacionales en oficio ord. Nº 916, de 3 de octubre de 2012; lo informado por la Secretaría Regional Ministerial de Los Ríos, mediante oficio ord. Nº 2.957, de 18 de octubre de 2012; lo informado por la Corporación Nacional Forestal (CONAF) y el Ministerio del Medio Ambiente; lo informado por el Asesor Legal de Asuntos Indígenas del Ministerio de Desarrollo Social, mediante oficio ord. Nº 78, de 14 de octubre de 2012; el Acuerdo Nº 26, de 2012, del Consejo de Ministros para la Sustentabilidad; la ley 19.300; el DL Nº 1.939, de 1977; el decreto con fuerza de ley Nº 294, de 1960, Orgánica del Ministerio de Agricultura; el DS Nº 531, de 1967, del Ministerio de Relaciones Exteriores, que ordenó cumplir como Ley de la República la "Convención para la Protección de la Flora, la Fauna y las Bellezas Escénicas Naturales de América", suscrita en Washington D.C., Estados Unidos de Norteamérica, el 12 de octubre de 1940; el DS Nº 868 de 1981 del Ministerio de Relaciones Exteriores, que ordenó cumplir como la Ley de la República, la Convención sobre "Conservación de Especies Migratorias de Fauna Salvajes"; el decreto supremo Nº 1.963 de 1994 del Ministerio de Relaciones Exteriores, que ordenó cumplir como la Ley de la República, la Convención sobre "Conservación sobre Diversidad Biológica"; las facultades contenidas en los artículos 19 Nº 8 y 32 Nº 6 de la Constitución Política de la República y la resolución Nº 1.600, de 2008, de la Contraloría General de la República.
+- "-Sentence_3": Núm. 60.- Santiago, 7 de junio de 2013.- Vistos: Estos antecedentes, lo solicitado por la Sra. Ministra de Bienes Nacionales en oficio ord. Nº 916, de 3 de octubre de 2012; lo informado por la Secretaría Regional Ministerial de Los Ríos, mediante oficio ord. Nº 2.957, de 18 de octubre de 2012; lo informado por la Corporación Nacional Forestal (CONAF) y el Ministerio del Medio Ambiente; lo informado por el Asesor Legal de Asuntos Indígenas del Ministerio de Desarrollo Social, mediante oficio ord. Nº 78, de 14 de octubre de 2012; el Acuerdo Nº 26, de 2012, del Consejo de Ministros para la Sustentabilidad; la ley 19.300; el DL Nº 1.939, de 1977; el decreto con fuerza de ley Nº 294, de 1960, Orgánica del Ministerio de Agricultura; el DS Nº 531, de 1967, del Ministerio de Relaciones Exteriores, que ordenó cumplir como Ley de la República la "Convención para la Protección de la Flora, la Fauna y las Bellezas Escénicas Naturales de América", suscrita en Washington D.C., Estados Unidos de Norteamérica, el 12 de octubre de 1940; el DS Nº 868 de 1981 del Ministerio de Relaciones Exteriores, que ordenó cumplir como la Ley de la República, la Convención sobre "Conservación de Especies Migratorias de Fauna Salvajes"; el decreto supremo Nº 1.963 de 1994 del Ministerio de Relaciones Exteriores, que ordenó cumplir como la Ley de la República, la Convención sobre "Conservación sobre Diversidad Biológica"; las facultades contenidas en los artículos 19 Nº 8 y 32 Nº 6 de la Constitución Política de la República y la resolución Nº 1.600, de 2008, de la Contraloría General de la República.
       
-- "Sentence_4": Considerando:
+>> Any grouping of 4, 5 and 6 together works
+- "/Sentence_4": Considerando:
       
-- "Sentence_5": Que es deber del Estado tutelar la preservación de la naturaleza y la protección del medio ambiente; Que mediante decreto supremo Nº 9 del 3 de febrero de 2010, del Ministerio de Bienes Nacionales, se creó el "Parque Nacional Alerce Costero", en terrenos fiscales que componían la Reserva Forestal Valdivia, parte de los terrenos del Monumento Natural Alerce Costero, y parte del Fundo Fiscal Quitaluto, todos ubicados en las comunas de Corral de la provincia de Valdivia y en la comuna de La Unión, de la provincia del Ranco, Región de Los Ríos;
+- "/Sentence_5": Que es deber del Estado tutelar la preservación de la naturaleza y la protección del medio ambiente; Que mediante decreto supremo Nº 9 del 3 de febrero de 2010, del Ministerio de Bienes Nacionales, se creó el "Parque Nacional Alerce Costero", en terrenos fiscales que componían la Reserva Forestal Valdivia, parte de los terrenos del Monumento Natural Alerce Costero, y parte del Fundo Fiscal Quitaluto, todos ubicados en las comunas de Corral de la provincia de Valdivia y en la comuna de La Unión, de la provincia del Ranco, Región de Los Ríos;
 
-- "Sentence_6": Que por resolución Nº 203 de 26 de diciembre de 2011, el Fisco de Chile aceptó la donación modal de la sociedad Woodland Development Company, LLC, del Lote Nº 3, resultante de la Subdivisión del predio de mayor extensión denominado Fundo Chauhín, ubicado en el sector Pangui, en las comunas de Corral y La Unión, provincia de Valdivia y del Ranco, Región de Los Ríos. 
+- "/Sentence_6": Que por resolución Nº 203 de 26 de diciembre de 2011, el Fisco de Chile aceptó la donación modal de la sociedad Woodland Development Company, LLC, del Lote Nº 3, resultante de la Subdivisión del predio de mayor extensión denominado Fundo Chauhín, ubicado en el sector Pangui, en las comunas de Corral y La Unión, provincia de Valdivia y del Ranco, Región de Los Ríos. 
 
-- "Sentence_7": Que con fecha 10 de marzo de 2010, el Fisco de Chile regularizó e inscribió en el Conservador de Bienes Raíces de La Unión, el Lote Nº 2, denominado "Alto de Mirador" que formaba parte del Monumento Alerce Costero. 
+- "/Sentence_7": Que con fecha 10 de marzo de 2010, el Fisco de Chile regularizó e inscribió en el Conservador de Bienes Raíces de La Unión, el Lote Nº 2, denominado "Alto de Mirador" que formaba parte del Monumento Alerce Costero. 
 
-- "Sentence_8": Que conforme lo dispuesto en el artículo 71 de la ley 19.300, sobre Bases Generales del Medio Ambiente, es función del Consejo de Ministros para la Sustentabilidad proponer al Presidente de la República la creación de las Áreas Protegidas del Estado, que incluye parques y reservas marinas, así como los santuarios de la naturaleza y de las áreas marinas protegidas de múltiples usos. 
+- "/Sentence_8": Que conforme lo dispuesto en el artículo 71 de la ley 19.300, sobre Bases Generales del Medio Ambiente, es función del Consejo de Ministros para la Sustentabilidad proponer al Presidente de la República la creación de las Áreas Protegidas del Estado, que incluye parques y reservas marinas, así como los santuarios de la naturaleza y de las áreas marinas protegidas de múltiples usos. 
 
-- "Sentence_9": Que en sesión ordinaria de fecha 4 de octubre de 2012, el Consejo de Ministros para la Sustentabilidad, acordó unánimemente proponer al Presidente de la República la ampliación del Parque Nacional Alerce Costero. 
+- "/Sentence_9": Que en sesión ordinaria de fecha 4 de octubre de 2012, el Consejo de Ministros para la Sustentabilidad, acordó unánimemente proponer al Presidente de la República la ampliación del Parque Nacional Alerce Costero. 
 
-- "Sentence_10": Que estos terrenos cumplen con las características para ser anexados al Parque Nacional Alerce Costero, constituyendo un importante enclave ambiental, social y de belleza escénica para la Región de Los Ríos y en especial para las provincias y comunas indicadas; Que los objetos de conservación del Parque Nacional Alerce Costero son:
+>> Sentences 10, 11, 12 and 13 can go together
+
+- "/Sentence_10": Que estos terrenos cumplen con las características para ser anexados al Parque Nacional Alerce Costero, constituyendo un importante enclave ambiental, social y de belleza escénica para la Región de Los Ríos y en especial para las provincias y comunas indicadas; Que los objetos de conservación del Parque Nacional Alerce Costero son:
       
-- "Sentence_11": a) Mejorar la protección de las formaciones vegetales Bosque Laurifolio Valdiviano y Bosque Siempreverde de la Cordillera Pelada, ambas formaciones insuficientemente representadas en el Sistema Nacional de Áreas Silvestres Protegidas del Estado (Snaspe);
+- "/Sentence_11": a) Mejorar la protección de las formaciones vegetales Bosque Laurifolio Valdiviano y Bosque Siempreverde de la Cordillera Pelada, ambas formaciones insuficientemente representadas en el Sistema Nacional de Áreas Silvestres Protegidas del Estado (Snaspe);
 
-- "Sentence_12": b) Preservar muestras representativas de la ecorregión de los Bosques Templados lluviosos del tipo Valdiviano, que se caracteriza por su singularidad, alta concentración de alerces, gran número de especies endémicas y su biodiversidad única en el mundo; y
+- "/Sentence_12": b) Preservar muestras representativas de la ecorregión de los Bosques Templados lluviosos del tipo Valdiviano, que se caracteriza por su singularidad, alta concentración de alerces, gran número de especies endémicas y su biodiversidad única en el mundo; y
 
-- "Sentence_13": c) Proteger la diversidad y núcleos poblacionales de flora y fauna, especialmente para aquellas especies que presentan problemas de conservación.
+- "/Sentence_13": c) Proteger la diversidad y núcleos poblacionales de flora y fauna, especialmente para aquellas especies que presentan problemas de conservación.
       
-- "Sentence_14": Que la consagración de estos terrenos para fines de conservación y protección ofrece una valiosa oportunidad para integrar la educación ambiental y la participación ciudadana, así como valorar el trabajo desempeñado por instituciones públicas, privadas y comunitarias en el proceso de estudio y propuesta de la unidad de manejo para este predio;
+>> Sentences 14, 15 and 16 can work together
 
-- "Sentence_15": Que según los antecedentes tenidos a la vista, existen fundamentos suficientes para aprobar la propuesta de ampliación del Parque Nacional Alerce Costero, de acuerdo con el plano aportado por el Ministerio de Bienes Nacionales que se adjunta al presente decreto; y
+- "/-Sentence_14": Que la consagración de estos terrenos para fines de conservación y protección ofrece una valiosa oportunidad para integrar la educación ambiental y la participación ciudadana, así como valorar el trabajo desempeñado por instituciones públicas, privadas y comunitarias en el proceso de estudio y propuesta de la unidad de manejo para este predio;
 
-- "Sentence_16": Que los objetivos de ampliación del Parque Nacional Alerce Costero están directamente asociados al cumplimiento de las recomendaciones señaladas anteriormente.
+- "/-Sentence_15": Que según los antecedentes tenidos a la vista, existen fundamentos suficientes para aprobar la propuesta de ampliación del Parque Nacional Alerce Costero, de acuerdo con el plano aportado por el Ministerio de Bienes Nacionales que se adjunta al presente decreto; y
+
+- "-/Sentence_16": Que los objetivos de ampliación del Parque Nacional Alerce Costero están directamente asociados al cumplimiento de las recomendaciones señaladas anteriormente.
       
-- "Sentence_17": Decreto:
+- "/Sentence_17": Decreto:
 
 I.- Desaféctese el Sector Nº 2, del Monumento Natural Alerce Costero, denominado "Altos de Mirador" ubicado en la comuna de La Unión, provincia del Ranco, Región de Los Ríos, creado por decreto supremo Nº 19, de 21 de enero de 1987, del Ministerio de Bienes Nacionales.  
 
-- "Sentence_18": II.- Amplíese el "Parque Nacional Alerce Costero", mediante la incorporación de los inmuebles fiscales que a continuación se individualizan:
+>> 18 and 19 can go together
+
+- "/Sentence_18": II.- Amplíese el "Parque Nacional Alerce Costero", mediante la incorporación de los inmuebles fiscales que a continuación se individualizan:
  
-- "Sentence_19": 1º Lote Nº 3 o Retazo de terreno que forma parte del Resto del Fundo Chaihuín, ubicado en parte de las comunas de La Unión, provincia del Ranco y de Corral, provincia de Valdivia, Región de Los Ríos, inscrito a nombre del Fisco a fojas 2006 Nº 2.285, del año 2012, del Registro de Propiedad del Conservador de Bienes Raíces de Valdivia y a fojas 582 Nº 664, del Registro de Propiedad del Conservador de Bienes Raíces de La Unión.
+- "/Sentence_19": 1º Lote Nº 3 o Retazo de terreno que forma parte del Resto del Fundo Chaihuín, ubicado en parte de las comunas de La Unión, provincia del Ranco y de Corral, provincia de Valdivia, Región de Los Ríos, inscrito a nombre del Fisco a fojas 2006 Nº 2.285, del año 2012, del Registro de Propiedad del Conservador de Bienes Raíces de Valdivia y a fojas 582 Nº 664, del Registro de Propiedad del Conservador de Bienes Raíces de La Unión.
  
-- "Sentence_20": Para efectos cartográficos y armonía con los predios existentes del Parque Nacional Alerce Costero, este predio se individualiza de manera administrativa en el plano Nº 14102-2157 C.R. del Ministerio de Bienes Nacionales, como Hijuela 4, Sector Pangui.
+- "-Sentence_20": Para efectos cartográficos y armonía con los predios existentes del Parque Nacional Alerce Costero, este predio se individualiza de manera administrativa en el plano Nº 14102-2157 C.R. del Ministerio de Bienes Nacionales, como Hijuela 4, Sector Pangui.
  
-- "Sentence_21": Hijuela Nº 4 (Pangui) de 9.358,45 hectáreas
+- "/Sentence_21": Hijuela Nº 4 (Pangui) de 9.358,45 hectáreas
       
-- "Sentence_22": Lote 4 (a) de 3.808,25 hectáreas. 
+- "/Sentence_22": Lote 4 (a) de 3.808,25 hectáreas. 
       
-- "Sentence_23": Noreste: Río Chaihuín, desde la desembocadura del estero Lludi hasta la desembocadura del estero La Piedra que lo separa de la Hijuela Nº 2 (La Romaza) Lote (a) y Río Chaihuín, desde la desembocadura del estero La Piedra hasta su intersección con la Ruta T-720 de Cumleufu a Río Colún, que lo separa de Británico Cancino Ulloa.
+- "/Sentence_23": Noreste: Río Chaihuín, desde la desembocadura del estero Lludi hasta la desembocadura del estero La Piedra que lo separa de la Hijuela Nº 2 (La Romaza) Lote (a) y Río Chaihuín, desde la desembocadura del estero La Piedra hasta su intersección con la Ruta T-720 de Cumleufu a Río Colún, que lo separa de Británico Cancino Ulloa.
 
-- "Sentence_24": Sur: Ruta T-720 de la Colonia Cumleufu a Río Colún, que lo separa del Lote (b) de la misma propiedad.
+- "/Sentence_24": Sur: Ruta T-720 de la Colonia Cumleufu a Río Colún, que lo separa del Lote (b) de la misma propiedad.
 
-- "Sentence_25": Suroeste: Camino público de la Colonia Cumleufu a Río Colún, que lo separa del Lote (d) de la misma propiedad.
+- "/Sentence_25": Suroeste: Camino público de la Colonia Cumleufu a Río Colún, que lo separa del Lote (d) de la misma propiedad.
 
-- "Sentence_26": Oeste: Estero sin nombre, desde su desembocadura en el estero El Puente hasta su nacimiento en la coordenada U.T.M. V48: 629.084,90 m., 5.566.165,30 m que lo separa de la Woodland Development Corp. (TNC); Woodland Development Corp.(TNC), en línea recta desde el nacimiento del estero sin nombre en la coordenada U.T.M. V48: 629.084,90 m., 5.566.165,30 m., pasando por la coordenada U.T.M. V49: 629.121,10 m., 5.566.198,70 m. en huella existente hasta la coordenada U.T.M. V50: 629.144,40 m., 5.566.280,30 m en el estero Lludi, separada por línea imaginaria y estero Lludi desde la coordenada U.T.M. V50: 629.144,40 m., 5.566.280,30 m hasta su desembocadura en el río Chaihuín, que lo separa de la Woodland Development Corp. (TNC).
+- "-Sentence_26": Oeste: Estero sin nombre, desde su desembocadura en el estero El Puente hasta su nacimiento en la coordenada U.T.M. V48: 629.084,90 m., 5.566.165,30 m que lo separa de la Woodland Development Corp. (TNC); Woodland Development Corp.(TNC), en línea recta desde el nacimiento del estero sin nombre en la coordenada U.T.M. V48: 629.084,90 m., 5.566.165,30 m., pasando por la coordenada U.T.M. V49: 629.121,10 m., 5.566.198,70 m. en huella existente hasta la coordenada U.T.M. V50: 629.144,40 m., 5.566.280,30 m en el estero Lludi, separada por línea imaginaria y estero Lludi desde la coordenada U.T.M. V50: 629.144,40 m., 5.566.280,30 m hasta su desembocadura en el río Chaihuín, que lo separa de la Woodland Development Corp. (TNC).
 
 >>>>>>>>>>>> Evaluation ends here
 ----------------------------------
