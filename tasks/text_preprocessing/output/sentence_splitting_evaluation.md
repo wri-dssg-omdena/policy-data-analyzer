@@ -122,6 +122,7 @@
 
 - NLTK
 	- Total identified sentences: 244
+	- Total sentences for evaluation extract: 51
 	- Main errors come from confuesing docket numbers: "inspection at http://www.regulations.gov under Docket No. FWS-R4-ES-2018-0074."
 	- Score: 41/43
 	- Error sentences:
@@ -130,6 +131,34 @@
 			- Sentence_8
 			- Sentence_9
 			- Sentence_24
+
+- Spacy
+	- Total identified sentences: 277
+	- Total sentences for evaluation extract: 78
+	- Main errors also come from links AND docker numbers. Small errors from not properly identifying bullet points?
+	- Score: 39.5/43
+	- Error sentences:
+		- Half:
+			- Sentence_1
+			- Sentence_2
+			- Sentence_7
+			- Sentence_8
+			- Sentence_10
+		- Full
+			- Sentence_6
+			- Sentence_7
+			- Sentence_14
+			- Sentence_24
+
+- Manual
+	- Total identified sentences: 135
+	- Total sentences for evaluation extract: 27
+	- Main issue here is that the text is read through lines and that mixes and cuts sentences in an undesirable way, as some sentences are separated by a new line in the middle.
+	- Score: too low
+	- Error sentences:
+		- Sentence_13-Sentence_17 together
+		- Sentence_18-Sentence_22 together
+		- Sentence_22-Sentence_30 are both cut and mixed together
 
 
 *General patterns to take in account for preprocessing:*
