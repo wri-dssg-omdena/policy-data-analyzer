@@ -6,22 +6,25 @@
 # from scrapy.http import Request
 # import re
 # import request
+import scrapy
+import json
+import datetime
+from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
+from scrapy_official_newspapers.spiders import BaseSpider
 
-# class ArkansasScrapySpider(scrapy.Spider):
-#     name = 'arkansas_scrapy'
-       
+class Arkansas(BaseSpider):
+    name = 'Arkansas'
+    country = "USA"
+    country_code = "US" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
+    state_name = "Arkansas"
+    satate_code = "	US-AR" # Yoou can usually find the ISO3166 code also in the wikipedia entry.
+    source = "Arkansas State Legislature"
+    spider_builder = "Rong Fang"
+    scrapable = "True"
+    allowed_domains = ["arkleg.state.ar.us"]
+    start_date = "2021-01-01"
     
-#     country = "USA"
-#     state = "Arkansas"
-#     #need to specify the geo_code for USA_AR
-#     geo_code = "USA-000-00000-0000000"
-#     # does level 0 refer to country level, then state level is 1?
-#     level = "1"
-#     #The following criteria define the endpoint of url
-#     collector = "Rong Fang"
-#     scrapper_name = "Rong Fang"
-#     scrapable = "True"
-#     source = "https://www.arkleg.state.ar.us"
+
 #     #search_type = "/Acts/Search?start=0&bienniumAll=on&hdnSessions=on"
 #     #sessions = "%2Cb2021%2Cz2021R%2Cb2019%2Cz2019R%2Cz2020F%2Cz2020S1%2Cb2017%2Cz2017R%2Cz2017S1%2Cz2018F%2Cz2018S2%2Cb2015%2Cz2015R%2Cz2015S1%2Cz2016F%2Cz2016S2%2Cz2016S3%2Cb2013%2Cz2013R%2Cz2013S1%2Cz2014F%2Cz2014S2%2Cb2011%2Cz2011R%2Cz2012F%2Cb2009%2Cz2009R%2Cz2010F%2Cb2007%2Cz2007R%2Cz2008S1%2Cb2005%2Cz2005R%2Cz2006S1%2Cb2003%2Cz2003R%2Cz2003S1%2Cz2003S2%2Cb2001%2Cz2001R%2Cz2002S1%2Cb1999%2Cz1999R%2Cz1999S1%2Cz2000S2%2Cb1997%2Cz1997R%2Cb1995%2Cz1995R%2Cz1995S1%2Cb1993%2Cz1993R%2Cz1993S1%2Cz1994S2%2Cb1991%2Cz1991R%2Cz1991S1%2Cz1991S2%2Cb1989%2Cz1989R%2Cz1989S1%2Cz1989S2%2Cz1989S3%2Cb1987%2Cz1987R%2Cz1987S1%2Cz1987S2%2Cz1987S3%2Cz1987S4%2C&ddChamber=A&ddExclusivity=Only&ddBienniumSession=2021%2F2021R"
    
