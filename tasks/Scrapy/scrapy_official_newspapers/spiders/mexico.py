@@ -18,7 +18,7 @@ class MexicoDOF(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["sidofqa.segob.gob.mx"]
-    start_date = "2010-01-01"
+    start_date = "2018-01-01"
     #This is a category that appears in the database which yields a lot of documents that announce job posts. We exclude them from the search
     authorship_to_exclude = 'CONVOCATORIAS PARA CONCURSOS DE PLAZAS VACANTES DEL SERVICIO PROFESIONAL DE CARRERA EN LA ADMINISTRACION PUBLICA FEDERAL'
 
@@ -38,33 +38,38 @@ class MexicoDOF(BaseSpider):
             yield scrapy.Request(self.start_url, dont_filter=True, callback=self.parse)
 
     def parse(self, response):
-        for nota in json.loads(response.text)["NotasMatutinas"]:
-            if 'titulo' in nota:
-                text_to_search = nota["titulo"]
-                if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) and nota['nombreCodOrgaUno'] != self.authorship_to_exclude:
-                    #self.debug(nota)
-                    item = ScrapyOfficialNewspapersItem()
-                    item['country'] = self.country
-                    item['state'] = self.state_name
-                    item['data_source'] = self.source
-                    if 'tipoNota' in nota:
-                        item['law_class'] = nota['tipoNota']
-                    else:
-                        item['law_class'] = ''
-                    item['title'] = nota["titulo"]
-                    codigo_nota = nota['codNota']
-                    item['reference'] = codigo_nota
-                    if 'codOrgaDos' in nota:
-                        item['authorship'] = nota['nombreCodOrgaUno'] + "/" + nota['codOrgaDos']
-                    else:
-                        item['authorship'] = nota['nombreCodOrgaUno']
-                    item['summary'] = ""
-                    item['publication_date'] = nota['fecha']
-                    item['url'] = self.start_url
-                    if nota['existeDoc'] == 'S':
-                        item['doc_url'] = f'https://sidofqa.segob.gob.mx/dof/sidof/documentos/doc/{codigo_nota}'
-                        item['doc_name'] = self.HSA1_encoding(f'https://sidofqa.segob.gob.mx/dof/sidof/documentos/doc/{codigo_nota}')
-                    else:
-                        item['doc_url'] = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
-                        item['doc_name'] = self.HSA1_encoding(f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true')
-                    yield item
+        notas = []
+        notas.append(json.loads(response.text)["NotasMatutinas"])
+        notas.append(json.loads(response.text)["NotasVespertinas"])
+        notas.append(json.loads(response.text)["NotasExtraordinarias"])
+
+        # for nota in notas:
+        #     if 'titulo' in nota:
+        #         text_to_search = nota["titulo"]
+        #         if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) and nota['nombreCodOrgaUno'] != self.authorship_to_exclude:
+        #             #self.debug(nota)
+        #             item = ScrapyOfficialNewspapersItem()
+        #             item['country'] = self.country
+        #             item['state'] = self.state_name
+        #             item['data_source'] = self.source
+        #             if 'tipoNota' in nota:
+        #                 item['law_class'] = nota['tipoNota']
+        #             else:
+        #                 item['law_class'] = ''
+        #             item['title'] = nota["titulo"]
+        #             codigo_nota = nota['codNota']
+        #             item['reference'] = codigo_nota
+        #             if 'codOrgaDos' in nota:
+        #                 item['authorship'] = nota['nombreCodOrgaUno'] + "/" + nota['codOrgaDos']
+        #             else:
+        #                 item['authorship'] = nota['nombreCodOrgaUno']
+        #             item['summary'] = ""
+        #             item['publication_date'] = nota['fecha']
+        #             item['url'] = self.start_url
+        #             if nota['existeDoc'] == 'S':
+        #                 item['doc_url'] = f'https://sidofqa.segob.gob.mx/dof/sidof/documentos/doc/{codigo_nota}'
+        #                 item['doc_name'] = self.HSA1_encoding(f'https://sidofqa.segob.gob.mx/dof/sidof/documentos/doc/{codigo_nota}')
+        #             else:
+        #                 item['doc_url'] = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
+        #                 item['doc_name'] = self.HSA1_encoding(f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true')
+        #             yield item
