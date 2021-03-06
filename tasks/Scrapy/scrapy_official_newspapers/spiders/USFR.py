@@ -14,13 +14,14 @@ class USFR(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
-    start_date = "2010-01-01"
-    API_key_file = 'C:/Users/user/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
+    start_date = "2021-01-01"
+    # API_key_file = 'C:/Users/user/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
+    API_key_file = '/home/propietari/Documents/claus/us_gov_api_key.json'
 
     def __init__(self):
         # First we import the two dictionaries that we are going to use to filter the policies.
         self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_EN.json')
-        self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
+        self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_EN.json')
         # We upload the credentials to access the API
         self.API_key = self.import_json(self.API_key_file)["us gov apikey jp"]
         # This is to set the time span variables. 
@@ -36,6 +37,7 @@ class USFR(BaseSpider):
     def parse(self, response):
         for granule in json.loads(response.text)["granules"]:
             url = granule["granuleLink"] + f'?api_key={self.API_key}'
+            self.debug(url)
             yield scrapy.Request(url, dont_filter=True, callback=self.parse_other)
 
     def parse_other(self, response):

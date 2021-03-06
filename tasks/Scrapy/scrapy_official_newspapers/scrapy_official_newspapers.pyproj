@@ -43,6 +43,7 @@
     <Compile Include="settings.py" />
     <Compile Include="spiders\elperuano.py" />
     <Compile Include="spiders\elsalvador.py" />
+    <Compile Include="spiders\IndiaCodeActs.py" />
     <Compile Include="spiders\leychile.py" />
     <Compile Include="spiders\oregon.py" />
     <Compile Include="spiders\USFR.py" />

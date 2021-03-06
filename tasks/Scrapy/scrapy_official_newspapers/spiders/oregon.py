@@ -22,7 +22,7 @@ import scrapy
 from dateutil.parser import parse
 
 
-class OregonSpider(BaseSpider):
+class Oregon(BaseSpider):
     name = 'Oregon'
     country = "USA"
     country_code = "US" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
