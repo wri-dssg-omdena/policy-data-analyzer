@@ -1,7 +1,8 @@
-from scrapy_official_newspapers.spiders import BaseSpider
 import scrapy
+from scrapy_official_newspapers.spiders import BaseSpider
 from scrapy.selector import Selector
 from scrapy_official_newspapers.items import ScrapyOfficialNewspapersItem
+from bs4 import BeautifulSoup
 import datetime
 import json
 import re
@@ -18,14 +19,22 @@ class MexicoDOF(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["sidofqa.segob.gob.mx"]
-    start_date = "2021-01-01"
+    start_date = "2021-02-25"
     #This is a category that appears in the database which yields a lot of documents that announce job posts. We exclude them from the search
     authorship_to_exclude = 'CONVOCATORIAS PARA CONCURSOS DE PLAZAS VACANTES DEL SERVICIO PROFESIONAL DE CARRERA EN LA ADMINISTRACION PUBLICA FEDERAL'
+    folder_to_save = "dof/"
 
     def __init__(self):
         self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_ES.json')
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
         self.from_date, self.today = self.create_date_span(self.start_date)
+
+        folder = '/home/propietari/Documents/claus/' # TODO: change to your local path
+        file_name = 'AWS_S3_keys_JordiPlanas_Made_in_game.json' # TODO: Change to your filename
+        self.bucket = "wri-testing" # TODO: Change to the final bucket
+        bucket_region = "eu-central-1" # TODO: Change to fit to the final bucket
+        file = folder + file_name
+        self.s3 = self.open_S3_session(file, self.bucket, bucket_region)
     
     def start_requests(self):
         for day in self.create_date_list(self.from_date, self.today, 1, "days", self.country_code):
@@ -38,16 +47,15 @@ class MexicoDOF(BaseSpider):
             yield scrapy.Request(self.start_url, dont_filter=True, callback=self.parse)
 
     def parse(self, response):
-        notas = []
-        notas.append(json.loads(response.text)["NotasMatutinas"])
-        notas.append(json.loads(response.text)["NotasVespertinas"])
-        notas.append(json.loads(response.text)["NotasExtraordinarias"])
+        # notas = []
+        # notas.append(json.loads(response.text)["NotasMatutinas"])
+        # notas.append(json.loads(response.text)["NotasVespertinas"])
+        # notas.append(json.loads(response.text)["NotasExtraordinarias"])
 
         for nota in json.loads(response.text)["NotasMatutinas"]:
             if 'titulo' in nota:
                 text_to_search = nota["titulo"]
                 if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) and nota['nombreCodOrgaUno'] != self.authorship_to_exclude:
-                    self.debug("True")
                     item = ScrapyOfficialNewspapersItem()
                     item['country'] = self.country
                     item['state'] = self.state_name
@@ -66,12 +74,26 @@ class MexicoDOF(BaseSpider):
                     item['summary'] = ""
                     item['publication_date'] = nota['fecha']
                     item['url'] = self.start_url
-                    # if nota['existeDoc'] == 'S':
-                    #     item['doc_url'] = f'https://sidofqa.segob.gob.mx/dof/sidof/documentos/doc/{codigo_nota}'
-                    #     item['doc_name'] = self.HSA1_encoding(f'https://sidofqa.segob.gob.mx/dof/sidof/documentos/doc/{codigo_nota}')
-                    # else:
-                    item['pdf_url'] = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
-                    item['doc_name'] = self.HSA1_encoding(f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true')
+                    doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
+                    self.doc_name = self.HSA1_encoding(doc_url) + ".txt"
+                    item['doc_name'] = self.doc_name
+                    self.debug(self.doc_name)
                     yield item
+                    yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other)
             else:
                 pass
+
+    def parse_other(self, response):
+        # self.debug("\n**** in the nota detalle ****\n")
+        soup = BeautifulSoup(response.css('div#DivDetalleNota').get())
+        paragraphs = soup.find_all("p")
+        tables = soup.find_all("td")
+        text = ""
+        for line in paragraphs[1:]:
+            text = text + line.text + "\n"
+        for cell in tables:
+            text = text + cell.text + "\n"
+        file = self.folder_to_save + self.doc_name
+        self.debug("\n       ****************       \n")
+        self.debug(file)
+        self.save_to_s3(self.s3, self.bucket, file, text.replace("\t", ""))

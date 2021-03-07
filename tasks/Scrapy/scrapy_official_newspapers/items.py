@@ -20,7 +20,7 @@ class ScrapyOfficialNewspapersItem(scrapy.Item):
 	summary = scrapy.Field() # If available a summary of the law.
 	publication_date = scrapy.Field() # The date of publication should always be accessible because we know what day the official newspaper was published
 	url = scrapy.Field() # Here we keep the url of the page where we found all metainformation
-	doc_url = scrapy.Field() # Here we keep the url of the page where we can retrieve the actual text of the law.
-	pdf_url = scrapy.Field() # Just in case 
+	file_urls = scrapy.Field() # Here we keep the url of the page where we can retrieve the actual text of the law.
+	# pdf_url = scrapy.Field() # Just in case 
 	doc_name = scrapy.Field() # This is the HSA1 token of the doc_url
 	pass

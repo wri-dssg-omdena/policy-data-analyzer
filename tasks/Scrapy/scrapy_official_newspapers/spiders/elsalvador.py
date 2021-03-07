@@ -19,13 +19,14 @@ class ElSalvador(BaseSpider):
 	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola"]#["forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
 	info_url = ""
 	counter = 0
-	start_date = "2020-01-01"
+	start_date = "2020-12-01"
 	serch_results = 0
 
 	url_dict = {}
 
 	def __init__(self):
-		self.keyword_dict, self.negative_keyword_dict = self.import_filtering_keywords()
+		self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_ES.json')
+		self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
 		self.from_date, self.today = self.create_date_span(self.start_date)
 
 	def start_requests(self):
@@ -64,7 +65,7 @@ class ElSalvador(BaseSpider):
 		item, good = self.parse_table(item, table)
 		
 		doc_url = response.xpath('//*[@id="menu2"]/comment()[2]').get().split("\"")[1]
-		item['doc_url'] = doc_url
+		item['file_urls'] = [doc_url]
 		item['doc_name'] = self.HSA1_encoding(doc_url)
 		if good:
 			yield item
@@ -114,7 +115,7 @@ class ElSalvador(BaseSpider):
 			item_object['reference'] = tipo_documento + "-" + municipio + num_documento
 		else:
 			item_object['reference'] = tipo_documento + num_documento
-		if self.search_keywords(texttext_to_search, self.keyword_dict, self.negative_keyword_dict) and valid:
+		if self.search_keywords(text_to_search, self.keyword_dict, self.negative_keyword_dict) and valid:
 			return item_object, True
 		else:
 			return item_object, False

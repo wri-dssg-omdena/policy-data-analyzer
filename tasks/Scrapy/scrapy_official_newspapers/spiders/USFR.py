@@ -14,7 +14,7 @@ class USFR(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
-    start_date = "2021-01-01"
+    start_date = "2021-03-03"
     # API_key_file = 'C:/Users/user/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
     API_key_file = '/home/propietari/Documents/claus/us_gov_api_key.json'
 
@@ -61,8 +61,10 @@ class USFR(BaseSpider):
             item['summary'] = summary
             item['publication_date'] = summary_full['dateIssued']
             item['url'] = summary_full['download']['txtLink'].replace('htm', 'summary?api_key=')
-            item['doc_url'] = summary_full['download']['txtLink'] + '?api_key='
-            item['doc_name'] = self.HSA1_encoding(summary_full['download']['txtLink'] + f'?api_key={self.API_key}')
+            doc_url = summary_full['download']['txtLink'] + f'?api_key={self.API_key}'
+            # self.debug(doc_url)
+            item['file_urls'] = [doc_url]
+            item['doc_name'] = self.HSA1_encoding(summary_full['download']['txtLink'] + f'?api_key={self.API_key}') + ".txt"
 
             yield item
 

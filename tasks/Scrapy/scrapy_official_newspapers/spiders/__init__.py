@@ -2,8 +2,7 @@
 #
 # Please refer to the documentation for information on how to create and manage
 # your spiders.
-from scrapy.spiders import Spider
-import re
+import boto3
 import json
 from dateutil.relativedelta import relativedelta
 import datetime
@@ -11,6 +10,8 @@ from icecream import ic
 import hashlib
 import holidays
 import logging
+import re
+from scrapy.spiders import Spider
 
 
 class BaseSpider(Spider):
@@ -113,6 +114,22 @@ class BaseSpider(Spider):
 		   next_day += ONE_DAY
 		return next_day
 
+	def open_S3_session(self, credentials_file, bucket, bucket_region):
+		with open(credentials_file, 'r') as dict:
+			credentials = json.load(dict)
+										
+		KEY = list(credentials)[0]
+		SECRET = list(credentials.values())[0]
+		s3BucketName = bucket
+		region = bucket_region
+		s3 = boto3.resource(
+			service_name = 's3',
+			region_name = region,
+			aws_access_key_id = KEY,
+			aws_secret_access_key = SECRET
+		)
+		return s3
+
 	def parse_date(self, raw_date):
 		date = re.search(r'(\d+/\d+/\d+)', raw_date)
 		date = date.group(0)
@@ -122,6 +139,9 @@ class BaseSpider(Spider):
 		"""Remove html tags from a string"""
 		clean = re.compile('<.*?>')
 		return re.sub(clean, '', text)
+
+	def save_to_s3(self, s3, bucket, file_key, text):
+		s3.Object(bucket, file_key).put(Body = text)
 
 	def search_keywords(self,string, keyword_dict, negative_keyword_dict):
 		string = string.lower()
