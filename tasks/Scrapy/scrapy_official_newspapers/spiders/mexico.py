@@ -22,14 +22,15 @@ class MexicoDOF(BaseSpider):
     start_date = "2021-02-25"
     #This is a category that appears in the database which yields a lot of documents that announce job posts. We exclude them from the search
     authorship_to_exclude = 'CONVOCATORIAS PARA CONCURSOS DE PLAZAS VACANTES DEL SERVICIO PROFESIONAL DE CARRERA EN LA ADMINISTRACION PUBLICA FEDERAL'
-    folder_to_save = "dof/"
+    folder_to_save = "wri.-testing/dof/"
 
     def __init__(self):
         self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_ES.json')
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
         self.from_date, self.today = self.create_date_span(self.start_date)
 
-        folder = '/home/propietari/Documents/claus/' # TODO: change to your local path
+        #folder = '/home/propietari/Documents/claus/' # TODO: change to your local path
+        folder = 'C:/Users/jordi/Documents/claus/' # TODO: change to your local path
         file_name = 'AWS_S3_keys_JordiPlanas_Made_in_game.json' # TODO: Change to your filename
         self.bucket = "wri-testing" # TODO: Change to the final bucket
         bucket_region = "eu-central-1" # TODO: Change to fit to the final bucket
@@ -75,17 +76,18 @@ class MexicoDOF(BaseSpider):
                     item['publication_date'] = nota['fecha']
                     item['url'] = self.start_url
                     doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
-                    self.doc_name = self.HSA1_encoding(doc_url) + ".txt"
-                    item['doc_name'] = self.doc_name
-                    self.debug(self.doc_name)
+                    doc_name = self.HSA1_encoding(doc_url) + ".txt"
+                    item['doc_name'] = doc_name
+                    #self.debug("\n       #################       \n")
+                    #self.debug(doc_name)
                     yield item
-                    yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other)
+                    yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other, cb_kwargs=dict(document = doc_name))
             else:
                 pass
 
-    def parse_other(self, response):
+    def parse_other(self, response, document):
         # self.debug("\n**** in the nota detalle ****\n")
-        soup = BeautifulSoup(response.css('div#DivDetalleNota').get())
+        soup = BeautifulSoup(response.css('div#DivDetalleNota').get(), features = "lxml")
         paragraphs = soup.find_all("p")
         tables = soup.find_all("td")
         text = ""
@@ -93,7 +95,7 @@ class MexicoDOF(BaseSpider):
             text = text + line.text + "\n"
         for cell in tables:
             text = text + cell.text + "\n"
-        file = self.folder_to_save + self.doc_name
-        self.debug("\n       ****************       \n")
-        self.debug(file)
+        file = self.folder_to_save + document
+        #self.debug("\n       ****************       \n")
+        #self.debug(file)
         self.save_to_s3(self.s3, self.bucket, file, text.replace("\t", ""))
