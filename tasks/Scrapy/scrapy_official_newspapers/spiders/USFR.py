@@ -14,10 +14,12 @@ class USFR(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
-    start_date = "2021-03-03"
+    start_date = "2015-01-01"
+    stop_date = "2016-01-01"
     # API_key_file = 'C:/Users/user/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
-    API_key_file = 'C:/Users/jordi/Documents/claus/us_gov_api_key.json'
-    #API_key_file = '/home/propietari/Documents/claus/us_gov_api_key.json'
+    # API_key_file = 'C:/Users/jordi/Documents/claus/us_gov_api_key.json'
+    # API_key_file = '/home/propietari/Documents/claus/us_gov_api_key.json'
+    API_key_file = '/home/propietari/Documents/claus/us_gov_api_key_jpc.json'
 
     def __init__(self):
         # First we import the two dictionaries that we are going to use to filter the policies.
@@ -27,10 +29,15 @@ class USFR(BaseSpider):
         self.API_key = self.import_json(self.API_key_file)["us gov apikey jp"]
         # This is to set the time span variables. 
         self.from_date, self.today = self.create_date_span(self.start_date)
+        self.to_date = datetime.datetime.strptime(stop_date, '%Y-%m-%d').date()
+        # with open('people.csv', 'r') as file:
+        #     reader = csv.reader(file)
+        #     for row in reader:
+        #         print(row[6])
     
     def start_requests(self):
-        for day in self.create_date_list(self.from_date, self.today, 1, "days", self.country_code):
-            #print(day)
+        for day in self.create_date_list(self.from_date, self.to_date, 1, "days", self.country_code):
+            print(day)
             start_url = f'https://api.govinfo.gov/packages/FR-{day}/granules?offset=0&pageSize=300&api_key={self.API_key}'
             #print(start_urls)
             yield scrapy.Request(start_url, dont_filter=True, callback=self.parse)
@@ -38,7 +45,7 @@ class USFR(BaseSpider):
     def parse(self, response):
         for granule in json.loads(response.text)["granules"]:
             url = granule["granuleLink"] + f'?api_key={self.API_key}'
-            self.debug(url)
+            # self.debug(url)
             yield scrapy.Request(url, dont_filter=True, callback=self.parse_other)
 
     def parse_other(self, response):

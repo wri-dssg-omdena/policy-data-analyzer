@@ -12,11 +12,13 @@ import holidays
 import logging
 import re
 from scrapy.spiders import Spider
+from scrapy.utils.log import configure_logging
 
 
 class BaseSpider(Spider):
 	logging.getLogger('scrapy.core.scraper').addFilter(lambda x: not x.getMessage().startswith('Scraped from')) #To avoid printing item in the terminal prompt
-
+	configure_logging(install_root_handler=True)
+	logging.disable(10)  # DEBUG = 10, INFO = 20, WARNING = 30, ERROR = 40; CRITICAL = 50
 	def add_leading_zero_two_digits(self, number):
 		if number < 10:
 			num = "0" + str(number)
@@ -106,6 +108,15 @@ class BaseSpider(Spider):
 			json_dict = json.load(dict)
 		return json_dict
 
+	def negative_keyword_filter(self,string, negative_keyword_dict):
+		string = string.lower()
+		resp = True
+		for negative_word in negative_keyword_dict:
+			if self.findWholeWord(negative_word.lower())(string) != None:
+				resp = False
+				break
+		return(resp)
+
 	def next_business_day(self, date, time_span, time_unit, country_code):
 		ONE_DAY = datetime.timedelta(days=1)
 		HOLIDAYS = holidays.CountryHoliday(country_code)
@@ -139,6 +150,10 @@ class BaseSpider(Spider):
 		"""Remove html tags from a string"""
 		clean = re.compile('<.*?>')
 		return re.sub(clean, '', text)
+
+	def save_dict(file, dictionary):
+		with open(file, 'w') as fp:
+			json.dump(dictionary, fp)
 
 	def save_to_s3(self, s3, bucket, file_key, text):
 		s3.Object(bucket, file_key).put(Body = text)
