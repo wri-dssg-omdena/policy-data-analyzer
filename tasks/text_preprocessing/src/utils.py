@@ -19,7 +19,7 @@ def parse_emails(text):
     """
     Remove the periods from emails in text, except the last one
     """
-    emails = [email if email[-1] != "." else email[:-1] for email in re.findall(r"\S*@\S*\s?", txt)]
+    emails = [email if email[-1] != "." else email[:-1] for email in re.findall(r"\S*@\S*\s?", text)]
 
     for email in emails:
         new_email = email.replace(".", "")
