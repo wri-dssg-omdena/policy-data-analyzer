@@ -78,11 +78,11 @@ def nltk_sents(txt, tokenizer, extra_abbreviations=None):
     return sents
 
 
-def format_sents_for_output(sents):
-    formatted_sents = []
+def format_sents_for_output(sents, doc_id):
+    formatted_sents = {}
 
     for i, sent in enumerate(sents):
-        formatted_sents.append({f"sentence_{i}": sent, "label": []})
+        formatted_sents.update({f"{doc_id}_sent_{i}": {"text": sent, "label": []}})
 
     return formatted_sents
 
@@ -114,11 +114,11 @@ def output_sents(sents, f_name, f_uuid, country, output_dir="../output"):
     sents_json[f_uuid] = {"metadata":
                               {"n_sentences": len(sents),
                                "filename": f_name,
-                               "format": fformat,
+                               "fileformat": fformat,
                                "country": country},
-                          "sentences": format_sents_for_output(sents)}
+                          "sentences": format_sents_for_output(sents, f_uuid)}
 
-    with open(f"{output_dir}/{country}_{f_uuid}_sents.json", "w") as fout:
+    with open(f"{output_dir}/{f_uuid}_sents.json", "w") as fout:
         json.dump(sents_json, fout, indent=4)
 
 
