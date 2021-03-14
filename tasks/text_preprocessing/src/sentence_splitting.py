@@ -98,19 +98,20 @@ def format_sents_for_output(sents, doc_id):
     return formatted_sents
 
 
-def filenames_for_country(country, s3):
+def doc_ids_per_country(country, s3):
     """
-    Get a list of text filenames for a given country from the CSV database in the S3 bucket
+    Get a list of text document file IDs for a given country from the CSV database in the S3 bucket.
+    In the CSV, the file id is the file name without the file extension ("23sd45fg.txt" without the ".txt")
     """
     metadata_fname = f"metadata/{country}_metadata.csv"
     obj = s3.Object(bucket_name=BUCKET_NAME, key=metadata_fname)
 
-    filenames = []
+    doc_ids = []
     for row in csv.reader(codecs.getreader("utf-8")(obj.get()['Body'])):
         # Add original file ID without the file format
-        filenames.append(row[3][:-4])
+        doc_ids.append(row[3][:-4])
 
-    return filenames
+    return doc_ids
 
 
 def get_abbreviations(language, s3):
