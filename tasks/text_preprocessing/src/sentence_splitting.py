@@ -1,21 +1,33 @@
 """ Sample usage:
-    -  India docs, 5 minimum word sentence, with abbreviations
-        - python sentence_splitting.py -i ../input -o ../output -l eng -c India -af India_abbrevs.txt -fdb fname_id_db.json -mnw 5
-    -  USA docs, 3 minimum word sentence, with abbreviations
-        - python sentence_splitting.py -i ../input -o ../output -l eng -c USA -af USA_abbrevs.txt -fdb fname_id_db.json -mnw 3
+    -  Format
+        $ python sentence_splitting.py -c [path_to_aws_credentials_json] -l [english | spanish] -n [any integer]
+    -  English documents, 5 words minimum for a sentence to be stored
+        $ python sentence_splitting.py -c /Users/some_user/credentials.json -l english -n 5
+
+    Expected format for JSON credentials file:
+    {
+        "aws": {
+            "id": "AWS ID",
+            "secret": "AWS SECRET"
+        }
+    }
 """
-import nltk
-import json
-import os
-import uuid
-import argparse
 import sys
-from tqdm import tqdm
+
 sys.path.append("../../../")
 from tasks.text_preprocessing.src.utils import *
 
-en_tokenizer = nltk.data.load("tokenizers/punkt/english.pickle")
-es_tokenizer = nltk.data.load("tokenizers/punkt/spanish.pickle")
+import nltk
+import uuid
+import json
+import boto3
+import csv
+import codecs
+import argparse
+
+EN_TOKENIZER = nltk.data.load("tokenizers/punkt/english.pickle")
+ES_TOKENIZER = nltk.data.load("tokenizers/punkt/spanish.pickle")
+BUCKET_NAME = "wri-nlp-policy"
 
 
 def english_sents_preprocess(txt, remove_new_lines=False):
@@ -87,109 +99,146 @@ def format_sents_for_output(sents, doc_id):
     return formatted_sents
 
 
-def generate_uuid(f_name, fname_ids_db_path):
+def filenames_for_country(country, s3):
     """
-    Generate uuid for file name and store in existing json if it doesn't exist already
+    Get a list of text filenames for a given country from the CSV database in the S3 bucket
     """
+    metadata_fname = f"metadata/{country}_metadata.csv"
+    obj = s3.Object(bucket_name=BUCKET_NAME, key=metadata_fname)
 
-    with open(fname_ids_db_path, "r") as fin:
-        fjson = json.load(fin)
+    filenames = []
+    for row in csv.reader(codecs.getreader("utf-8")(obj.get()['Body'])):
+        # Add original file ID without the file format
+        filenames.append(row[3][:-4])
 
-        if f_name not in fjson:
-            f_uuid = str(uuid.uuid4())
-            fjson[f_name] = f_uuid
-        else:
-            f_uuid = fjson[f_name]
-
-    with open(fname_ids_db_path, "w") as fout:
-        json.dump(fjson, fout, indent=4)
-
-    return f_uuid
+    return filenames
 
 
-def output_sents(sents, f_name, f_uuid, country, output_dir="../output"):
+def get_abbreviations(language, s3):
+    """
+    Gets the set of abbreviations for a given language, from the text file in the S3 bucket
+    """
+    abbreviations_fname = f"abbreviations/{language}_abbreviations.txt"
+    obj = s3.Object(bucket_name=BUCKET_NAME, key=abbreviations_fname)
+    abbreviations_str = obj.get()['Body'].read().decode('utf-8')
+    return set(abbreviations_str.split("\n"))
 
+
+def aws_credentials_from_file(f_name):
+    """
+    Returns the id and secret for an AWS account. Expected format of input file:
+    {
+        "aws": {
+            "id": "AWS ID",
+            "secret": "AWS SECRET"
+        }
+    }
+    """
+    with open(f_name, "r") as f:
+        creds = json.load(f)
+
+    return creds["aws"]["id"], creds["aws"]["secret"]
+
+
+def move_s3_object(obj_name, obj_old_folder, obj_new_folder, s3):
+    """
+    Moves an object from a given S3 folder to another by copying it to the new folder it and then deleting it from the old one
+    """
+    try:
+        s3.Object(BUCKET_NAME, f"{obj_old_folder}/{obj_name}").copy_from(
+            CopySource=f"{BUCKET_NAME}/{obj_new_folder}/{obj_name}")
+        _ = s3.Object(BUCKET_NAME, f"{obj_old_folder}/{obj_name}").delete()
+    except Exception as e:
+        print(f"Error while moving {obj_name} from {obj_old_folder} to {obj_new_folder}.")
+        print(e)
+
+
+def output_sents(sents, f_name, f_uuid, language, s3):
+    """
+    Store a JSON file containing the metadata and sentences for a given text file in the S3 bucket
+    """
     sents_json = {}
     fformat = f_name.split(".")[-1]
     sents_json[f_uuid] = {"metadata":
                               {"n_sentences": len(sents),
-                               "filename": f_name,
-                               "fileformat": fformat,
-                               "country": country},
+                               "file_name": f_name,
+                               "file_format": fformat},
                           "sentences": format_sents_for_output(sents, f_uuid)}
 
-    with open(f"{output_dir}/{f_uuid}_sents.json", "w") as fout:
-        json.dump(sents_json, fout, indent=4)
+    s3.Object(BUCKET_NAME, f"{language}_documents/sentences/{f_uuid}_sents.json").put(
+        Body=(json.dumps(sents_json, indent=4)))
 
 
-def get_abbrevs(input_path, abbrevs_file):
-    if abbrevs_file:
-        with open(f"{input_path}/{abbrevs_file}", "r") as f:
-            abbrevs = set([abbrev.replace("\n", "") for abbrev in f.readlines()])
-            return abbrevs
-    return None
+def main(credentials_fname, language, min_num_words):
+    """
+    1. Set up S3 bucket object using credentials from given file
+    2. Iterate through new text files in given language folder (i.e english_documents/text_files/new/)
+    3. For each file, split the text into sentences and store the JSON sentences file to the sentences folder in the bucket (i.e english_documents/sentences
+    4. Move the text file from the new to the processed folder (i.e english_documents/text_files/processed/)
+    """
+    # Set up AWS S3 bucket info
+    aws_id, aws_secret = aws_credentials_from_file(credentials_fname)
+    region = 'us-east-1'
 
+    s3 = boto3.resource(
+        service_name='s3',
+        region_name=region,
+        aws_access_key_id=aws_id,
+        aws_secret_access_key=aws_secret
+    )
 
-def get_files(input_path, country):
-    blacklist = {".DS_Store", f"{country}_abbrevs.txt"}
-    return [file for file in os.listdir(input_path) if file not in blacklist]
+    # Set up abbreviations and sentence tokenizer
+    abbrevs = get_abbreviations(language, s3)
+    tokenizer = ES_TOKENIZER if language == "spanish" else EN_TOKENIZER
 
+    # Get original text files, split them into sentences, and store them to the S3 bucket
+    i = 0
+    error_files = []
+    new_text_files_folder = f"{language}_documents/text_files/new"
+    processed_text_files_folder = f"{language}_documents/text_files/processed"
+    for obj in s3.Bucket(BUCKET_NAME).objects.all().filter(Prefix=new_text_files_folder):
+        # Don't get the directory itself
+        if not obj.key.endswith("/"):
+            print("Processing", obj.key)
+            file_id = obj.key.replace(new_text_files_folder, "").replace(".txt", "")
+            text = obj.get()['Body'].read().decode('utf-8')
+            try:
+                preprocessed = english_sents_preprocess(text)
+                sents = nltk_sents(preprocessed, tokenizer, abbrevs)
+                post_processed_sents = english_sents_postprocess(sents, min_num_words)
+                output_sents(post_processed_sents, obj.key, file_id, language, s3)
+                move_s3_object(file_id + ".txt", new_text_files_folder, processed_text_files_folder, s3)
+            except Exception as e:
+                error_files.append({file_id: e})
 
-def main(base_input_dir, base_output_dir, language, country, abbrevs_file, fname_ids_db_name, min_num_words):
-    input_path = f"{base_input_dir}/{country}"
-    output_path = f"{base_output_dir}/{country}"
+        i += 1
+        if i == 2:
+            break
+        if i % 100 == 0:
+            print("----------------------------------------------")
+            print(f"Processing {i} documents...")
+            print(f"Number of errors so far: {len(error_files)}")
+            print("----------------------------------------------")
 
-    # NOTE: Can uncomment for manual experiments without depending on command line
-    # usa_files = ["Federal Register, Volume 85 Issue 190 (Wednesday, September 30, 2020).htm",
-    #              "Federal Register, Volume 86 Issue 28 (Friday, February 12, 2021).htm",
-    #              "Federal Register, Volume 86 Issue 29 (Tuesday, February 16, 2021).htm"]
-    # india_files = ["India1.txt", "India2.txt", "India_image1.txt", "India_image2.txt"]
+    with open("../output/sentence_splitting_errors.json", "w") as f:
+        json.dump(error_files, f)
 
-    # usa_abbrevs = {"no", "sec", "cong", "dist", "doc"}
-    # india_abbrevs = {"sub", "subs", "ins", "govt", "dy", "dept", "deptt", "ptg"}
-
-    # This is where we store the original file names mapped to their unique ids
-    # fname_ids_db_name = "fname_id_db.json"
-
-    # Choose a file for testing purposes and the minimum number of words to include in the sentences
-    # f_name = india_files[3]
-    # min_num_words = 5
-
-    abbrevs = get_abbrevs(input_path, abbrevs_file)
-    files = get_files(input_path, country)
-    tokenizer = es_tokenizer if language == "spa" else en_tokenizer
-
-    for f_name in tqdm(files):
-        with open(f"{input_path}/{f_name}", "r") as txt_file:
-            txt = txt_file.read()
-            preprocessed = english_sents_preprocess(txt)
-            sents = nltk_sents(preprocessed, tokenizer, abbrevs)
-            post_processed_sents = english_sents_postprocess(sents, min_num_words)
-            f_uuid = generate_uuid(f_name, fname_ids_db_path=f"{base_output_dir}/{fname_ids_db_name}")
-            output_sents(post_processed_sents, f_name, f_uuid, country, output_path)
+    print("=============================================================")
+    print(f"Total documents processed: {i}")
+    print(f"Total number of documents with errors: {len(error_files)}. Stored file in ../output/sentence_splitting_errors.json")
+    print("=============================================================")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-i', '--input_path', default="../input",
-                        help="Base path for input folders")
-    parser.add_argument('-o', '--output_path', default="../output",
-                        help="Base path for output folders")
-    parser.add_argument('-l', '--language', default="eng",
-                        help="Language for sentence preprocessing/splitting")
-    parser.add_argument('-c', '--country', default="USA",
-                        help="Country for sentence preprocessing/splitting and name of output sub-folder")
-    parser.add_argument('-af', '--abbrevs_file', default="USA_abbrevs.txt",
-                        help="Name of the file that contains abbreviations. Should be located in input sub-folder for country")
-    parser.add_argument('-fdb', '--fname_ids_db_name', default="fname_id_db.json",
-                        help="Name of the JSON file that contains the mappings between file names and their unique ids. Should be located in output base folder")
-    parser.add_argument('-mnw', '--min_num_words', default=5,
+    parser.add_argument('-c', '--creds_file', required=True,
+                        help="AWS credentials JSON file")
+    parser.add_argument('-l', '--language', required=True,
+                        help="Language for sentence preprocessing/splitting. Current options are: english, spanish")
+    parser.add_argument('-n', '--min_num_words', default=5,
                         help="Minimum number of words that a sentence needs to have to be stored")
 
     args = parser.parse_args()
 
-    main(args.input_path, args.output_path, args.language, args.country, args.abbrevs_file, args.fname_ids_db_name, int(args.min_num_words))
-
-
-
+    main(args.creds_file, args.language, int(args.min_num_words))
