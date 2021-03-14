@@ -18,7 +18,6 @@ sys.path.append("../../../")
 from tasks.text_preprocessing.src.utils import *
 
 import nltk
-import uuid
 import json
 import boto3
 import csv
@@ -127,7 +126,6 @@ def get_abbreviations(language, s3):
 def aws_credentials_from_file(f_name):
     """
     Returns the id and secret for an AWS account. Expected format of input file:
-    {
         "aws": {
             "id": "AWS ID",
             "secret": "AWS SECRET"
