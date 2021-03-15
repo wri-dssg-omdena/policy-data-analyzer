@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
 def load_file(file_name):
     with open(file_name, "r") as f:
         return json.load(f)
