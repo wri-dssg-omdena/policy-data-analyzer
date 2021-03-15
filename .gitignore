@@ -107,3 +107,6 @@ tasks/Scrapy/scrapy_official_newspapers/.vs/scrapy_official_newspapers/v16/.suo
 *.pdf
 tasks/Scrapy/scrapy_official_newspapers/.vs/slnx.sqlite
 tasks/Scrapy/scrapy_official_newspapers/.vs/VSWorkspaceState.json
+tasks/Scrapy/scrapy_official_newspapers/output/India_metadata.csv
+tasks/Scrapy/scrapy_official_newspapers/output/USFR_metadata.csv
+tasks/Scrapy/scrapy_official_newspapers/output/India_20210314.csv
