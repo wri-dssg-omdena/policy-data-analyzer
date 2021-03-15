@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
 def load_file(file_name):
     with open(file_name, "r") as f:
         return json.load(f)
@@ -12,8 +13,7 @@ def labeled_sentences_from_dataset(dataset):
     sentence_tags_dict = {}
 
     for document in dataset.values():
-        for section in document.values():
-            sentence_tags_dict.update(section['sentences'])
+        sentence_tags_dict.update(document['sentences'])
 
     return sentence_tags_dict
 
