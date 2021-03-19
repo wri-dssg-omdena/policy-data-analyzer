@@ -1,5 +1,6 @@
 import boto3
 import json
+import time
 
 # Whenever you have your key and your secret credentials in a json file of the form {<"key"> : <"secret">} you can use it as decorator for the connection function
 def load_key_secret(path, filename, credentials):
@@ -35,15 +36,25 @@ def connect_to_S3_resource(path, filename, region):
             return get_S3_resource(region)
         return inner
     return decorator
-© 2021 GitHub, Inc.
-Terms
-Privacy
-Security
-Status
-Docs
-Contact GitHub
-Pricing
-API
-Training
-Blog
-About
+
+# This is a timer to be applied to any function
+def timer(func):
+    def inner():
+        start_time = time.time()
+        func()
+        total_time = (time.time() - start_time)
+        if total_time < 1:
+            total_time = total_time * 1000
+            units = "milliseconds"
+        elif total_time <= 120:
+            units = "seconds"
+        elif total_time <= 5400:
+            total_time = total_time / 60
+            units = "minutes"
+        elif total_time <= 86400:
+            total_time = total_time / 3600
+            units = "hours"
+        print(f"--- the process took {round(total_time, 3)} {units} ---")
+    return inner
+
+
