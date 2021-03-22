@@ -1,5 +1,5 @@
 from tasks.data_loading.src.s3_client_utils import *
-from pandas import DataFrame
+from pandas import DataFrame, read_excel
 from csv import reader
 from codecs import getreader
 
@@ -9,10 +9,10 @@ class S3Client:
         self.aws_id, self.aws_secret = aws_credentials_from_file(creds_filepath, creds_filename)
         self.s3 = get_s3(self.aws_id, self.aws_secret)
         self.bucket_name = bucket_name
-        self.language = language
         self.metadata_folder = f"metadata/"
 
         # Language dependent DB names
+        self.language = None
         self.base_folder = None
         self.raw_files_folder = None
         self.new_text_files_folder = None
@@ -28,14 +28,18 @@ class S3Client:
             self._update_folder_names(language)
 
     def _update_folder_names(self, language):
+        """
+        Update names of the folders according to the document language we are working with
+        For instance, all english document related folders will be located in /english_documents/
+        """
         if self.language != language:
             # Folders
             self.base_folder = f"{language}_documents"
             self.raw_files_folder = f"{self.base_folder}/raw_pdf"
             self.new_text_files_folder = f"{self.base_folder}/text_files/new"
             self.processed_text_files_folder = f"{self.base_folder}/text_files/processed"
-            self.new_sentences_folder = f"{self.base_folder}/sentences/new"
-            self.processed_sentences_folder = f"{self.base_folder}/sentences/processed"
+            self.new_sentences_folder = f"{self.base_folder}/sentences"  #/new
+            # self.processed_sentences_folder = f"{self.base_folder}/sentences/processed"
             self.assisted_labeling_folder = f"{self.base_folder}/assisted_labeling"
 
             # Files
@@ -82,7 +86,9 @@ class S3Client:
 
     def load_sentences(self, language, init_doc, end_doc):
         """
-        TODO: Write docs
+        Yield a sentence id and a sentence dictionary in the format
+            {"text": "Sample sentence text", "labels": [0]}
+        from the JSON files in the sentence folder of the S3 bucket
         """
         self._update_folder_names(language)
         for i, obj in enumerate(self.s3.Bucket(self.bucket_name).objects.all().filter(Prefix=self.new_sentences_folder)):
@@ -93,7 +99,8 @@ class S3Client:
 
     def store_assisted_labeling_csv(self, results_dictionary, queries_dictionary, init_doc, results_limit):
         """
-        TODO: Write docs
+        Store a CSV file containing the sentence id, similarity score and sentence text as columns.
+        In addition, there's an empty column for the labeling of each sentence
         """
         path = f"s3://{self.bucket_name}/{self.assisted_labeling_folder}"
         col_headers = ["sentence_id", "similarity_score", "text"]
@@ -126,3 +133,11 @@ class S3Client:
         obj = self.s3.Object(bucket_name=self.bucket_name, key=self.abbrevs_file)
         abbreviations_str = obj.get()['Body'].read().decode('utf-8')
         return set(abbreviations_str.split("\n"))
+
+    def get_queries(self, language):
+        """
+        Return a pandas dataframe with the queries stored as an excel file for assisted labeling.
+        """
+        self._update_folder_names(language)
+        return read_excel(f"s3://{self.bucket_name}/assisted_labeling_queries/english_queries.xlsx",
+                      storage_options={"key": self.aws_id, "secret": self.aws_secret})
