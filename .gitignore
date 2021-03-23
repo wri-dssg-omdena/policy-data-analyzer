@@ -79,6 +79,9 @@ target/
 # VS Code
 .vscode/
 
+# Visual Studio
+.vs
+
 # Spyder
 .spyproject/
 
@@ -104,12 +107,12 @@ tasks/data_augmentation/models/uncased_L-12_H-768_A-12/bert_model.ckpt.data-0000
 tasks/data_augmentation/output/test201224.json
 tasks/preprocess_text/notebooks/netscore.png
 tasks/Scrapy/scrapy_official_newspapers/.vs/scrapy_official_newspapers/v16/.suo
+tasks/Scrapy/scrapy_official_newspapers/scrapy_official_newspapers.pyproj
+tasks/Scrapy/scrapy_official_newspapers/scrapy_official_newspapers.pyproj
 *.pdf
+*.csv
 tasks/Scrapy/scrapy_official_newspapers/.vs/slnx.sqlite
 tasks/Scrapy/scrapy_official_newspapers/.vs/VSWorkspaceState.json
-tasks/Scrapy/scrapy_official_newspapers/output/India_metadata.csv
-tasks/Scrapy/scrapy_official_newspapers/output/USFR_metadata.csv
-tasks/Scrapy/scrapy_official_newspapers/output/India_20210314.csv
 .vs/PythonSettings.json
 .vs/slnx.sqlite
 .vs/policy-data-analyzer/v16/.suo
