@@ -1,0 +1,6 @@
+The file english_documents/raw_pdf/0bc17448527c7798e84937eb897bdaa82c3c4a3c.pdf could not be converted
+The file english_documents/raw_pdf/24476987c17ff76d2615d37e7442ad5ec65b8eab.pdf could not be converted
+The file english_documents/raw_pdf/fa5597b9ce2b1710862f49e542a77abb29b4a0b1.pdf could not be converted
+The file english_documents/raw_pdf/36e264a6e22c28073eab34ef3feb25b773421a09.pdf could not be converted
+The file english_documents/raw_pdf/67c1063bfeae1f8d537925db52a825559bf9f302.pdf could not be converted
+The file english_documents/raw_pdf/ae28573ff5753854456a16e5c0ddf8164710f443.pdf could not be converted
