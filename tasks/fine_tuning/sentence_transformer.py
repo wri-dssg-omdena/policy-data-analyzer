@@ -10,7 +10,7 @@ from typing import Iterable, Dict, Tuple, Type, Callable
 import transformers
 import matplotlib.pyplot as plt
 from sentence_transformers import SentencesDataset, InputExample, losses
-form sentence_transformers import SentenceTransformer as ST
+from sentence_transformers import SentenceTransformer as ST
 from torch import nn, Tensor
 from torch.utils.data import DataLoader
 
