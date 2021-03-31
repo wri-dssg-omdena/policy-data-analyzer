@@ -10,7 +10,7 @@ from typing import Iterable, Dict, Tuple, Type, Callable
 import transformers
 import matplotlib.pyplot as plt
 from sentence_transformers import SentencesDataset, InputExample, losses
-from sentence_transformers import SentenceTransformer as ST
+from sentence_transformers import SentenceTransformer
 from torch import nn, Tensor
 from torch.utils.data import DataLoader
 
@@ -23,7 +23,7 @@ from tqdm.autonotebook import trange
 from statistics import mean
 
 
-class SentenceTransformer(ST): # I checked and I think the same name will work when overriding the fit function
+class EarlyStoppingSentenceTransformer(SentenceTransformer): # I checked and I think the same name will work when overriding the fit function
 
     def fit(self,
             train_objectives: Iterable[Tuple[DataLoader, nn.Module]],
