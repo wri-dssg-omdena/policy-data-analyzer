@@ -8,6 +8,7 @@ Original source code: https://github.com/UKPLab/sentence-transformers/blob/maste
 from typing import Iterable, Dict, Tuple, Type, Callable
 
 import transformers
+import os
 import matplotlib.pyplot as plt
 from sentence_transformers import SentencesDataset, InputExample, losses
 from sentence_transformers import SentenceTransformer
