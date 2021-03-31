@@ -5,10 +5,21 @@ Implementing the Early Stopping feature that will be useful for us
 Original source code: https://github.com/UKPLab/sentence-transformers/blob/master/sentence_transformers/SentenceTransformer.py#L434
 """
 
+from typing import Iterable, Dict, Tuple, Type, Callable
+
+import transformers
+import matplotlib.pyplot as plt
 from sentence_transformers import SentencesDataset, SentenceTransformer, InputExample, losses
-from sentence_transformers.evaluation import LabelAccuracyEvaluator
-from sentence_transformers import SentencesDataset, SentenceTransformer, InputExample
+from torch import nn, Tensor
+from torch.utils.data import DataLoader
+
 from sentence_transformers.evaluation import LabelAccuracyEvaluator, SentenceEvaluator
+
+from torch.optim import Optimizer
+from torch import device
+import torch.multiprocessing as mp
+from tqdm.autonotebook import trange
+from statistics import mean
 
 
 class SentenceTransformer(SentenceTransformer): # I checked and I think the same name will work when overriding the fit function
@@ -219,8 +230,7 @@ class SentenceTransformer(SentenceTransformer): # I checked and I think the same
         prev_score = self.ACC_LIST[-2]
         moving_average = mean(self.ACC_LIST[-self.PATIENCE-1: -1])
 
-        print(
-        f'''{'='*60}\nCurrent Score is: {score}\nCurrent ACC_LIST is: {self.ACC_LIST}''')
+        print(f"{'='*60}\nCurrent Score is: {score}\nCurrent ACC_LIST is: {self.ACC_LIST}")
         
         if score >= moving_average or len(self.ACC_LIST) - 1 <= self.PATIENCE: # score is >= the moving average in the last PATIENCE values
             if score > prev_score and score - prev_score >= self.BASELINE: # better score 
