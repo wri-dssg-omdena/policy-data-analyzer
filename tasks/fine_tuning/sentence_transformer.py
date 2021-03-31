@@ -29,6 +29,7 @@ from sentence_transformers.evaluation import LabelAccuracyEvaluator, SentenceEva
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from torch import nn, Tensor
+import torch
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
 from torch import device
