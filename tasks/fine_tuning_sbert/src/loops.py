@@ -86,12 +86,10 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
 
     json_output_fname = output_path + f"/{experiment}_FineTuningResults.json"
 
-    # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
-    with open(json_output_fname, "w") as f:
-        json.dump({}, f)
+#     # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
+#     with open(json_output_fname, "w") as f:
+#         json.dump({}, f)
     for seed in seeds:
-        # Setup
-        output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
 
         # =============== SETTING GLOBAL SEEDS ===============================
         os.environ['PYTHONHASHSEED'] = str(seed)
@@ -107,12 +105,13 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
         torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.enabled = False
         # ====================================================================        
-        for DO_seed in seeds:
+        
+        for DO_seed in range[1, 2]:
             for test_perc in all_test_perc:
-                with open(json_output_fname, "r") as fr:
-                    output = json.load(fr)
+#                 with open(json_output_fname, "r") as fr:
+#                     output = json.load(fr)
 
-                output[f"test_perc={test_perc}"] = {}
+#                 output[f"test_perc={test_perc}"] = {}
                 X_train, X_test, y_train, y_test = train_test_split(train_sents, train_labels, test_size=test_perc,
                                                                     stratify=train_labels, random_state=DO_seed)
 
@@ -131,8 +130,9 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                     dev_samples.append(InputExample(texts=[sent], label=label_id))
 
                 for model_name in model_names:
-                    # Setup
-                    output[f"test_perc={test_perc}"][f'model_name={model_name}'] = {}
+#                     # Setup
+#                     output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
+#                     output[f"test_perc={test_perc}"][f'model_name={model_name}'] = {}
 
                     # Train set config
                     model = EarlyStoppingSentenceTransformer(model_name)
@@ -174,6 +174,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                     end = time.time()
                     hours, rem = divmod(end - start, 3600)
                     minutes, seconds = divmod(rem, 60)
+                    print(f"WI : {seed} - DO : {DO_seed} - test_per: {test_perc} - model : {model_name}\n")
                     print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
                     if eval_classifier is None:
