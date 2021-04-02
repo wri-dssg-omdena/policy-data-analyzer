@@ -89,100 +89,101 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
     # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
     with open(json_output_fname, "w") as f:
         json.dump({}, f)
+    for seed in seeds:
+        # Setup
+        output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
 
-    for test_perc in all_test_perc:
-        with open(json_output_fname, "r") as fr:
-            output = json.load(fr)
+        # =============== SETTING GLOBAL SEEDS ===============================
+        os.environ['PYTHONHASHSEED'] = str(seed)
+        # Torch RNG
+        torch.manual_seed(seed)
+        # torch.cuda.manual_seed(seed)
+        torch.cuda.manual_seed_all(seed)
+        # Python RNG
+        np.random.seed(seed)
+        random.seed(seed)
+        # CuDA Determinism
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+        torch.backends.cudnn.enabled = False
+        # ====================================================================        
+        for DO_seed in seeds:
+            for test_perc in all_test_perc:
+                with open(json_output_fname, "r") as fr:
+                    output = json.load(fr)
 
-        output[f"test_perc={test_perc}"] = {}
-        X_train, X_test, y_train, y_test = train_test_split(train_sents, train_labels, test_size=test_perc,
-                                                            stratify=train_labels, random_state=100)
+                output[f"test_perc={test_perc}"] = {}
+                X_train, X_test, y_train, y_test = train_test_split(train_sents, train_labels, test_size=test_perc,
+                                                                    stratify=train_labels, random_state=DO_seed)
 
-        # Load data samples into batches
-        train_batch_size = 16
-        label2int = dict(zip(label_names, range(len(label_names))))
-        train_samples = []
-        for sent, label in zip(X_train, y_train):
-            label_id = label2int[label]
-            train_samples.append(InputExample(texts=[sent], label=label_id))
+                # Load data samples into batches
+                train_batch_size = 16
+                label2int = dict(zip(label_names, range(len(label_names))))
+                train_samples = []
+                for sent, label in zip(X_train, y_train):
+                    label_id = label2int[label]
+                    train_samples.append(InputExample(texts=[sent], label=label_id))
 
-        # Configure the dev set evaluator - still need to test whether this works
-        dev_samples = []
-        for sent, label in zip(X_test, y_test):
-            label_id = label2int[label]
-            dev_samples.append(InputExample(texts=[sent], label=label_id))
+                # Configure the dev set evaluator - still need to test whether this works
+                dev_samples = []
+                for sent, label in zip(X_test, y_test):
+                    label_id = label2int[label]
+                    dev_samples.append(InputExample(texts=[sent], label=label_id))
 
-        for model_name in model_names:
-            # Setup
-            output[f"test_perc={test_perc}"][f'model_name={model_name}'] = {}
+                for model_name in model_names:
+                    # Setup
+                    output[f"test_perc={test_perc}"][f'model_name={model_name}'] = {}
 
-            # Train set config
-            model = EarlyStoppingSentenceTransformer(model_name)
-            train_dataset = SentencesDataset(train_samples, model=model)
-            train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=train_batch_size)
+                    # Train set config
+                    model = EarlyStoppingSentenceTransformer(model_name)
+                    train_dataset = SentencesDataset(train_samples, model=model)
+                    train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=train_batch_size)
 
-            for seed in seeds:
-                # Setup
-                output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
 
-                # =============== SETTING GLOBAL SEEDS ===============================
-                os.environ['PYTHONHASHSEED'] = str(seed)
-                # Torch RNG
-                torch.manual_seed(seed)
-                # torch.cuda.manual_seed(seed)
-                torch.cuda.manual_seed_all(seed)
-                # Python RNG
-                np.random.seed(seed)
-                random.seed(seed)
-                # CuDA Determinism
-                torch.backends.cudnn.deterministic = True
-                torch.backends.cudnn.benchmark = False
-                torch.backends.cudnn.enabled = False
-                # ====================================================================
 
-                # Define the way the loss is computed
-                classifier = SoftmaxClassifier(model=model,
-                                               sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
-                                               num_labels=len(label2int))
+                    # Define the way the loss is computed
+                    classifier = SoftmaxClassifier(model=model,
+                                                   sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
+                                                   num_labels=len(label2int))
 
-                # Dev set config
-                dev_dataset = SentencesDataset(dev_samples, model=model)
-                dev_dataloader = DataLoader(dev_dataset, shuffle=True, batch_size=train_batch_size)
-                dev_evaluator = LabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
-                                                       name='lae-dev')
+                    # Dev set config
+                    dev_dataset = SentencesDataset(dev_samples, model=model)
+                    dev_dataloader = DataLoader(dev_dataset, shuffle=True, batch_size=train_batch_size)
+                    dev_evaluator = LabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
+                                                           name='lae-dev')
 
-                warmup_steps = math.ceil(
-                    len(train_dataset) * max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
+                    warmup_steps = math.ceil(
+                        len(train_dataset) * max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
 
-                model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={test_perc}_n-epoch={max_num_epochs}_seed={seed}"
+                    model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={test_perc}_n-epoch={max_num_epochs}_seed={seed}"
 
-                # Train the model
-                start = time.time()
+                    # Train the model
+                    start = time.time()
 
-                model.fit(train_objectives=[(train_dataloader, classifier)],
-                          evaluator=dev_evaluator,
-                          epochs=max_num_epochs,  # We always tune on an extra epoch to see the performance gain
-                          evaluation_steps=1000,
-                          warmup_steps=warmup_steps,
-                          output_path=output_path,
-                          BASELINE=baseline,
-                          PATIENCE=patience,
-                          params={'model_name': model_name, 'test_perc': test_perc, 'seed': seed}
-                          )
+                    model.fit(train_objectives=[(train_dataloader, classifier)],
+                              evaluator=dev_evaluator,
+                              epochs=max_num_epochs,  # We always tune on an extra epoch to see the performance gain
+                              evaluation_steps=1000,
+                              warmup_steps=warmup_steps,
+                              output_path=output_path,
+                              BASELINE=baseline,
+                              PATIENCE=patience,
+                              params={'model_name': model_name, 'test_perc': test_perc, 'seed': seed}
+                              )
 
-                end = time.time()
-                hours, rem = divmod(end - start, 3600)
-                minutes, seconds = divmod(rem, 60)
-                print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+                    end = time.time()
+                    hours, rem = divmod(end - start, 3600)
+                    minutes, seconds = divmod(rem, 60)
+                    print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-                if eval_classifier is None:
-                    evaluate_using_sbert(model, test_sents, test_labels, label_names,
-                                         model_deets, model_name, max_num_epochs, numeric_labels, output,
-                                         output_path, test_perc, json_output_fname, seed)
-                else:
-                    evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents,
-                                           test_labels, label_names, model_deets, model_name, max_num_epochs,
-                                           output, test_perc, output_path, json_output_fname, seed)
+                    if eval_classifier is None:
+                        evaluate_using_sbert(model, test_sents, test_labels, label_names,
+                                             model_deets, model_name, max_num_epochs, numeric_labels, output,
+                                             output_path, test_perc, json_output_fname, seed)
+                    else:
+                        evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents,
+                                               test_labels, label_names, model_deets, model_name, max_num_epochs,
+                                               output, test_perc, output_path, json_output_fname, seed)
 
 
 def evaluate_using_sbert(model, test_sents, test_labels, label_names,
