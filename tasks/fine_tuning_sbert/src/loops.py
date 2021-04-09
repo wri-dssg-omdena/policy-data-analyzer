@@ -106,7 +106,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
         torch.backends.cudnn.enabled = False
         # ====================================================================        
         
-        for DO_seed in range[1, 2]:
+        for DO_seed in range[1, 2]:#TODO: Set the full range
             for test_perc in all_test_perc:
 #                 with open(json_output_fname, "r") as fr:
 #                     output = json.load(fr)
