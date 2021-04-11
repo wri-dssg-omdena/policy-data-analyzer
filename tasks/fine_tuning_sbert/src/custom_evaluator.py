@@ -1,3 +1,10 @@
+"""
+Custom LabelAccuracyEvaluator for custom traning loop based on: 
+    - https://github.com/UKPLab/sentence-transformers/blob/master/sentence_transformers/evaluation/LabelAccuracyEvaluator.py
+Added:
+    - F1 score calculation
+    - `call()` function now returns a dict instead of a float, to access more metrics
+"""
 from sentence_transformers.evaluation import SentenceEvaluator
 import torch
 from torch.utils.data import DataLoader
