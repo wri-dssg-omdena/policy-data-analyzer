@@ -19,7 +19,7 @@ class MexicoDOF(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["sidofqa.segob.gob.mx"]
-    start_date = "2021-02-25"
+    start_date = "2021-01-25"
     #This is a category that appears in the database which yields a lot of documents that announce job posts. We exclude them from the search
     authorship_to_exclude = 'CONVOCATORIAS PARA CONCURSOS DE PLAZAS VACANTES DEL SERVICIO PROFESIONAL DE CARRERA EN LA ADMINISTRACION PUBLICA FEDERAL'
     folder_to_save = "wri.-testing/dof/"
@@ -29,8 +29,8 @@ class MexicoDOF(BaseSpider):
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
         self.from_date, self.today = self.create_date_span(self.start_date)
 
-        #folder = '/home/propietari/Documents/claus/' # TODO: change to your local path
-        folder = 'C:/Users/jordi/Documents/claus/' # TODO: change to your local path
+        folder = '/home/propietari/Documents/claus/' # TODO: change to your local path
+        # folder = 'C:/Users/jordi/Documents/claus/' # TODO: change to your local path
         file_name = 'AWS_S3_keys_JordiPlanas_Made_in_game.json' # TODO: Change to your filename
         self.bucket = "wri-testing" # TODO: Change to the final bucket
         bucket_region = "eu-central-1" # TODO: Change to fit to the final bucket
@@ -78,8 +78,8 @@ class MexicoDOF(BaseSpider):
                     doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
                     doc_name = self.HSA1_encoding(doc_url) + ".txt"
                     item['doc_name'] = doc_name
-                    #self.debug("\n       #################       \n")
-                    #self.debug(doc_name)
+                    # self.debug("\n       #################       \n")
+                    # self.debug(doc_name)
                     yield item
                     yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other, cb_kwargs=dict(document = doc_name))
             else:
