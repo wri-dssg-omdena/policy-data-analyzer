@@ -31,7 +31,7 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             scheduler: str = 'WarmupLinear',
             warmup_steps: int = 10000,
             optimizer_class: Type[Optimizer] = transformers.AdamW,
-            optimizer_params: Dict[str, object] = {'lr': 2e-5},
+            optimizer_params: Dict[str, object] = {'lr': 2e-5, 'correct_bias': True},
             weight_decay: float = 0.01,
             evaluation_steps: int = 0,
             output_path: str = None,
