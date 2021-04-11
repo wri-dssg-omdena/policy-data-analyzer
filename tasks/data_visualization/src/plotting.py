@@ -8,7 +8,7 @@ import scprep
 import phate
 
 
-def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=100, store_name=None,
+def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=100, output_path=None,
                             verbose=0):
     df = pd.DataFrame()
     df["y"] = np.array(numeric_labels)
@@ -68,8 +68,8 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
 
     plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
 
-    if store_name:
-        plt.savefig(store_name + "_viz.png")
+    if output_path:
+        plt.savefig(output_path + "_viz.png")
     else:
         plt.show()
 

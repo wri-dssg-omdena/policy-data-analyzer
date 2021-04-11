@@ -1,3 +1,11 @@
+"""
+Custom LabelAccuracyEvaluator for custom traning loop based on:
+    - https://github.com/UKPLab/sentence-transformers/blob/master/sentence_transformers/evaluation/LabelAccuracyEvaluator.py
+Added:
+    - F1 score calculation
+    - Visualization of sentence embeddings and confusion matrix
+    - `call()` function now returns a dict instead of a float, to access more metrics
+"""
 import itertools
 import matplotlib.pyplot as plt
 import numpy as np
@@ -29,7 +37,7 @@ def batch_to_device(batch, target_device: device):
 def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
                           color_map=None,
                           normalize=True,
-                          exp_name=None):
+                          output_path=None):
     """
     Adapted from: https://stackoverflow.com/questions/19233771/sklearn-plot-confusion-matrix-with-labels
     """
@@ -66,8 +74,8 @@ def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
     plt.xlabel('Predicted label')
     plt.ylabel('True label')
 
-    if exp_name:
-        fname = f"{exp_name}_cm.png"
+    if output_path:
+        fname = f"{output_path}_cm.png"
         plt.savefig(fname)
         print(f"Stored confusion matrix: {fname}")
 
@@ -101,7 +109,8 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         self.csv_file = "accuracy_evaluation" + name + "_results.csv"
         self.csv_headers = ["epoch", "steps", "accuracy"]
 
-    def __call__(self, model, output_path: str = None, epoch: int = -1, steps: int = -1) -> dict:
+    def __call__(self, model, output_path: str = None, model_deets: str = None,
+                 epoch: int = -1, steps: int = -1) -> dict:
         model.eval()
         total = 0
         correct = 0
@@ -144,19 +153,27 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         logging.info("Accuracy: {:.4f} ({}/{})\n".format(accuracy, correct, total))
         logging.info(f"Macro F1: {macro_f1}")
         logging.info(f"Weighted F1: {weighted_f1}")
-        plot_confusion_matrix(cm, self.label_names)
-        visualize_embeddings_2D(np.vstack(all_embs), all_labels, tsne_perplexity=50, verbose=0)
 
         if output_path is not None:
-            csv_path = os.path.join(output_path, self.csv_file)
-            if not os.path.isfile(csv_path):
-                with open(csv_path, mode="w", encoding="utf-8") as f:
-                    writer = csv.writer(f)
-                    writer.writerow(self.csv_headers)
-                    writer.writerow([epoch, steps, accuracy])
-            else:
-                with open(csv_path, mode="a", encoding="utf-8") as f:
-                    writer = csv.writer(f)
-                    writer.writerow([epoch, steps, accuracy])
+            self.store_results(accuracy, epoch, output_path, steps)
+            plot_confusion_matrix(cm, self.label_names, output_path=f"{output_path}/{model_deets}")
+            visualize_embeddings_2D(np.vstack(all_embs), all_labels, tsne_perplexity=50, verbose=0,
+                                    output_path=f"{output_path}/{model_deets}")
 
+        else:
+            plot_confusion_matrix(cm, self.label_names)
+            visualize_embeddings_2D(np.vstack(all_embs), all_labels, tsne_perplexity=50, verbose=0,)
+            
         return score_dict
+
+    def store_results(self, accuracy, epoch, output_path, steps):
+        csv_path = os.path.join(output_path, self.csv_file)
+        if not os.path.isfile(csv_path):
+            with open(csv_path, mode="w", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow(self.csv_headers)
+                writer.writerow([epoch, steps, accuracy])
+        else:
+            with open(csv_path, mode="a", encoding="utf-8") as f:
+                writer = csv.writer(f)
+                writer.writerow([epoch, steps, accuracy])
