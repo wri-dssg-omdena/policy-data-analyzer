@@ -18,7 +18,6 @@ import os
 import csv
 from sklearn.metrics import f1_score, confusion_matrix
 from sentence_transformers.evaluation import SentenceEvaluator
-from tasks.data_visualization.src.plotting import visualize_embeddings_2D
 
 
 def batch_to_device(batch, target_device: device):
@@ -128,13 +127,11 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
 
         all_predictions = []
         all_labels = []
-        all_embs = []
         for step, batch in enumerate(tqdm(self.dataloader, desc="Evaluating")):
             features, label_ids = batch_to_device(batch, model.device)
             with torch.no_grad():
                 _, prediction = self.softmax_model(features, labels=None)
 
-            all_embs.extend([sent_emb.unsqueeze(0) for f in features for sent_emb in f['sentence_embedding']])
             predictions_as_numbers = torch.argmax(prediction, dim=1)
             all_predictions.extend(predictions_as_numbers.tolist())
             all_labels.extend(label_ids.tolist())
@@ -153,17 +150,12 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         logging.info("Accuracy: {:.4f} ({}/{})\n".format(accuracy, correct, total))
         logging.info(f"Macro F1: {macro_f1}")
         logging.info(f"Weighted F1: {weighted_f1}")
+        plot_confusion_matrix(cm, self.label_names, output_path=f"{output_path}/{model_deets}" if model_deets and output_path else None)
 
         if output_path is not None:
             self.store_results(accuracy, epoch, output_path, steps)
-            plot_confusion_matrix(cm, self.label_names, output_path=f"{output_path}/{model_deets}")
-            visualize_embeddings_2D(np.vstack(all_embs), all_labels, tsne_perplexity=50, verbose=0,
-                                    output_path=f"{output_path}/{model_deets}")
 
-        else:
-            plot_confusion_matrix(cm, self.label_names)
-            visualize_embeddings_2D(np.vstack(all_embs), all_labels, tsne_perplexity=50, verbose=0,)
-            
+
         return score_dict
 
     def store_results(self, accuracy, epoch, output_path, steps):
