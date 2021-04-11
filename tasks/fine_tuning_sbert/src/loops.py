@@ -7,7 +7,6 @@ from typing import Iterable, Dict
 import cupy as cp
 import spacy
 from sentence_transformers import SentencesDataset, SentenceTransformer, InputExample
-from sentence_transformers.evaluation import LabelAccuracyEvaluator
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from torch import nn, Tensor
@@ -17,6 +16,7 @@ from tasks.data_augmentation.src.zero_shot_classification.latent_embeddings_clas
 from tasks.data_loading.src.utils import *
 from tasks.data_visualization.src.plotting import *
 from tasks.fine_tuning_sbert.src.sentence_transformer import EarlyStoppingSentenceTransformer
+from tasks.fine_tuning_sbert.src.custom_evaluator import CustomLabelAccuracyEvaluator
 from tasks.model_evaluation.src.model_evaluator import *
 
 if spacy.prefer_gpu():
@@ -125,20 +125,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 # Setup
                 output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
 
-                # =============== SETTING GLOBAL SEEDS ===============================
-                os.environ['PYTHONHASHSEED'] = str(seed)
-                # Torch RNG
-                torch.manual_seed(seed)
-                # torch.cuda.manual_seed(seed)
-                torch.cuda.manual_seed_all(seed)
-                # Python RNG
-                np.random.seed(seed)
-                random.seed(seed)
-                # CuDA Determinism
-                torch.backends.cudnn.deterministic = True
-                torch.backends.cudnn.benchmark = False
-                torch.backends.cudnn.enabled = False
-                # ====================================================================
+                set_seeds(seed)
 
                 # Define the way the loss is computed
                 classifier = SoftmaxClassifier(model=model,
@@ -148,7 +135,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 # Dev set config
                 dev_dataset = SentencesDataset(dev_samples, model=model)
                 dev_dataloader = DataLoader(dev_dataset, shuffle=True, batch_size=train_batch_size)
-                dev_evaluator = LabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
+                dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
                                                        name='lae-dev')
 
                 warmup_steps = math.ceil(
@@ -175,16 +162,10 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 minutes, seconds = divmod(rem, 60)
                 print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-                if eval_classifier is None:
-                    evaluate_using_sbert(model, test_sents, test_labels, label_names,
-                                         model_deets, model_name, max_num_epochs, numeric_labels, output,
-                                         output_path, test_perc, json_output_fname, seed)
-                else:
-                    evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents,
-                                           test_labels, label_names, model_deets, model_name, max_num_epochs,
-                                           output, test_perc, output_path, json_output_fname, seed)
 
-
+"""
+NOTE: Functions below are deprecated and in the process of being refactored.
+"""
 def evaluate_using_sbert(model, test_sents, test_labels, label_names,
                          model_deets, model_name, num_epochs, numeric_labels, output,
                          output_path, test_perc, json_output_fname, seed):
@@ -279,3 +260,18 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
 
     evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
+
+
+def set_seeds(seed):
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    # Torch RNG
+    torch.manual_seed(seed)
+    # torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    # Python RNG
+    np.random.seed(seed)
+    random.seed(seed)
+    # CuDA Determinism
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.enabled = False
