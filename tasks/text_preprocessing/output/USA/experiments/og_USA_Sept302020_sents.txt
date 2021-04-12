@@ -1,0 +1,729 @@
+- "Sentence_1": Federal Register, Volume 85 Issue 190 (Wednesday, September 30, 2020)
+[Federal Register Volume 85, Number 190 (Wednesday, September 30, 2020)]
+[Rules and Regulations]
+[Pages 61614-61619]
+From the Federal Register Online via the Government Publishing Office [www.gpo.gov]
+[FR Doc No: 2020-19109]
+
+
+=======================================================================
+-----------------------------------------------------------------------
+
+- "Sentence_2": DEPARTMENT OF THE INTERIOR
+
+Fish and Wildlife Service
+
+50 CFR Part 17
+
+[Docket No. FWS-R4-ES-2018-0074; FF09E21000 FXES11110900000 201]
+RIN 1018-BD43
+
+
+Endangered and Threatened Wildlife and Plants; Section 4(d) Rule 
+for Trispot Darter
+
+AGENCY: Fish and Wildlife Service, Interior.
+
+ACTION: Final rule.
+
+-----------------------------------------------------------------------
+
+- "Sentence_3": SUMMARY: We, the U.S. Fish and Wildlife Service (Service), adopt a rule 
+under section 4(d) of the Endangered Species Act of 1973 (Act), as 
+amended, for the trispot darter (Etheostoma trisella), a fish from 
+Alabama, Georgia, and Tennessee. 
+
+- "Sentence_4": This rule provides measures that are 
+necessary and advisable to conserve the species.
+
+- "Sentence_5": DATES: This rule is effective October 30, 2020.
+
+- "Sentence_6": ADDRESSES: This final rule is available on the internet at http://www.regulations.gov under Docket No. FWS-R4-ES-2018-0074 and at https://www.fws.gov/southeast. 
+
+- "Sentence_7": Comments and materials we received, as well as 
+supporting documentation we used in preparing this rule, are available 
+for public inspection at http://www.regulations.gov under Docket No. 
+FWS-R4-ES-2018-0074.
+
+- "Sentence_8": FOR FURTHER INFORMATION CONTACT: William Pearson, Field Supervisor, 
+U.S. Fish and Wildlife Service, Alabama Ecological Services Field 
+Office, 1208-B Main Street, Daphne, AL 36526; telephone 251-441-5870. 
+Persons who use a telecommunications device for the deaf (TDD) may call 
+the Federal Relay Service at 800-877-8339.
+
+- "Sentence_9": SUPPLEMENTARY INFORMATION:
+
+Previous Federal Actions
+
+    On October 4, 2017, we published in the Federal Register (82 FR 
+46183) a proposed rule to list the trispot darter as a threatened 
+species under the Act (16 U.S.C. 1531 et seq.). 
+
+- "Sentence_10": On December 28, 2018, 
+we published the following documents in the Federal Register: (1) The 
+final rule listing the trispot darter as a threatened species (83 FR 
+67131), (2) the proposed rule to provide measures necessary and 
+advisable to conserve the species under section 4(d) of the Act (a 
+``4(d) rule'') for the species (83 FR 67185), and (3) the proposed rule 
+to designate critical habitat for the species (83 FR 67190). 
+
+- "Sentence_11": Elsewhere 
+in today's Federal Register, we issue a final rule to designate 
+critical habitat for the trispot darter. 
+
+- "Sentence_12": Please see these documents for 
+additional previous Federal actions affecting the trispot darter.
+
+- "Sentence_13": Summary of Changes From the Proposed Rule
+
+    This final rule incorporates one change to our proposed rule based 
+on the comments we received. 
+
+- "Sentence_14": Specifically, we replaced the term 
+``highest-standard best management practices'' with the term ``State 
+best management practices.''
+
+- "Sentence_15":     In addition, in this rule, we change the way in which the 
+provisions of the 4(d) rule for the trispot darter appear in 50 CFR 
+17.44 from what we proposed; here, we do not refer to the prohibitions 
+and provisions set forth in section 9(a)(1) of the Act. 
+
+- "Sentence_16": Instead, we 
+refer to the prohibitions set forth at 50 CFR 17.21, which apply to 
+endangered species. 
+
+- "Sentence_17": However, the substance of the prohibitions, and 
+exceptions to those prohibitions, in the 4(d) rule for the trispot 
+darter have not changed.
+
+- "Sentence_18": Background
+
+    The trispot darter is a small-bodied, freshwater fish found in the 
+Coosa River System, above the fall line in the Ridge and Valley of 
+Alabama, Georgia, and Tennessee. 
+
+- "Sentence_19": It is a migratory species that uses 
+distinct breeding and nonbreeding habitats. 
+
+- "Sentence_20": From approximately April to 
+October, the species inhabits its nonbreeding habitat, which consists 
+of small to medium river margins and lower reaches of tributaries with 
+slower velocities. 
+
+- "Sentence_21": After October, trispot darters move from the main 
+channels into tributaries, eventually reaching adjacent seepage areas 
+where they congregate and remain for the duration of spawning, until 
+approximately late April. 
+
+- "Sentence_22": Breeding sites are intermittent seepage areas 
+and ditches with little to no flow and shallow depths (12 inches (30 
+centimeters) or less).
+
+- "Sentence_23": For a full summary of species information, please refer to the 
+October 4, 2017, proposed listing rule (82 FR 46183) and the species 
+status assessment (SSA) report for the trispot darter (Service 2018, 
+entire). 
+
+- "Sentence_24": Both documents are available at http://www.regulations.gov 
+under Docket No. FWS-R4-ES-2017-0063, and on the Service's South 
+Atlantic-Gulf Region website at https://www.fws.gov/southeast/.
+
+- "Sentence_25": [[Page 61615]]
+
+Summary of Comments and Recommendations
+
+    On December 28, 2018, we proposed a 4(d) rule for the trispot 
+darter (83 FR 67185). 
+
+- "Sentence_26": We accepted public comments on the proposed 4(d) 
+rule for 60 days, ending February 26, 2019. 
+
+- "Sentence_27": During the comment period, 
+we received 13 comments addressing the proposed 4(d) rule. 
+
+- "Sentence_28": Eight of the 
+comments supported the general protections of the proposed 4(d) rule, 
+and five explicitly expressed support for our conservation strategy of 
+sustainable forest management and best management practices. 
+
+- "Sentence_29": None of 
+the comments opposed the proposed 4(d) rule. 
+
+- "Sentence_30": All substantive 
+information provided during the comment period has either been 
+incorporated directly into this final rule or is addressed in our 
+responses below.
+
+- "Sentence_31": State Comments
+
+    Comment: The Alabama Forestry Commission commented that limiting 
+silvicultural and forest management activities to May 1 through 
+December 31 is concerning and may be unnecessary with BMP compliance.
+
+- "Sentence_32": Our Response: The 4(d) rule identifies actions that are prohibited 
+in order to protect the darter, as well as actions that are excluded 
+from those prohibitions, including certain forest management 
+activities. 
+
+- "Sentence_33": Because trispot darters spawn from January through April, 
+making this the most sensitive period of the species' lifecycle, the 
+exclusions for forest management activities in spawning habitat apply 
+only from May 1 through December 31. 
+
+- "Sentence_34": During the spawning period, the 
+exclusions do not apply in areas where spawning habitat is present; 
+however, in non-spawning habitat, the exclusions apply year-round. 
+
+- "Sentence_35": In 
+some cases, silvicultural and forest management activities may still be 
+undertaken in areas that are spawning habitat during the spawning 
+season, as long as there is consultation with the Service under section 
+7 of the Act or a conservation agreement under section 10 of the Act.
+
+- "Sentence_36": Performing silvicultural and forest management activities in the range 
+of the trispot darter between May 1 and December 31, while applying 
+State best management practices, will not adversely affect, and may 
+provide conservation benefits for, the species.
+
+- "Sentence_37": Public Comments
+
+    Comment: In regard to silviculture practices or forest management 
+activities, we received three public comments and one comment from the 
+Alabama Forestry Commission concerning our use of the term ``highest-
+standard best management practices.'' 
+
+- "Sentence_38": Specifically, one public 
+commenter requested clarification of the term, and two other public 
+commenters requested amending the term to ``State best management 
+practices.'' 
+
+- "Sentence_39": The State agency commented that Alabama's best management 
+practices for forestry clearly state that stream management zones, 
+stream crossings, and forest roads must always be sufficient in design 
+and filtering capacity to not impact water quality and passage of 
+aquatic species. 
+
+- "Sentence_40": Thus, complying with Alabama's best management 
+practices should ensure water quality and the reference for the need to 
+``implement the highest-standard best management practices'' is not 
+needed.
+
+- "Sentence_41": Our Response: Best management practices can change over time as new 
+scientific and commercial information becomes available. 
+
+- "Sentence_42": Therefore, 
+rather than specifying a particular set of best management practices, 
+we interpreted ``highest-standard best management practices'' to refer 
+to the most stringent ones available at the time of project 
+implementation. 
+
+- "Sentence_43": To clarify the terminology, we removed the term 
+``highest-standard'' and now refer to these practices (the most 
+stringent ones currently available) as ``State best management 
+practices,'' which constitute the highest standard.
+
+>>>>>>>>>>>> Evaluation ends here
+----------------------------------
+
+Final Rule Issued Under Section 4(d) of the Act
+
+Background
+
+    Section 4(d) of the Act contains two sentences. The first sentence 
+states that the ``Secretary shall issue such regulations as he deems 
+necessary and advisable to provide for the conservation'' of species 
+listed as threatened. The U.S. Supreme Court has noted that statutory 
+language like ``necessary and advisable'' demonstrates a large degree 
+of deference to the agency (see Webster v. Doe, 486 U.S. 592 (1988)). 
+Conservation is defined in the Act to mean ``the use of all methods and 
+procedures which are necessary to bring any endangered species or 
+threatened species to the point at which the measures provided pursuant 
+to [the Act] are no longer necessary.'' Additionally, the second 
+sentence of section 4(d) of the Act states that the Secretary ``may by 
+regulation prohibit with respect to any threatened species any act 
+prohibited under section 9(a)(1), in the case of fish or wildlife, or 
+9(a)(2), in the case of plants.'' Thus, the combination of the two 
+sentences of section 4(d) of the Act provide the Secretary with wide 
+latitude of discretion to select and promulgate appropriate regulations 
+tailored to the specific conservation needs of the threatened species. 
+The second sentence grants particularly broad discretion to the Service 
+when adopting the prohibitions under section 9.
+    The courts have recognized the extent of the Secretary's discretion 
+under this standard to develop rules that are appropriate for the 
+conservation of a species. For example, courts have upheld rules 
+developed under section 4(d) as a valid exercise of agency authority 
+where they prohibited take of threatened wildlife, or include a limited 
+taking prohibition (see Alsea Valley Alliance v. Lautenbacher, 2007 
+U.S. Dist. Lexis 60203 (D. Or. 2007); Washington Environmental Council 
+v. National Marine Fisheries Service, 2002 U.S. Dist. Lexis 5432 (W.D. 
+Wash. 2002)). Courts have also upheld 4(d) rules that do not address 
+all of the threats a species faces (see State of Louisiana v. Verity, 
+853 F.2d 322 (5th Cir. 1988)). As noted in the legislative history when 
+the Act was initially enacted, ``once an animal is on the threatened 
+list, the Secretary has an almost infinite number of options available 
+to him with regard to the permitted activities for those species. He 
+may, for example, permit taking, but not importation of such species, 
+or he may choose to forbid both taking and importation but allow the 
+transportation of such species'' (H.R. Rep. No. 412, 93rd Cong., 1st 
+Sess. 1973).
+    Exercising its authority under section 4(d), the Service has 
+developed a final rule for the trispot darter that is designed to 
+address the species' specific threats and conservation needs. Although 
+the statute does not require the Service to make a ``necessary and 
+advisable'' finding with respect to the adoption of specific 
+prohibitions under section 9, we find that this final 4(d) rule as a 
+whole satisfies the requirement in section 4(d) of the Act to issue 
+regulations deemed necessary and advisable to provide for the 
+conservation of the trispot darter. As discussed in the final listing 
+rule (83 FR 67131; December 28, 2018), the Service has concluded that 
+the trispot darter is likely to become in danger of extinction within 
+the foreseeable future primarily due to threats that degrade instream 
+habitat and reduce water quality and water quantity, all which reduce 
+connectivity between populations. The provisions of this final 4(d) 
+rule promote conservation of the trispot darter by encouraging 
+management of stream systems and the landscapes they drain while also 
+meeting land use management considerations. The provisions of this 
+final 4(d) rule are one of many tools that the Service will use
+
+[[Page 61616]]
+
+to promote the conservation of the trispot darter.
+
+Provisions of the 4(d) Rule for Trispot Darter
+
+    This final 4(d) rule provides for the conservation of the trispot 
+darter by prohibiting the following activities, except as otherwise 
+authorized or permitted: Importing or exporting; take; possession and 
+other acts with unlawfully taken specimens; delivering, receiving, 
+transporting, or shipping in interstate or foreign commerce in the 
+course of commercial activity; and selling or offering for sale in 
+interstate or foreign commerce. We also include several standard 
+exclusions to these prohibitions, which are set forth under Regulation 
+Promulgation, below, as well as some species-specific exclusions.
+    As discussed in the final listing rule (83 FR 67131) a range of 
+natural and anthropogenic factors that affect aquatic systems may 
+impact the status of the trispot darter. The largest threat to the 
+future viability of the species is habitat degradation from stressors 
+that influence four habitat elements: water quality, water quantity, 
+instream habitat, and habitat connectivity. These stressors include 
+hydrologic alteration, sedimentation, loss of connectivity, loss of 
+riparian vegetation, contaminants entering the water system due to 
+agricultural activities (such as excessive poultry litter and livestock 
+entering streams), and urbanization within the watersheds inhabited by 
+the species. Regulating these activities would reduce their combined 
+negative effects, providing for the conservation of the trispot darter 
+by helping to preserve remaining populations.
+    Conservation actions that benefit the trispot darter include 
+habitat restoration and protection. Additionally, conservation may be 
+achieved through augmentation of populations to increase their size 
+(number of individuals), which increases resiliency to adverse events 
+such as storms and droughts, inadvertent runoff of pollutants and 
+sediment, and contaminant spills. This rule provides exceptions from 
+the Act's incidental take prohibitions, accommodating species 
+restoration efforts by State wildlife agencies, channel restoration 
+projects, and streambank stabilization projects. Further, this rule 
+enhances habitat protection, by providing exceptions to incidental take 
+provisions for silviculture and forest management that implement best 
+management practices; transportation projects that provide for fish 
+passage in waters occupied by the trispot darter; and projects carried 
+out under the Working Lands for Wildlife program of the Natural 
+Resources Conservation Service, U.S. Department of Agriculture. The 
+provisions in this rule for channel restoration and habitat protection 
+can occur only between May 1 and December 31, to avoid the trispot 
+darter's spawning period, when seasonal spawning areas are wetted. This 
+curtails the likelihood of incidental take occurring. Although the 
+exceptions for certain activities may result in some minimal level of 
+harm or temporary disturbance to the trispot darter, overall, these 
+activities benefit the species by contributing to conservation and 
+recovery.
+    The provisions in this rule are necessary and advisable because the 
+species needs active conservation to improve the quality of its habitat 
+and, absent protections, the species is likely to become in danger of 
+extinction within the foreseeable future. These provisions can 
+encourage cooperation by landowners and other affected parties in 
+implementing conservation measures. This allows for use of the land 
+while at the same time ensuring the preservation of suitable habitat 
+and minimizing impact on the species.
+    Under the Act, ``take'' means to harass, harm, pursue, hunt, shoot, 
+wound, kill, trap, capture, or collect, or to attempt to engage in any 
+such conduct. Some of these provisions have been further defined in 
+regulation at 50 CFR 17.3. Take can result knowingly or otherwise, by 
+direct and indirect impacts, intentionally or incidentally. Regulating 
+intentional and incidental take under this 4(d) rule will help preserve 
+the species' remaining populations; enable beneficial management 
+actions to occur; and decrease synergistic, negative effects from other 
+stressors.
+    We may issue permits to carry out otherwise prohibited activities, 
+including those described above, involving threatened wildlife under 
+certain circumstances. Regulations governing permits are codified at 50 
+CFR 17.32. With regard to threatened wildlife, a permit may be issued 
+for the following purposes: For scientific purposes, to enhance 
+propagation or survival, for economic hardship, for zoological 
+exhibition, for educational purposes, for incidental taking, or for 
+special purposes consistent with the purposes of the Act. There are 
+also certain statutory exemptions from the prohibitions, which are 
+found in sections 9 and 10 of the Act.
+    The Service recognizes the special and unique relationship with our 
+State natural resource agency partners in contributing to conservation 
+of listed species. State agencies often possess scientific data and 
+valuable expertise on the status and distribution of endangered, 
+threatened, and candidate species of wildlife and plants. State 
+agencies, because of their authorities and their close working 
+relationships with local governments and landowners, are in a unique 
+position to assist the Services in implementing all aspects of the Act. 
+In this regard, section 6 of the Act provides that the Services shall 
+cooperate to the maximum extent practicable with the States in carrying 
+out programs authorized by the Act. Therefore, any qualified employee 
+or agent of a State conservation agency that is a party to a 
+cooperative agreement with the Service in accordance with section 6(c) 
+of the Act, who is designated by his or her agency for such purposes, 
+would be able to conduct activities designed to conserve trispot darter 
+that may result in otherwise prohibited take without additional 
+authorization.
+    Nothing in this 4(d) rule changes in any way the recovery planning 
+provisions of section 4(f) of the Act, the consultation requirements 
+under section 7 of the Act, or the ability of the Service to enter into 
+partnerships for the management and protection of the trispot darter. 
+However, interagency cooperation may be further streamlined through 
+planned programmatic consultations for the species between Federal 
+agencies and the Service.
+
+Required Determinations
+
+Regulatory Planning and Review (Executive Orders 12866 and 13563)
+
+    Executive Order (E.O.) 12866 provides that the Office of 
+Information and Regulatory Affairs (OIRA) in the Office of Management 
+and Budget will review all significant rules. OIRA has determined that 
+this rule is not significant.
+    E.O. 13563 reaffirms the principles of E.O. 12866 while calling for 
+improvements in the nation's regulatory system to promote 
+predictability, to reduce uncertainty, and to use the best, most 
+innovative, and least burdensome tools for achieving regulatory ends. 
+The executive order directs agencies to consider regulatory approaches 
+that reduce burdens and maintain flexibility and freedom of choice for 
+the public where these approaches are relevant, feasible, and 
+consistent with regulatory objectives. E.O. 13563 emphasizes further 
+that regulations must be based on the best available science and that 
+the rulemaking process must allow for public participation and an open 
+exchange of ideas. We have developed
+
+[[Page 61617]]
+
+this final 4(d) rule in a manner consistent with these requirements.
+
+Regulatory Flexibility Act (5 U.S.C. 601 et seq.)
+
+    Under the Regulatory Flexibility Act (RFA; 5 U.S.C. 601 et seq.), 
+as amended by the Small Business Regulatory Enforcement Fairness Act of 
+1996 (SBREFA; 5 U.S.C. 801 et seq.), whenever an agency is required to 
+publish a notice of rulemaking for any proposed or final rule, it must 
+prepare and make available for public comment a regulatory flexibility 
+analysis that describes the effects of the rule on small entities 
+(i.e., small businesses, small organizations, and small government 
+jurisdictions). However, no regulatory flexibility analysis is required 
+if the head of the agency certifies the rule will not have a 
+significant economic impact on a substantial number of small entities. 
+The SBREFA amended the RFA to require Federal agencies to provide a 
+certification statement of the factual basis for certifying that the 
+rule will not have a significant economic impact on a substantial 
+number of small entities. Thus, for a regulatory flexibility analysis 
+to be required, impacts must exceed a threshold for ``significant 
+impact'' and a threshold for a ``substantial number of small 
+entities.'' See 5 U.S.C. 605(b). Based on the information that is 
+available to us at this time, we certify that this rule will not have a 
+significant economic impact on a substantial number of small entities. 
+The following discussion explains our rationale.
+    On December 28, 2018, we published the final rule listing the 
+trispot darter as a threatened species (83 FR 67131). In this issue of 
+the Federal Register, we publish (1) this final rule to establish a 
+4(d) rule for the trispot darter, and (2) a final rule designating 
+critical habitat for the species. Any economic impacts resulting from 
+these three final rules under the Act stem from listing the trispot 
+darter and designating its critical habitat rather than this 4(d) rule. 
+This 4(d) rule will not add to any costs due to section 7 consultation 
+for the species and its critical habitat because, while this rule 
+establishes prohibitions on acts with regard to the trispot darter, it 
+also provides exceptions to those prohibitions. These exceptions will 
+reduce the amount of time, and therefore costs, to complete 
+consultations because the effects of the activities excepted by the 
+4(d) rule will not require analysis during those consultations. 
+Therefore, a final regulatory flexibility analysis is not required.
+
+Executive Order 13771
+
+    This rule is not an Executive Order (E.O.) 13771 (``Reducing 
+Regulation and Controlling Regulatory Costs'') (82 FR 9339, February 3, 
+2017) regulatory action because this rule is not significant under E.O. 
+12866.
+
+Energy Supply, Distribution or Use (Executive Order 13211)
+
+    Executive Order 13211 (Actions Concerning Regulations That 
+Significantly Affect Energy Supply, Distribution, or Use) requires 
+agencies to prepare Statements of Energy Effects when undertaking 
+actions that significantly affect energy supply, distribution, or use. 
+This rule will not have any significant effect, nor is it likely to 
+have any effect, on energy supplies, distribution, or use. Therefore, 
+this action is not a significant energy action, and no Statement of 
+Energy Effects is required.
+
+Unfunded Mandates Reform Act (2 U.S.C. 1501 et seq.)
+
+    In accordance with the Unfunded Mandates Reform Act (2 U.S.C. 1501 
+et seq.), we make the following finding:
+    This rule would not produce a Federal mandate. In general, a 
+Federal mandate is a provision in legislation, statute, or regulation 
+that would impose an enforceable duty upon State, local, or tribal 
+governments, or the private sector, and includes both ``Federal 
+intergovernmental mandates'' and ``Federal private sector mandates.'' 
+These terms are defined in 2 U.S.C. 658(5)-(7). ``Federal 
+intergovernmental mandate'' includes a regulation that ``would impose 
+an enforceable duty upon State, local, or tribal governments'' with two 
+exceptions. It excludes ``a condition of Federal assistance.'' It also 
+excludes ``a duty arising from participation in a voluntary Federal 
+program,'' unless the regulation ``relates to a then-existing Federal 
+program under which $500,000,000 or more is provided annually to State, 
+local, and tribal governments under entitlement authority,'' if the 
+provision would ``increase the stringency of conditions of assistance'' 
+or ``place caps upon, or otherwise decrease, the Federal Government's 
+responsibility to provide funding,'' and the State, local, or tribal 
+governments ``lack authority'' to adjust accordingly. At the time of 
+enactment, these entitlement programs were: Medicaid; Aid to Families 
+with Dependent Children work programs; Child Nutrition; Food Stamps; 
+Social Services Block Grants; Vocational Rehabilitation State Grants; 
+Foster Care, Adoption Assistance, and Independent Living; Family 
+Support Welfare Services; and Child Support Enforcement. ``Federal 
+private sector mandate'' includes a regulation that ``would impose an 
+enforceable duty upon the private sector, except (i) a condition of 
+Federal assistance or (ii) a duty arising from participation in a 
+voluntary Federal program.''
+    This rule will not impose an unfunded mandate on State, local, or 
+tribal governments, or the private sector of more than $100 million per 
+year. The rule will not have a significant or unique effect on State, 
+local, or tribal governments or the private sector. A statement 
+containing the information required by the Unfunded Mandates Reform Act 
+(2 U.S.C. 1501 et seq.) is not required.
+
+Takings--Executive Order 12630
+
+    In accordance with Executive Order 12630 (Government Actions and 
+Interference with Constitutionally Protected Private Property Rights), 
+this rule does not have significant takings implications. We have 
+determined that the rule has no potential takings of private property 
+implications as defined by this Executive Order because this 4(d) rule, 
+with limited exceptions, maintains the regulatory status quo regarding 
+activities currently allowed under the Endangered Species Act. A 
+takings implication assessment is not required.
+
+Federalism--Executive Order 13132
+
+    In accordance with E.O. 13132 (Federalism), this 4(d) rule does not 
+have significant Federalism effects. A federalism summary impact 
+statement is not required. This rule will not have substantial direct 
+effects on the States, on the relationship between the Federal 
+government and the States, or on the distribution of powers and 
+responsibilities among the various levels of government.
+
+Civil Justice Reform--Executive Order 12988
+
+    In accordance with Executive Order 12988 (Civil Justice Reform), 
+the Office of the Solicitor has determined that the rule does not 
+unduly burden the judicial system and that it meets the requirements of 
+sections 3(a) and 3(b)(2) of the Order. We issue this 4(d) rule in 
+accordance with the provisions of the Act. To assist the public in 
+understanding the conservation needs of the species, the rule 
+identifies the prohibitions and exclusions to those prohibitions that 
+are necessary and advisable to the conservation of the species.
+
+[[Page 61618]]
+
+Paperwork Reduction Act of 1995 (44 U.S.C. 3501 et seq.)
+
+    This rule does not contain information collection requirements, and 
+a submission to the Office of Management and Budget (OMB) under the 
+Paperwork Reduction Act of 1995 (44 U.S.C. 3501 et seq.) is not 
+required. We may not conduct or sponsor and you are not required to 
+respond to a collection of information unless it displays a currently 
+valid OMB control number.
+
+National Environmental Policy Act (42 U.S.C. 4321 et seq.)
+
+    We have prepared a final environmental assessment, as defined under 
+the authority of the National Environmental Policy Act of 1969. For 
+information on how to obtain a copy of the final environmental 
+assessment, see ADDRESSES, above.
+
+Government-to-Government Relationships With Tribes
+
+    In accordance with the President's memorandum of April 29, 1994 
+(Government-to-Government Relations with Native American Tribal 
+Governments; 59 FR 22951), Executive Order 13175 (Consultation and 
+Coordination with Indian Tribal Governments), and the Department of the 
+Interior's manual at 512 DM 2, we readily acknowledge our 
+responsibility to communicate meaningfully with recognized Federal 
+Tribes on a government-to-government basis. In accordance with 
+Secretarial Order 3206 of June 5, 1997 (American Indian Tribal Rights, 
+Federal-Tribal Trust Responsibilities, and the Endangered Species Act), 
+we readily acknowledge our responsibilities to work directly with 
+tribes in developing programs for healthy ecosystems, to acknowledge 
+that tribal lands are not subject to the same controls as Federal 
+public lands, to remain sensitive to Indian culture, and to make 
+information available to tribes. We have determined that no tribal 
+interests will be affected by this rule.
+
+References Cited
+
+    A complete list of references cited in this rulemaking is available 
+on the internet at http://www.regulations.gov and upon request from the 
+Alabama Ecological Services Field Office (see FOR FURTHER INFORMATION 
+CONTACT).
+
+Authors
+
+    The primary authors of this rule are the staff members of the Fish 
+and Wildlife Service's Species Assessment Team and the Alabama 
+Ecological Services Field Office.
+
+List of Subjects in 50 CFR Part 17
+
+    Endangered and threatened species, Exports, Imports, Reporting and 
+recordkeeping requirements, Transportation.
+
+Regulation Promulgation
+
+    Accordingly, we amend part 17, subchapter B of chapter I, title 50 
+of the Code of Federal Regulations, as follows:
+
+PART 17--ENDANGERED AND THREATENED WILDLIFE AND PLANTS
+
+0
+1. The authority citation for part 17 continues to read as follows:
+
+    Authority:  16 U.S.C. 1361-1407; 1531-1544; and 4201-4245, 
+unless otherwise noted.
+
+
+0
+2. Amend Sec.  17.11 in paragraph (h) by revising the entry for 
+``Darter, trispot'' under FISHES in the List of Endangered and 
+Threatened Wildlife to read as set forth below.
+
+
+Sec.  17.11  Endangered and threatened wildlife.
+
+* * * * *
+    (h) * * *
+
+----------------------------------------------------------------------------------------------------------------
+                                                                                          Listing citations and
+           Common name              Scientific name      Where listed         Status         applicable rules
+----------------------------------------------------------------------------------------------------------------
+ 
+                                                  * * * * * * *
+Fishes
+ 
+                                                  * * * * * * *
+Darter, trispot.................  Etheostoma          Wherever found....  T              83 FR 67131, 12/28/
+                                   trisella.                                              2018; 50 CFR 17.44(q);
+                                                                                          \4d\ 50 CFR
+                                                                                          17.95(e).\CH\
+ 
+                                                  * * * * * * *
+----------------------------------------------------------------------------------------------------------------
+
+
+0
+3. Amend Sec.  17.44 by adding paragraph (q) to read as follows:
+
+
+Sec.  17.44  Special rules--fishes.
+
+* * * * *
+    (q) Trispot darter (Etheostoma trisella). (1) Prohibitions. The 
+following prohibitions that apply to endangered wildlife also apply to 
+the trispot darter. Except as provided under paragraph (q)(2) of this 
+section and Sec. Sec.  17.4 and 17.5, it is unlawful for any person 
+subject to the jurisdiction of the United States to commit, to attempt 
+to commit, to solicit another to commit, or cause to be committed, any 
+of the following acts in regard to the trispot darter:
+    (i) Import or export, as set forth at Sec.  17.21(b) for endangered 
+wildlife.
+    (ii) Take, as set forth at Sec.  17.21(c)(1) for endangered 
+wildlife.
+    (iii) Possession and other acts with unlawfully taken specimens, as 
+set forth at Sec.  17.21(d)(1) for endangered wildlife.
+    (iv) Interstate or foreign commerce in the course of commercial 
+activity, as set forth at Sec.  17.21(e) for endangered wildlife.
+    (v) Sale or offer for sale, as set forth at Sec.  17.21(f) for 
+endangered wildlife.
+    (2) Exceptions from prohibitions. In regard to this species, you 
+may:
+    (i) Conduct activities as authorized by a permit issued under Sec.  
+17.32.
+    (ii) Take, as set forth at Sec.  17.21(c)(2) through (c)(4) for 
+endangered wildlife.
+    (iii) Take, as set forth at Sec.  17.31(b).
+    (iv) Take incidental to an otherwise lawful activity caused by:
+    (A) Species restoration efforts by State wildlife agencies, 
+including collection of broodstock, tissue collection for genetic 
+analysis, captive propagation, and subsequent stocking into currently 
+occupied and unoccupied areas within the historical range of the 
+species.
+    (B) Channel restoration projects that create natural, physically 
+stable, ecologically functioning streams (or stream and wetland 
+systems) that are reconnected with their groundwater aquifers and, if 
+the projects involve known trispot darter spawning habitat, that take 
+place between May 1 and December 31. These projects can be accomplished 
+using a variety of methods, but the desired outcome is a natural 
+channel with low shear stress (force of water moving against the 
+channel); bank heights that enable reconnection to the floodplain; a 
+reconnection of surface and groundwater systems, resulting in perennial 
+flows in the channel; riffles and pools comprised of existing soil, 
+rock, and wood instead of large
+
+[[Page 61619]]
+
+imported materials; low compaction of soils within adjacent riparian 
+areas; and inclusion of riparian wetlands.
+    (C) Streambank stabilization projects that utilize bioengineering 
+methods to replace pre-existing, bare, eroding stream banks with 
+vegetated, stable stream banks, thereby reducing bank erosion and 
+instream sedimentation and improving habitat conditions for the 
+species. Stream banks may be stabilized using live stakes (live, 
+vegetative cuttings inserted or tamped into the ground in a manner that 
+allows the stake to take root and grow), live fascines (live branch 
+cuttings, usually willows, bound together into long, cigar-shaped 
+bundles), or brush layering (cuttings or branches of easily rooted tree 
+species layered between successive lifts of soil fill). Stream banks 
+must not be stabilized solely through the use of quarried rock (rip-
+rap) or the use of rock baskets or gabion structures.
+    (D) Silviculture practices and forest management activities that:
+    (1) Implement State best management practices, particularly for 
+streamside management zones, for stream crossings, for forest roads, 
+for erosion control, and to maintain stable channel morphology; or
+    (2) Remove logging debris or any other large material placed within 
+natural or artificial wet weather conveyances or ephemeral, 
+intermittent, or perennial stream channels; and
+    (3) When such activities involve trispot darter spawning habitat, 
+are carried out between May 1 and December 31.
+    (E) Transportation projects that provide for fish passage at stream 
+crossings that are performed between May 1 and December 31 to avoid the 
+time period when the trispot darter will be found within spawning 
+habitat, if such habitat is affected by the activity.
+    (F) Projects carried out in the species' range under the Working 
+Lands for Wildlife program of the Natural Resources Conservation 
+Service, U.S. Department of Agriculture, that:
+    (1) Do not alter habitats known to be used by the trispot darter 
+beyond the fish's tolerances; and
+    (2) Are performed between May 1 and December 31 to avoid the time 
+period when the trispot darter will be found within its spawning 
+habitat, if such habitat is affected by the activity.
+    (v) Possess and engage in other acts with unlawfully taken 
+wildlife, as set forth at Sec.  17.21(d)(2) for endangered wildlife.
+* * * * *
+
+Aurelia Skipwith,
+Director, U.S. Fish and Wildlife Service.
+[FR Doc. 2020-19109 Filed 9-29-20; 8:45 am]
+BILLING CODE 4333-15-P

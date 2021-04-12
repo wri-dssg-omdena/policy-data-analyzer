@@ -1,5 +1,5 @@
 # Custom
-input/
+# input/
 Omdena_key_S3.json
 Omdena_key.json
 tasks/preprocess_text/notebooks/client_secret.json
@@ -79,6 +79,9 @@ target/
 # VS Code
 .vscode/
 
+# Visual Studio
+.vs
+
 # Spyder
 .spyproject/
 
@@ -104,6 +107,10 @@ tasks/data_augmentation/models/uncased_L-12_H-768_A-12/bert_model.ckpt.data-0000
 tasks/data_augmentation/output/test201224.json
 tasks/preprocess_text/notebooks/netscore.png
 tasks/Scrapy/scrapy_official_newspapers/.vs/scrapy_official_newspapers/v16/.suo
+tasks/Scrapy/scrapy_official_newspapers/scrapy_official_newspapers.pyproj
+tasks/Scrapy/scrapy_official_newspapers/scrapy_official_newspapers.pyproj
+*.pdf
+*.csv
 tasks/Scrapy/scrapy_official_newspapers/.vs/slnx.sqlite
 tasks/Scrapy/scrapy_official_newspapers/.vs/VSWorkspaceState.json
 .vs/PythonSettings.json
@@ -111,3 +118,10 @@ tasks/Scrapy/scrapy_official_newspapers/.vs/VSWorkspaceState.json
 src/decorators.py
 .vs/policy-data-analyzer/v16/.suo
 .vs/VSWorkspaceState.json
+.vs/policy-data-analyzer/v16/.suo
+.vs/VSWorkspaceState.json
+tasks/data_augmentation/input/Embeddings_2021-03-04_ES.json
+tasks/data_augmentation/input/Embeddings_Chile_201223.json
+tasks/data_augmentation/input/Embeddings_ElSalvador_201223.json
+tasks/data_augmentation/input/WRI_Policy_Tags.xlsx
+tasks/preprocess_text/input/WRI Policy Tags Complete File phrases extraction all.xlsx
