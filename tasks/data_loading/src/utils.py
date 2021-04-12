@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from os import listdir
 from os.path import isfile, join
-#Function list
 
 
 def country_labeled_sentences(excel_map):
@@ -38,7 +37,6 @@ def filter_out_labeled_sents(sents, labels_to_filter):
 def get_counts_per_label(y_true, n_classes):
     """
     Return a map of {label: number of data points with that label} for the given list of labels
-
     Parameters:
         - y_true: (integer) a list of labels
         - n_classes: (integer) the number of classes
@@ -170,4 +168,3 @@ def sort_model_preds(dataset, model_preds):
 
 def unique_labels(all_labels):
     return list(set(all_labels))
-
