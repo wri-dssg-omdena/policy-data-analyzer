@@ -3,30 +3,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
-def load_sentences_for_language(language, s3, bucket_name, init_doc, end_doc):
-    policy_dict = {}
-    sents_folder = f"{language}_documents/sentences"
-
-    for i, obj in enumerate(s3.Bucket(bucket_name).objects.all().filter(Prefix=sents_folder)):
-
-        if not obj.key.endswith("/") and init_doc <= i < end_doc:
-            serializedObject = obj.get()['Body'].read()
-            policy_dict = {**policy_dict, **json.loads(serializedObject)}
-
-    return labeled_sentences_from_dataset(policy_dict)
-
-
-def aws_credentials_from_file(f_name):
-    with open(f_name, 'r') as f:
-        key_dict = json.load(f)
-
-    for key in key_dict:
-        KEY = key
-        SECRET = key_dict[key]
-        return KEY, SECRET
-
-
 def load_file(file_name):
     with open(file_name, "r") as f:
         return json.load(f)
