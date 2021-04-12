@@ -115,6 +115,9 @@ tasks/Scrapy/scrapy_official_newspapers/.vs/slnx.sqlite
 tasks/Scrapy/scrapy_official_newspapers/.vs/VSWorkspaceState.json
 .vs/PythonSettings.json
 .vs/slnx.sqlite
+src/decorators.py
+.vs/policy-data-analyzer/v16/.suo
+.vs/VSWorkspaceState.json
 .vs/policy-data-analyzer/v16/.suo
 .vs/VSWorkspaceState.json
 tasks/data_augmentation/input/Embeddings_2021-03-04_ES.json
