@@ -110,9 +110,8 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
             name = "_" + name
 
         self.csv_file = "accuracy_f1_evaluation" + name + "_results.csv"
-        self.csv_headers = ["epoch", "steps", "accuracy", "macro_f1", "weighted_f1"]
-        for param in self.model_hyper_params.keys():
-            self.csv_headers.insert(0, param)
+        self.csv_headers = [param_name for param_name in self.model_hyper_params]
+        self.csv_headers.extend(["epoch", "steps", "accuracy", "macro_f1", "weighted_f1"])
 
     def __call__(self, model, output_path: str = None, model_deets: str = None,
                  epoch: int = -1, steps: int = -1) -> dict:
@@ -168,8 +167,8 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
     def store_results(self, results_dict, epoch, output_path, steps):
         accuracy = results_dict["accuracy"]
         macro_f1 = results_dict["macro_f1"]
-        weighted_f1 = results_dict["weighted_f1"]    
-        
+        weighted_f1 = results_dict["weighted_f1"]
+
         csv_path = os.path.join(output_path, self.csv_file)
         if not os.path.isfile(csv_path):
             with open(csv_path, mode="w", encoding="utf-8") as f:

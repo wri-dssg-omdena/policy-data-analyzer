@@ -116,7 +116,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                 # Train the model
                 start = time.time()
                 dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
-                                                             name='lae-dev', label_names=label_names)
+                                                             name='lae-dev', label_names=label_names,
+                                                             model_hyper_params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed})
 
                 model.fit(train_objectives=[(train_dataloader, classifier)],
                           evaluator=dev_evaluator,
@@ -127,7 +128,6 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                           model_deets=model_deets,
                           baseline=baseline,
                           patience=patience,
-                          params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed}
                           )
 
                 end = time.time()
