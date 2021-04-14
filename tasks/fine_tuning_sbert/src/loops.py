@@ -151,7 +151,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_se
                 dev_evaluator = LabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
                                                        name='lae-dev')
 
-                warmup_steps = math.ceil((len(train_dataset) / train_batch_size) * 0.1)  # 10% of total training steps
+                warmup_steps = math.ceil(
+                    len(train_dataset) * max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
 
                 model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={test_perc}_n-epoch={max_num_epochs}_seed={seed}"
 
