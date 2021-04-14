@@ -2,7 +2,7 @@
 
 This project contains the code for the paper *Accelerating Incentives: Identifying economic and financial incentives for forest and landscape restoration in Latin American policy using Machine Learning*, accepted at [ICCP5](https://www.ippapublicpolicy.org/conference/icpp5/13). 
 
-In addition, we intend to build this tool in order to be extended by any type use case related to policy analysis. More information below.
+In the long term, we are building a tool that can be extended to any use case related to policy analysis. More information on the architecture and implementation below.
 
 # Table of contents
 - [About](#about)
