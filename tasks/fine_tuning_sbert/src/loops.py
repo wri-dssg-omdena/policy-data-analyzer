@@ -96,7 +96,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
 
         output[f"dev_perc={dev_perc}"] = {}
         X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=dev_perc,
-                                                            stratify=train_labels, random_state=100)
+                                                          stratify=train_labels, random_state=100)
 
         # Load data samples into batches
         train_batch_size = 16
@@ -127,7 +127,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                 set_seeds(seed)
                 # Setup output
                 output[f"dev_perc={dev_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
-                model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={dev_perc}_n-epoch={max_num_epochs}_seed={seed}"
+                model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={dev_perc}_seed={seed}"
 
                 # Train the model
                 start = time.time()
@@ -136,7 +136,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
 
                 model.fit(train_objectives=[(train_dataloader, classifier)],
                           evaluator=dev_evaluator,
-                          epochs=max_num_epochs,  # We always tune on an extra epoch to see the performance gain
+                          epochs=max_num_epochs,
                           evaluation_steps=1000,
                           warmup_steps=warmup_steps,
                           output_path=output_path,
@@ -159,6 +159,7 @@ def build_data_samples(X_train, label2int, y_train):
         train_samples.append(InputExample(texts=[sent], label=label_id))
     return train_samples
 
+
 def set_seeds(seed):
     os.environ['PYTHONHASHSEED'] = str(seed)
     # Torch RNG
@@ -174,31 +175,49 @@ def set_seeds(seed):
     torch.backends.cudnn.enabled = False
 
 
-"""
-NOTE: Functions below are deprecated and in the process of being refactored.
-"""
+def evaluate_using_sbert(model, test_sents, test_labels, label_names,
+                         model_deets, numeric_labels, output_path=None):
+    """
+    Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
+    and returning. Evaluation method:
+     - Calculate cosine similarity between label and sentence embeddings
+     - Includes the projection matrix approach used in https://joeddav.github.io/blog/2020/05/29/ZSL.html#A-latent-embedding-approach
+
+    """
+    # Projection matrix Z low-dim projection
+    print("Classifying sentences...")
+    proj_matrix = cp.asnumpy(calc_proj_matrix(test_sents, 50, es_nlp, model, 0.01))
+    test_embs = encode_all_sents(test_sents, model, proj_matrix)
+    label_embs = encode_labels(label_names, model, proj_matrix)
+
+    model_preds, model_scores = calc_all_cos_similarity(test_embs, label_embs, label_names)
+
+    print("Evaluating predictions...")
+    print(classification_report(test_labels, model_preds))
+    numeric_preds = labels2numeric(model_preds, label_names)
+    evaluator = ModelEvaluator(label_names, y_true=numeric_labels, y_pred=numeric_preds)
+
+    print("Visualizing...")
+    out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
+                            output_path=out_path)
+    evaluator.plot_confusion_matrix(color_map='Blues', output_path=out_path)
+    print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
+
+    return evaluator.avg_f1.tolist()
+
 
 def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels,
-                           label_names, model_deets, model_name, num_epochs, output,
-                           dev_perc, output_path, json_output_fname, seed):
+                           label_names, model_deets, output_path):
+    """
+    Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
+    and returning. Evaluation method:
+     - A sklearn classifier, such as a RandomForest or SVM
+    """
     # Sentence encoding
     print("Classifying sentences...")
     train_embs = encode_all_sents(train_sents, model)
     test_embs = encode_all_sents(test_sents, model)
-
-    # i = 0
-    # # ===========
-    # viz_string = f"{output_path}/{model_deets}_exp_{i}"
-    # cm_string = f"{output_path}/{model_deets}_exp_{i}"
-    # # ===========
-
-    # while os.path.exists(viz_string):
-    #     i += 1
-    #     viz_string = f"{output_path}/{model_deets}_exp_{i}"
-    #     cm_string = f"{output_path}/{model_deets}_exp_{i}"
-
-    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
-                            output_path=f"{output_path}/{model_deets}")
 
     # Classifier training
     clf.fit(np.vstack(train_embs), train_labels)
@@ -212,20 +231,11 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     numeric_test_labels = labels2numeric(test_labels, label_names)
     evaluator = ModelEvaluator(label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
 
-    # with open(f"{results_save_path}/exp_num.txt") as f:
-    #     exp = int(f.read())
-
-    output[f"dev_perc={dev_perc}"][f'model_name={model_name}'][f'seed={seed}'].append(
-        {"num_epochs": num_epochs,
-         "avg_f1": evaluator.avg_f1.tolist()})
-
-    # with open(f"{results_save_path}/exp_num.txt", "w") as f:
-    #     f.write(str(exp+1))
-
-    with open(json_output_fname, "w") as f:
-        json.dump(output, f)
-
-    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
+    print("Visualizing...")
+    out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
+                            output_path=out_path)
+    evaluator.plot_confusion_matrix(color_map='Blues', output_path=out_path)
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
-
+    return evaluator.avg_f1.tolist()

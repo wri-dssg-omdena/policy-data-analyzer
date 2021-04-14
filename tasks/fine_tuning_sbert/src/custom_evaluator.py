@@ -139,6 +139,7 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
             total += prediction.size(0)
             correct += predictions_as_numbers.eq(label_ids).sum().item()
 
+        # Calculate evaluation metrics
         cm = confusion_matrix(all_labels, all_predictions)
         accuracy = correct / total
         macro_f1 = f1_score(all_labels, all_predictions, average='macro')
@@ -150,11 +151,11 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         logging.info("Accuracy: {:.4f} ({}/{})\n".format(accuracy, correct, total))
         logging.info(f"Macro F1: {macro_f1}")
         logging.info(f"Weighted F1: {weighted_f1}")
-        plot_confusion_matrix(cm, self.label_names, output_path=f"{output_path}/{model_deets}" if model_deets and output_path else None)
+        out_path = f"{output_path}/{model_deets}_n-epochs={epoch}" if model_deets and output_path else None
+        plot_confusion_matrix(cm, self.label_names, output_path=out_path)
 
         if output_path is not None:
             self.store_results(accuracy, epoch, output_path, steps)
-
 
         return score_dict
 

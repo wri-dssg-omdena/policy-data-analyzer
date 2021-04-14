@@ -113,7 +113,7 @@ class ModelEvaluator:
         if plot_cm:
             self.plot_confusion_matrix(color_map="Blues",
                                        normalize=normalize,
-                                       exp_name=f"{self.output_path}{exp_name}")
+                                       output_path=f"{self.output_path}{exp_name}")
 
         if exp_name:
             fname = f"{self.output_path + exp_name}_results.csv"
@@ -152,7 +152,7 @@ class ModelEvaluator:
     def plot_confusion_matrix(self, title='Confusion matrix',
                               color_map=None,
                               normalize=True,
-                              exp_name=None):
+                              output_path=None):
         """
         Adapted from: https://stackoverflow.com/questions/19233771/sklearn-plot-confusion-matrix-with-labels
         """
@@ -189,8 +189,8 @@ class ModelEvaluator:
         plt.xlabel('Predicted label')
         plt.ylabel('True label')
 
-        if exp_name:
-            fname = f"{exp_name}_cm.png"
+        if output_path:
+            fname = f"{output_path}_cm.png"
             plt.savefig(fname)
             print(f"Stored confusion matrix: {fname}")
 
