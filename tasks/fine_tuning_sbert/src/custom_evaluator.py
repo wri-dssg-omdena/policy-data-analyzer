@@ -105,8 +105,8 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         if name:
             name = "_" + name
 
-        self.csv_file = "accuracy_evaluation" + name + "_results.csv"
-        self.csv_headers = ["epoch", "steps", "accuracy"]
+        self.csv_file = "accuracy_f1_evaluation" + name + "_results.csv"
+        self.csv_headers = ["epoch", "steps", "accuracy", "macro_f1", "weighted_f1"]
 
     def __call__(self, model, output_path: str = None, model_deets: str = None,
                  epoch: int = -1, steps: int = -1) -> dict:
@@ -155,18 +155,22 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         plot_confusion_matrix(cm, self.label_names, output_path=out_path)
 
         if output_path is not None:
-            self.store_results(accuracy, epoch, output_path, steps)
+            self.store_results(score_dict, epoch, output_path, steps)
 
         return score_dict
 
-    def store_results(self, accuracy, epoch, output_path, steps):
+    def store_results(self, results_dict, epoch, output_path, steps):
+        accuracy = results_dict["accuracy"]
+        macro_f1 = results_dict["macro_f1"]
+        weighted_f1 = results_dict["weighted_f1"]    
+        
         csv_path = os.path.join(output_path, self.csv_file)
         if not os.path.isfile(csv_path):
             with open(csv_path, mode="w", encoding="utf-8") as f:
                 writer = csv.writer(f)
                 writer.writerow(self.csv_headers)
-                writer.writerow([epoch, steps, accuracy])
+                writer.writerow([epoch, steps, accuracy, macro_f1, weighted_f1])
         else:
             with open(csv_path, mode="a", encoding="utf-8") as f:
                 writer = csv.writer(f)
-                writer.writerow([epoch, steps, accuracy])
+                writer.writerow([epoch, steps, accuracy, macro_f1, weighted_f1])
