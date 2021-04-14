@@ -7,6 +7,8 @@ Added:
     - `call()` function now returns a dict instead of a float, to access more metrics
 """
 import itertools
+from typing import Dict
+
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -90,7 +92,8 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
     The results are written in a CSV. If a CSV already exists, then values are appended.
     """
 
-    def __init__(self, dataloader: DataLoader, name: str = "", label_names: list = None, softmax_model=None):
+    def __init__(self, dataloader: DataLoader, name: str = "", label_names: list = None, softmax_model=None,
+                 model_hyper_params: Dict[str, str] = None):
         """
         Constructs an evaluator for the given dataset
 
@@ -101,12 +104,15 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         self.name = name
         self.softmax_model = softmax_model
         self.label_names = label_names
+        self.model_hyper_params = model_hyper_params
 
         if name:
             name = "_" + name
 
         self.csv_file = "accuracy_f1_evaluation" + name + "_results.csv"
         self.csv_headers = ["epoch", "steps", "accuracy", "macro_f1", "weighted_f1"]
+        for param in self.model_hyper_params.keys():
+            self.csv_headers.insert(0, param)
 
     def __call__(self, model, output_path: str = None, model_deets: str = None,
                  epoch: int = -1, steps: int = -1) -> dict:
@@ -169,8 +175,12 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
             with open(csv_path, mode="w", encoding="utf-8") as f:
                 writer = csv.writer(f)
                 writer.writerow(self.csv_headers)
-                writer.writerow([epoch, steps, accuracy, macro_f1, weighted_f1])
+                row = [param_value for param_value in self.model_hyper_params]
+                row.extend([epoch, steps, accuracy, macro_f1, weighted_f1])
+                writer.writerow(row)
         else:
             with open(csv_path, mode="a", encoding="utf-8") as f:
                 writer = csv.writer(f)
-                writer.writerow([epoch, steps, accuracy, macro_f1, weighted_f1])
+                row = [param_value for param_value in self.model_hyper_params]
+                row.extend([epoch, steps, accuracy, macro_f1, weighted_f1])
+                writer.writerow(row)

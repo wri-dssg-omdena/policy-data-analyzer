@@ -41,7 +41,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             show_progress_bar: bool = True,
             baseline: float = 0.01,
             patience: int = 5,
-            params: Dict[str, str] = {}
             ):
         """
         Train the model with the given training objective
@@ -67,9 +66,8 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                 It must accept the following three parameters in this order:
                 `score`, `epoch`, `steps`
         :param show_progress_bar: If True, output a tqdm progress bar
-        :param BASELINE: minimum improvement in the accuracy for a new model to be saved and best_score to be updated
-        :param PATIENCE: maximum number of epochs to go without an improvement in the accuracy
-        :param params: contains the name of the model, test percentage, and seed to save the accuracy plot in drive
+        :param baseline: minimum improvement in the accuracy for a new model to be saved and best_score to be updated
+        :param patience: maximum number of epochs to go without an improvement in the accuracy
         """
         self.acc_list = [1e-6]  # stores the accuracy while training
         training_acc_list = []
