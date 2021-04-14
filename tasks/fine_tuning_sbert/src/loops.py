@@ -67,7 +67,6 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
     output_path = train_params["output_path"]
-    experiment = train_params["experiment"]
     all_dev_perc = train_params["all_dev_perc"]
     model_names = train_params["model_names"]
     max_num_epochs = train_params["max_num_epochs"]
@@ -82,19 +81,9 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
 
     print(f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
-    json_output_fname = output_path + f"/{experiment}_FineTuningResults.json"
-
-    # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
-    with open(json_output_fname, "w") as f:
-        json.dump({}, f)
-
     label2int = dict(zip(label_names, range(len(label_names))))
 
     for dev_perc in all_dev_perc:
-        with open(json_output_fname, "r") as fr:
-            output = json.load(fr)
-
-        output[f"dev_perc={dev_perc}"] = {}
         X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=dev_perc,
                                                           stratify=train_labels, random_state=100)
 
@@ -104,9 +93,6 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
         dev_samples = build_data_samples(X_dev, label2int, y_dev)
 
         for model_name in model_names:
-            # Setup output
-            output[f"dev_perc={dev_perc}"][f'model_name={model_name}'] = {}
-
             # Train set config
             model = EarlyStoppingSentenceTransformer(model_name)
             train_dataset = SentencesDataset(train_samples, model=model)
@@ -125,8 +111,6 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
 
             for seed in seeds:
                 set_seeds(seed)
-                # Setup output
-                output[f"dev_perc={dev_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
                 model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={dev_perc}_seed={seed}"
 
                 # Train the model
