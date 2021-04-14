@@ -7,18 +7,23 @@ In addition, we intend to build this tool in order to be extended by any type us
 # Table of contents
 - [About](#about)
 - [Architecture](#architecture)
+  - [General Pipeline](#general-pipeline)
+  - [Human-in-the-loop Annotation Pipeline](#human-in-the-loop-annotation-pipeline)
+  - [Classifier Pipeline](#classifier-pipeline)
 - [Results](#results)
+  - [Incentive Detection](#incentive-detection)
+  - [Incentive Instrument Classification](#incentive-instrument-classification)
 - [Development](#development)
   - [Contribution Guidelines](#contribution-guidelines)
   - [Project Organization](#project-organization)
-- [World Resources Institute](#world-resources-institute)
+- [Background, Motivation and Impact](#background-motivation-and-impact)
 
 ## About
-We are collaborating with the World Resources Institute (WRI) to create a tool that can assist policy analysts in understanding regulations and incentives relating to forest and landscape restoration, how these policies are applied in practice, and the degree of alignment across ministries and levels of government.
+[DSSG Solve](https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/MulticlassClassificationResults.png) and [Omdena](https://omdena.com/) are collaborating with the [World Resources Institute](https://www.wri.org/) to create a tool that can assist policy analysts in understanding regulations and incentives relating to forest and landscape restoration, how these policies are applied in practice, and the degree of alignment across ministries and levels of government.
 
 So far, we have successfully built an end-to-end pipeline containing a model that can identify financial and economic incentives in policy documents from 5 Latin American countries: Chile, El Salvador, Guatemala, Mexico, and Peru. We presented our project to government officials from these countries and have received support and input from stakeholders in El Salvador and Chile. Going forward, we will receive additional input from stakeholders in other countries, including Mexico and India.  
 
-The modeling side has yielded promising results, and we will be presenting this progress at the [5th Conference on International Public Policy](https://www.ippapublicpolicy.org/conference/icpp5/13). The potential impact of this framework is quite large, as it can be extended to multiple countries and to different types of policy analysis. Very little has been done to apply ML to restoration, so this project is a great opportunity to pioneer a new application of data science to environmental efforts. More information on the initial background and motivation in the [World Resources Institute section](#world-resources-institute).
+The modeling side has yielded promising results, and we will be presenting this progress at the [5th Conference on International Public Policy](https://www.ippapublicpolicy.org/conference/icpp5/13). The potential impact of this framework is quite large, as it can be extended to multiple countries and to different types of policy analysis. Very little has been done to apply ML to restoration, so this project is a great opportunity to pioneer a new application of data science to environmental efforts. More information in the [Background, Motivation and Impact section](#background-motivation-and-impact).
 
 ## Architecture
 
@@ -32,10 +37,10 @@ The modeling side has yielded promising results, and we will be presenting this 
 <img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/ClassifierPipeline.png" width="50%">
 
 ## Results
-### Binary Classification (Detecting incentives)
+### Incentive Detection
 <img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/BinaryClassificationResults.png" width="60%">
 
-### Multiclass Classification (Detecting incentive instruments)
+### Incentive Instrument Classification
 <img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/MulticlassClassificationResults.png" width="55%">
 
 ## Development
@@ -125,27 +130,17 @@ Project structure based on the [cookiecutter data science project template](http
 
 
 -------------------------------------
-## [World Resources Institute](https://www.wri.org/)
-
-#### Background and Motivation
+## Background, Motivation and Impact
 
 We are on the verge of the United Nations Decade for Ecosystem Restoration. The Decade starts in 2021 and ushers in a global effort to drive ecosystem restoration to support climate mitigation and adaptation, water and food security, biodiversity conservation and livelihood development. In order to prepare for the decade, we must understand the enabling environment. However, to understand policies involves reading and analyzing thousands of pages of documentation across multiple sectors. Using NLP to mine policy documents, would promote knowledge sharing between stakeholders and enable rapid identification of incentives, disincentives, perverse incentives and misalignment between policies. If a lack of incentives or disincentives were discovered, this would provide an opportunity to advocate for positive change. Creating a systematic analysis tool using NLP would enable a standardized approach to generate data that can support evidence-based change.
-
-#### Project Description
 
 The viability of Nature Based Solutions projects is often impeded by the lack of positive incentives to adopt practices that conserve or restore land. Perverse incentives also encourage business-as-usual practices that have a heavy carbon footprint, degrade ecosystems, exploit workers or fail to generate decent livelihoods for rural communities.
 
 Shifting incentives in a specific jurisdiction begins with a diagnosis of the country’s existing regulations, incentives and mandates across agencies. The aim is to gain a thorough understanding of current regulations and incentives that are relevant to forest and landscape restoration, the reality of how they are applied in practice and the degree of alignment or conflict across ministries and different levels of government. Shifting incentives at international level, may require such diagnostics across multiple countries, or voluntary standards and business practices. For this purpose, natural language processing technologies are needed to expedite systematic review of the legal and policy context in the relevant jurisdictions, as well as examples of innovative incentives from other contexts.
 
-The initial focus is in Latin America, therefore native or fluent Spanish speakers are required to lead the project. If volunteers are interested in other country contexts, please contact us and we will assess data availability, but Latin America is a priority focus in the first instance.
-
-#### Intended Impact
-
 Success will be achieved as governments or market platforms create aligned incentives across sectoral silos, remove administrative bottlenecks, or reorient incentives in line with recommendations. To advocate for change, a systematic process of analyzing incentives is needed beyond manual policy analysis. Currently manual policy analysis is the only method utilized to understand incentives. This is inadequate when considering the scale of the task.
 
-#### Internal Stakeholders
-
-Global Restoration Initiative and Forest teams. Supporting the work of the Policy Accelerator
+_Description taken from: [DSSG Solve Project Description](https://www.solveforgood.org/proj/46/)_
 
 ------------------------------------------
 Previous Roadmap
