@@ -28,20 +28,20 @@ The modeling side has yielded promising results, and we will be presenting this 
 ## Architecture
 
 ### General Pipeline 
-<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/GeneralPipeline.png" width="80%">
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/master/images/GeneralPipeline.png" width="80%">
 
 ### Human-in-the-loop Annotation Pipeline
-<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/HITLPipeline.png" width="40%">
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/master/images/HITLPipeline.png" width="40%">
 
 ### Classifier Pipeline
-<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/ClassifierPipeline.png" width="50%">
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/master/images/ClassifierPipeline.png" width="50%">
 
 ## Results
 ### Incentive Detection
-<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/BinaryClassificationResults.png" width="60%">
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/master/images/BinaryClassificationResults.png" width="60%">
 
 ### Incentive Instrument Classification
-<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/MulticlassClassificationResults.png" width="55%">
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/master/images/MulticlassClassificationResults.png" width="55%">
 
 ## Development
 
