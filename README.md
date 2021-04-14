@@ -23,20 +23,20 @@ The modeling side has yielded promising results, and we will be presenting this 
 ## Architecture
 
 ### General Pipeline 
-![GeneralPipeline](https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/GeneralPipeline.png)
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/GeneralPipeline.png" width="80%">
 
 ### Human-in-the-loop Annotation Pipeline
-![HITLPipeline](https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/HITLPipeline.png)
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/HITLPipeline.png" width="40%">
 
 ### Classifier Pipeline
-![CLSPipeline](https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/ClassifierPipeline.png)
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/ClassifierPipeline.png" width="50%">
 
 ## Results
 ### Binary Classification (Detecting incentives)
-![BinClsRes](https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/BinaryClassificationResults.png)
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/BinaryClassificationResults.png" width="60%">
 
 ### Multiclass Classification (Detecting incentive instruments)
-![MultClsRes](https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/MulticlassClassificationResults.png)
+<img src="https://github.com/wri-dssg/policy-data-analyzer/blob/i77_edit_readme/images/MulticlassClassificationResults.png" width="55%">
 
 ## Development
 
