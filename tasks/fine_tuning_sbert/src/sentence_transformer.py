@@ -19,8 +19,6 @@ from torch.utils.data import DataLoader
 from tqdm.autonotebook import trange
 from statistics import mean
 
-
-# I checked and I think the same name will work when overriding the fit function
 class EarlyStoppingSentenceTransformer(SentenceTransformer):
 
     def fit(self,
@@ -35,14 +33,14 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             weight_decay: float = 0.01,
             evaluation_steps: int = 0,
             output_path: str = None,
+            model_deets: str = None,
             save_best_model: bool = True,
             max_grad_norm: float = 1,
             use_amp: bool = False,
             callback: Callable[[float, int, int], None] = None,
             show_progress_bar: bool = True,
-            BASELINE: float = 0.01,
-            PATIENCE: int = 5,
-            params: Dict[str, str] = {}
+            baseline: float = 0.01,
+            patience: int = 5,
             ):
         """
         Train the model with the given training objective
@@ -60,6 +58,7 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         :param weight_decay: Weight decay for model parameters
         :param evaluation_steps: If > 0, evaluate the model using evaluator after each number of training steps
         :param output_path: Storage path for the model and evaluation files
+        :param model_deets: Name containing hyperparameters of model
         :param save_best_model: If true, the best model (according to evaluator) is stored at output_path
         :param max_grad_norm: Used for gradient normalization.
         :param use_amp: Use Automatic Mixed Precision (AMP). Only for Pytorch >= 1.6.0
@@ -67,18 +66,17 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                 It must accept the following three parameters in this order:
                 `score`, `epoch`, `steps`
         :param show_progress_bar: If True, output a tqdm progress bar
-        :param BASELINE: minimum improvement in the accuracy for a new model to be saved and best_score to be updated
-        :param PATIENCE: maximum number of epochs to go without an improvement in the accuracy
-        :param params: contains the name of the model, test percentage, and seed to save the accuracy plot in drive
+        :param baseline: minimum improvement in the accuracy for a new model to be saved and best_score to be updated
+        :param patience: maximum number of epochs to go without an improvement in the accuracy
         """
-        self.ACC_LIST = [1e-6]  # stores the accuracy while training
-        TRAINING_ACC_LIST = []
+        self.acc_list = [1e-6]  # stores the accuracy while training
+        training_acc_list = []
 
         t_evaluator = LabelAccuracyEvaluator(dataloader=train_objectives[0][0], softmax_model=train_objectives[0][1],
                                              name='lae-training')
 
-        self.BASELINE = BASELINE
-        self.PATIENCE = PATIENCE
+        self.baseline = baseline
+        self.patience = patience
 
         if use_amp:
             from torch.cuda.amp import autocast
@@ -187,10 +185,10 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                         loss_model.train()
 
             # training evaluation
-            TRAINING_ACC_LIST.append(t_evaluator(self, output_path=output_path, epoch=epoch, steps=-1))
+            training_acc_list.append(t_evaluator(self, output_path=output_path, epoch=epoch, steps=-1))
 
             # validation evaluation
-            flag = self._eval_during_training(evaluator, output_path, save_best_model, epoch, -1, callback)
+            flag = self._eval_during_training(evaluator, output_path, model_deets, save_best_model, epoch, -1, callback)
 
             if flag is True:
                 print(f'Epoch: {epoch}')
@@ -201,46 +199,51 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                 print(f'Epoch: {epoch}')
                 print(f"Best score: {self.best_score}")
                 print('=' * 60)
-                plt.plot(range(1, len(TRAINING_ACC_LIST) + 1), TRAINING_ACC_LIST, 'orange', label='Training accuracy')
-                plt.plot(range(1, len(self.ACC_LIST) + 1), self.ACC_LIST, 'blue', label='Validation accuracy')
-                plt.title('Training and Validation accuracy')
-                plt.xlabel('Epochs')
-                plt.ylabel('Accuracy')
-                plt.rcParams["figure.figsize"] = [15, 15]
-                plt.legend()
-                plt.savefig(
-                    f"{output_path}/SBERT_model={params['model_name']}_test_perc={params['test_perc']}_n_epochs={epochs}_seed={params['seed']}.png",
-                    bbox_inches="tight", )
-                plt.show()
+                self.plot_train_val_accuracy(model_deets, output_path, training_acc_list)
                 return
 
             # removing the unnecessary first element in ACC_LIST that needed to be there for epoch 1
             if epoch == 0:
-                del self.ACC_LIST[0]
+                del self.acc_list[0]
 
         if evaluator is None and output_path is not None:  # No evaluator, but output path: save final model version
             self.save(output_path)
 
-    def _eval_during_training(self, evaluator, output_path, save_best_model, epoch, steps, callback):
+    def plot_train_val_accuracy(self, model_deets, output_path, training_acc_list):
+        plt.plot(range(1, len(training_acc_list) + 1), training_acc_list, 'orange', label='Training accuracy')
+        plt.plot(range(1, len(self.acc_list) + 1), self.acc_list, 'blue', label='Validation accuracy')
+        plt.title('Training and Validation accuracy')
+        plt.xlabel('Epochs')
+        plt.ylabel('Accuracy')
+        plt.rcParams["figure.figsize"] = [15, 15]
+        plt.legend()
+        plt.savefig(
+            f"{output_path}/{model_deets}.png",
+            bbox_inches="tight", )
+        plt.show()
+
+    def _eval_during_training(self, evaluator, output_path,
+                              model_deets, save_best_model, epoch, steps, callback):
         """Runs evaluation during the training"""
 
-        score = evaluator(self, output_path=output_path, epoch=epoch, steps=steps)
+        score_dict = evaluator(self, output_path=output_path, model_deets=model_deets, epoch=epoch, steps=steps)
 
-        self.ACC_LIST.append(score)
+        score = score_dict["accuracy"]
+        self.acc_list.append(score)
 
-        prev_score = self.ACC_LIST[-2]
-        moving_average = mean(self.ACC_LIST[-self.PATIENCE - 1: -1])
+        prev_score = self.acc_list[-2]
+        moving_average = mean(self.acc_list[-self.patience - 1: -1])
 
-        print(f"{'=' * 60}\nCurrent Score is: {score}\nCurrent ACC_LIST is: {self.ACC_LIST}")
+        print(f"{'=' * 60}\nCurrent Score is: {score}\nCurrent ACC_LIST is: {self.acc_list}")
 
         if score >= moving_average or len(
-                self.ACC_LIST) - 1 <= self.PATIENCE:  # score is >= the moving average in the last PATIENCE values
-            if score > prev_score and score - prev_score >= self.BASELINE:  # better score
+                self.acc_list) - 1 <= self.patience:  # score is >= the moving average in the last PATIENCE values
+            if score > prev_score and score - prev_score >= self.baseline:  # better score
                 if score > self.best_score:  # checking for local maxima
                     self.best_score = score
                     self.save(output_path)
                 return True  # continue training whether this is local maxima or not
-            elif score >= prev_score and score - prev_score < self.BASELINE:
+            elif score >= prev_score and score - prev_score < self.baseline:
                 if score > self.best_score:  # checking for local maxima
                     self.best_score = score
                     self.save(output_path)
