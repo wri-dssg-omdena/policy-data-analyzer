@@ -8,7 +8,8 @@ import scprep
 import phate
 
 
-def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=69420, store_name=None):
+def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=100, output_path=None,
+                            verbose=0):
     df = pd.DataFrame()
     df["y"] = np.array(numeric_labels)
 
@@ -19,7 +20,7 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
     df['pca-2'] = pca_result[:, 1]
 
     # Data for plot 2
-    tsne = TSNE(n_components=2, verbose=1, perplexity=tsne_perplexity, n_iter=1000, random_state=seed)
+    tsne = TSNE(n_components=2, verbose=verbose, perplexity=tsne_perplexity, n_iter=1000, random_state=seed)
     tsne_results = tsne.fit_transform(embs)
     df["tsne-1"] = tsne_results[:, 0]
     df["tsne-2"] = tsne_results[:, 1]
@@ -66,12 +67,14 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
         ).set(title="t-SNE on PCA projection")
 
     plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
-    
-    if store_name:
-        plt.savefig(store_name + "_viz.png")
+
+    if output_path:
+        plt.savefig(output_path + "_viz.png")
+    else:
+        plt.show()
 
 
-def visualize_PCA_embeddings_3D(embs, labels, fname=None, seed=69420):
+def visualize_PCA_embeddings_3D(embs, labels, fname=None, seed=100):
     pca = PCA(n_components=3, random_state=seed)
     pca_result = pca.fit_transform(embs)
     data = np.vstack([pca_result[:, 0], pca_result[:, 1], pca_result[:, 2]]).T
@@ -81,7 +84,7 @@ def visualize_PCA_embeddings_3D(embs, labels, fname=None, seed=69420):
                                         legend_anchor=(1.01, 1), filename=fname)
 
 
-def visualize_tSNE_embeddings_3D(embs, labels, perplexity=50, fname=None, seed=69420):
+def visualize_tSNE_embeddings_3D(embs, labels, perplexity=50, fname=None, seed=100):
     tsne = TSNE(n_components=3, verbose=1, perplexity=perplexity, n_iter=1000, random_state=seed)
     tsne_result = tsne.fit_transform(embs)
     data = np.vstack([tsne_result[:, 0], tsne_result[:, 1], tsne_result[:, 2]]).T
@@ -91,14 +94,14 @@ def visualize_tSNE_embeddings_3D(embs, labels, perplexity=50, fname=None, seed=6
                                         legend_anchor=(1.01, 1), filename=fname)
 
 
-def visualize_phate_embeddings_2D(embs, labels, knn=4, decay=15, t=12, seed=69420):
+def visualize_phate_embeddings_2D(embs, labels, knn=4, decay=15, t=12, seed=100):
     phate_operator = phate.PHATE(knn=knn, decay=decay,
                                  t=t, random_state=seed)  # (k=2, t=5000, n_pca=50, random_state=69420, knn_dist='cosine')
     tree_phate = phate_operator.fit_transform(embs)
     return phate.plot.scatter2d(phate_operator, c=labels, legend_anchor=(1.01, 1))
 
 
-def visualize_phate_embeddings_3D(embs, labels, knn=4, decay=15, t=12, seed=69420, fname=None):
+def visualize_phate_embeddings_3D(embs, labels, knn=4, decay=15, t=12, seed=100, fname=None):
     phate_operator = phate.PHATE(knn=knn, decay=decay,
                                  t=t, random_state=seed)  # (k=2, t=5000, n_pca=50, random_state=69420, knn_dist='cosine')
     tree_phate = phate_operator.fit_transform(embs)
