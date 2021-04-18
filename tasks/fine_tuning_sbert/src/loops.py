@@ -158,7 +158,6 @@ def set_seeds(seed):
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.enabled = False
 
-
 def evaluate_using_sbert(model, test_sents, test_labels, label_names,
                          model_deets, numeric_labels, output_path=None):
     """
