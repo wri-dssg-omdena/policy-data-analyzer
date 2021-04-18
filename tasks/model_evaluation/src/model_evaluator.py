@@ -4,9 +4,10 @@ from sklearn.metrics import confusion_matrix, precision_recall_curve, f1_score, 
 from sklearn.preprocessing import label_binarize
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import itertools
 from itertools import cycle
-import matplotlib.colors as mcolors
+
 
 import sys
 

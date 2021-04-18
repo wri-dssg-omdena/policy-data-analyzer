@@ -12,9 +12,6 @@
         }
     }
 """
-import sys
-
-sys.path.append("../../../")
 from tasks.text_preprocessing.src.utils import *
 
 import nltk
@@ -198,7 +195,6 @@ def main(credentials_fname, language, min_num_words):
     for obj in s3.Bucket(BUCKET_NAME).objects.all().filter(Prefix=new_text_files_folder):
         # Don't get the directory itself
         if not obj.key.endswith("/"):
-#             print("Processing", obj.key)
             file_id = obj.key.replace(new_text_files_folder, "").replace(".txt", "")
             text = obj.get()['Body'].read().decode('utf-8')
             try:
