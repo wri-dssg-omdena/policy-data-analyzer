@@ -14,6 +14,8 @@ In the long term, we are building a tool that can be extended to any use case re
   - [Incentive Detection](#incentive-detection)
   - [Incentive Instrument Classification](#incentive-instrument-classification)
 - [Development](#development)
+  - [Getting Started](#getting-started)
+  - [Main Components](#main-components)
   - [Contribution Guidelines](#contribution-guidelines)
   - [Project Organization](#project-organization)
 - [Background, Motivation and Impact](#background-motivation-and-impact)
@@ -44,6 +46,15 @@ The modeling side has yielded promising results, and we will be presenting this 
 <img src="https://github.com/wri-dssg/policy-data-analyzer/blob/master/images/MulticlassClassificationResults.png" width="55%">
 
 ## Development
+
+### Getting Started
+- If using Docker
+    TODO
+- If using virtual environment
+    TODO
+
+### Main Components
+TODO
 
 ### Contribution Guidelines
 
