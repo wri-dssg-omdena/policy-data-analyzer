@@ -8,7 +8,7 @@ Original source code: https://github.com/UKPLab/sentence-transformers/blob/maste
 from typing import Iterable, Dict, Tuple, Type, Callable
 import os
 import transformers
-import wandb_key
+import tasks.fine_tuning_sbert.src.wandb_key
 import wandb
 import matplotlib.pyplot as plt
 from sentence_transformers import SentenceTransformer
