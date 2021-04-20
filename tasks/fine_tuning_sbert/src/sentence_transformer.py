@@ -8,7 +8,6 @@ Original source code: https://github.com/UKPLab/sentence-transformers/blob/maste
 from typing import Iterable, Dict, Tuple, Type, Callable
 import os
 import transformers
-import tasks.fine_tuning_sbert.src.wandb_key
 import wandb
 import matplotlib.pyplot as plt
 from sentence_transformers import SentenceTransformer
@@ -202,7 +201,8 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                 self, output_path=output_path, epoch=epoch, steps=-1)
             training_acc_list.append(training_acc_evaluated)
 
-            wandb.log({"train_acc": training_acc_evaluated}, commit=False)
+            wandb.log({"train_acc": training_acc_evaluated,
+                      "epoch": epoch}, commit=False)
 
             # validation evaluation
             flag = self._eval_during_training(
@@ -241,9 +241,8 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         plt.ylabel('Accuracy')
         plt.rcParams["figure.figsize"] = [15, 15]
         plt.legend()
-        plt.savefig(
-            f"{output_path}/{model_deets}.png",
-            bbox_inches="tight", )
+        fig = plt.gcf()
+        wandb.log({"train_val_accuracy": wandb.Image(fig)}, commit=True)
         plt.show()
 
     def _eval_during_training(self, evaluator, output_path,
@@ -256,7 +255,11 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         score = score_dict["accuracy"]
         self.acc_list.append(score)
 
-        wandb.log({"validation_acc": score}, commit=True)
+        wandb.log({"validation_acc": score, "epoch": score}, commit=False)
+        wandb.log(
+            {"Macro F1 validation": score_dict['macro_f1'], "epoch": score}, commit=False)
+        wandb.log(
+            {"Weighted F1 validation": score_dict['weighted_f1'], "epoch": score}, commit=False)
 
         prev_score = self.acc_list[-2]
         moving_average = mean(self.acc_list[-self.patience - 1: -1])

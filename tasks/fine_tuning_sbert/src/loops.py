@@ -73,6 +73,9 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
     baseline = train_params['baseline']
     patience = train_params['patience']
     seeds = train_params['seeds']
+    wandb_key = train_params['wandb_key']
+
+    os.environ['WANDB_API_KEY'] = wandb_key
 
     if eval_classifier is None:
         train_params["eval_classifier"] = "SBERT"

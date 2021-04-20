@@ -12,6 +12,7 @@ from typing import Dict
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+import wandb
 from torch.utils.data import DataLoader
 from torch import device
 import logging
@@ -76,6 +77,11 @@ def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
     plt.xlabel('Predicted label')
     plt.ylabel('True label')
 
+    # wandb code
+    fig = plt.gcf()
+    wandb.init(project='WRI', entity='ramanshsharma')
+    wandb.log({"confusion matrix": wandb.Image(fig)})
+    wandb.finish()
     if output_path:
         fname = f"{output_path}_cm.png"
         plt.savefig(fname)

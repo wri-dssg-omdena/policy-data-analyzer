@@ -2,6 +2,7 @@ from sklearn.manifold import TSNE
 from sklearn.decomposition import PCA
 import seaborn as sns
 import pandas as pd
+import wandb
 import numpy as np
 import matplotlib.pyplot as plt
 import scprep
@@ -20,7 +21,8 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
     df['pca-2'] = pca_result[:, 1]
 
     # Data for plot 2
-    tsne = TSNE(n_components=2, verbose=verbose, perplexity=tsne_perplexity, n_iter=1000, random_state=seed)
+    tsne = TSNE(n_components=2, verbose=verbose,
+                perplexity=tsne_perplexity, n_iter=1000, random_state=seed)
     tsne_results = tsne.fit_transform(embs)
     df["tsne-1"] = tsne_results[:, 0]
     df["tsne-2"] = tsne_results[:, 1]
@@ -51,7 +53,8 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
         # Data for plot 3
         pca_k = PCA(n_components=pca_k_n_comps, random_state=seed)
         pca_k_result = pca_k.fit_transform(embs)
-        tsne = TSNE(n_components=2, verbose=1, perplexity=tsne_perplexity, n_iter=1000, random_state=seed)
+        tsne = TSNE(n_components=2, verbose=1,
+                    perplexity=tsne_perplexity, n_iter=1000, random_state=seed)
         tsne_pca_results = tsne.fit_transform(pca_k_result)
         df[f"tsne-pca-{pca_k_n_comps}-1"] = tsne_pca_results[:, 0]
         df[f"tsne-pca-{pca_k_n_comps}-2"] = tsne_pca_results[:, 1]
@@ -68,6 +71,11 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
 
     plt.legend(bbox_to_anchor=(1.01, 1), borderaxespad=0)
 
+    # wandb code
+    fig = plt.gcf()
+    wandb.init(project='WRI', entity='ramanshsharma')
+    wandb.log({"PCA_2D_embedding": wandb.Image(fig)})
+    wandb.finish()
     if output_path:
         plt.savefig(output_path + "_viz.png")
     else:
@@ -85,9 +93,11 @@ def visualize_PCA_embeddings_3D(embs, labels, fname=None, seed=100):
 
 
 def visualize_tSNE_embeddings_3D(embs, labels, perplexity=50, fname=None, seed=100):
-    tsne = TSNE(n_components=3, verbose=1, perplexity=perplexity, n_iter=1000, random_state=seed)
+    tsne = TSNE(n_components=3, verbose=1, perplexity=perplexity,
+                n_iter=1000, random_state=seed)
     tsne_result = tsne.fit_transform(embs)
-    data = np.vstack([tsne_result[:, 0], tsne_result[:, 1], tsne_result[:, 2]]).T
+    data = np.vstack(
+        [tsne_result[:, 0], tsne_result[:, 1], tsne_result[:, 2]]).T
     colors = np.array(labels)
 
     return scprep.plot.rotate_scatter3d(data, c=colors, figsize=(10, 8), title=f"t-SNE {perplexity} perplexity",
@@ -106,5 +116,4 @@ def visualize_phate_embeddings_3D(embs, labels, knn=4, decay=15, t=12, seed=100,
                                  t=t, random_state=seed)  # (k=2, t=5000, n_pca=50, random_state=69420, knn_dist='cosine')
     tree_phate = phate_operator.fit_transform(embs)
     return phate.plot.rotate_scatter3d(phate_operator, c=labels, legend_anchor=(1.01, 1),
-                                filename=fname)
-
+                                       filename=fname)
