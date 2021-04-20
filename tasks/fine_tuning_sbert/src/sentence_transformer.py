@@ -138,8 +138,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
 
         skip_scheduler = False
 
-        # this will write to the same project every time
-        wandb.init(project='WRI', entity='ramanshsharma')
         wandb.watch(self)  # this will hopefully 'watch' the model
         for epoch in trange(epochs, desc="Epoch", disable=not show_progress_bar):
             training_steps = 0
