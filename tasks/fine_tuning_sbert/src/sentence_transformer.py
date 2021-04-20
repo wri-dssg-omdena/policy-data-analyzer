@@ -137,9 +137,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
 
         skip_scheduler = False
 
-        # this will write to the same project every time
-        wandb.init(project='WRI', entity='ramanshsharma')
-        wandb.watch(self)  # this will hopefully 'watch' the model
         for epoch in trange(epochs, desc="Epoch", disable=not show_progress_bar):
             training_steps = 0
 
@@ -202,13 +199,11 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             training_acc_list.append(training_acc_evaluated)
 
             wandb.log({"train_acc": training_acc_evaluated,
-                      "epoch": epoch}, commit=False)
+                      "epoch": epoch})
 
             # validation evaluation
             flag = self._eval_during_training(
                 evaluator, output_path, model_deets, save_best_model, epoch, -1, callback)
-
-            wandb.finish()
 
             if flag is True:
                 print(f'Epoch: {epoch}')
@@ -242,7 +237,7 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         plt.rcParams["figure.figsize"] = [15, 15]
         plt.legend()
         fig = plt.gcf()
-        wandb.log({"train_val_accuracy": wandb.Image(fig)}, commit=True)
+        wandb.log({"train_val_accuracy": wandb.Image(fig)})
         plt.show()
 
     def _eval_during_training(self, evaluator, output_path,
@@ -255,11 +250,11 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         score = score_dict["accuracy"]
         self.acc_list.append(score)
 
-        wandb.log({"validation_acc": score, "epoch": score}, commit=False)
+        wandb.log({"validation_acc": score, "epoch": epoch})
         wandb.log(
-            {"Macro F1 validation": score_dict['macro_f1'], "epoch": score}, commit=False)
+            {"Macro F1 validation": score_dict['macro_f1'], "epoch": epoch})
         wandb.log(
-            {"Weighted F1 validation": score_dict['weighted_f1'], "epoch": score}, commit=False)
+            {"Weighted F1 validation": score_dict['weighted_f1'], "epoch": epoch})
 
         prev_score = self.acc_list[-2]
         moving_average = mean(self.acc_list[-self.patience - 1: -1])

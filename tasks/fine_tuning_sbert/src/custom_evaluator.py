@@ -79,9 +79,7 @@ def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
 
     # wandb code
     fig = plt.gcf()
-    wandb.init(project='WRI', entity='ramanshsharma')
     wandb.log({"confusion matrix": wandb.Image(fig)})
-    wandb.finish()
     if output_path:
         fname = f"{output_path}_cm.png"
         plt.savefig(fname)

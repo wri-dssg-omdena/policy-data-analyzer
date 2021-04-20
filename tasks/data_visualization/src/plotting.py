@@ -73,9 +73,7 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
 
     # wandb code
     fig = plt.gcf()
-    wandb.init(project='WRI', entity='ramanshsharma')
     wandb.log({"PCA_2D_embedding": wandb.Image(fig)})
-    wandb.finish()
     if output_path:
         plt.savefig(output_path + "_viz.png")
     else:

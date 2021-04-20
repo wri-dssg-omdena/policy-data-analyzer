@@ -125,6 +125,9 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                                                              name='lae-dev', label_names=label_names,
                                                              model_hyper_params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed})
 
+                # this will write to the same project every time
+                wandb.init(project='WRI', entity='ramanshsharma')
+
                 model.fit(train_objectives=[(train_dataloader, classifier)],
                           evaluator=dev_evaluator,
                           epochs=max_num_epochs,
@@ -135,6 +138,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                           baseline=baseline,
                           patience=patience,
                           )
+
+                wandb.finish()
 
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
