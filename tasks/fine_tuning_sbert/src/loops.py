@@ -79,7 +79,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
     else:
         train_params["eval_classifier"] = eval_classifier.__class__.__name__
 
-    print(f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
+    print(
+        f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
     label2int = dict(zip(label_names, range(len(label_names))))
 
@@ -96,11 +97,13 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
             # Train set config
             model = EarlyStoppingSentenceTransformer(model_name)
             train_dataset = SentencesDataset(train_samples, model=model)
-            train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=train_batch_size)
+            train_dataloader = DataLoader(
+                train_dataset, shuffle=True, batch_size=train_batch_size)
 
             # Dev set config
             dev_dataset = SentencesDataset(dev_samples, model=model)
-            dev_dataloader = DataLoader(dev_dataset, shuffle=True, batch_size=train_batch_size)
+            dev_dataloader = DataLoader(
+                dev_dataset, shuffle=True, batch_size=train_batch_size)
 
             # Define the way the loss is computed
             classifier = SoftmaxClassifier(model=model,
@@ -133,7 +136,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
                 minutes, seconds = divmod(rem, 60)
-                print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+                print("Time taken for fine-tuning:",
+                      "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
 
 def build_data_samples(X_train, label2int, y_train):
@@ -158,6 +162,7 @@ def set_seeds(seed):
     torch.backends.cudnn.benchmark = False
     torch.backends.cudnn.enabled = False
 
+
 def evaluate_using_sbert(model, test_sents, test_labels, label_names,
                          model_deets, numeric_labels, output_path=None):
     """
@@ -169,16 +174,19 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names,
     """
     # Projection matrix Z low-dim projection
     print("Classifying sentences...")
-    proj_matrix = cp.asnumpy(calc_proj_matrix(test_sents, 50, es_nlp, model, 0.01))
+    proj_matrix = cp.asnumpy(calc_proj_matrix(
+        test_sents, 50, es_nlp, model, 0.01))
     test_embs = encode_all_sents(test_sents, model, proj_matrix)
     label_embs = encode_labels(label_names, model, proj_matrix)
 
-    model_preds, model_scores = calc_all_cos_similarity(test_embs, label_embs, label_names)
+    model_preds, model_scores = calc_all_cos_similarity(
+        test_embs, label_embs, label_names)
 
     print("Evaluating predictions...")
     print(classification_report(test_labels, model_preds))
     numeric_preds = labels2numeric(model_preds, label_names)
-    evaluator = ModelEvaluator(label_names, y_true=numeric_labels, y_pred=numeric_preds)
+    evaluator = ModelEvaluator(
+        label_names, y_true=numeric_labels, y_pred=numeric_preds)
 
     print("Visualizing...")
     out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
@@ -212,7 +220,8 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     print(classification_report(test_labels, clf_preds))
     numeric_preds = labels2numeric(clf_preds, label_names)
     numeric_test_labels = labels2numeric(test_labels, label_names)
-    evaluator = ModelEvaluator(label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
+    evaluator = ModelEvaluator(
+        label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
 
     print("Visualizing...")
     out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None

@@ -8,6 +8,8 @@ Original source code: https://github.com/UKPLab/sentence-transformers/blob/maste
 from typing import Iterable, Dict, Tuple, Type, Callable
 import os
 import transformers
+import wandb_key
+import wandb
 import matplotlib.pyplot as plt
 from sentence_transformers import SentenceTransformer
 
@@ -19,6 +21,7 @@ from torch.utils.data import DataLoader
 from tqdm.autonotebook import trange
 from statistics import mean
 
+
 class EarlyStoppingSentenceTransformer(SentenceTransformer):
 
     def fit(self,
@@ -29,7 +32,8 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             scheduler: str = 'WarmupLinear',
             warmup_steps: int = 10000,
             optimizer_class: Type[Optimizer] = transformers.AdamW,
-            optimizer_params: Dict[str, object] = {'lr': 2e-5, 'correct_bias': True},
+            optimizer_params: Dict[str, object] = {
+                'lr': 2e-5, 'correct_bias': True},
             weight_decay: float = 0.01,
             evaluation_steps: int = 0,
             output_path: str = None,
@@ -100,7 +104,8 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         self.best_score = -9999999
 
         if steps_per_epoch is None or steps_per_epoch == 0:
-            steps_per_epoch = min([len(dataloader) for dataloader in dataloaders])
+            steps_per_epoch = min([len(dataloader)
+                                  for dataloader in dataloaders])
 
         num_train_steps = int(steps_per_epoch * epochs)
 
@@ -114,10 +119,12 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             optimizer_grouped_parameters = [
                 {'params': [p for n, p in param_optimizer if not any(nd in n for nd in no_decay)],
                  'weight_decay': weight_decay},
-                {'params': [p for n, p in param_optimizer if any(nd in n for nd in no_decay)], 'weight_decay': 0.0}
+                {'params': [p for n, p in param_optimizer if any(
+                    nd in n for nd in no_decay)], 'weight_decay': 0.0}
             ]
 
-            optimizer = optimizer_class(optimizer_grouped_parameters, **optimizer_params)
+            optimizer = optimizer_class(
+                optimizer_grouped_parameters, **optimizer_params)
             scheduler_obj = self._get_scheduler(optimizer, scheduler=scheduler, warmup_steps=warmup_steps,
                                                 t_total=num_train_steps)
 
@@ -130,6 +137,10 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         num_train_objectives = len(train_objectives)
 
         skip_scheduler = False
+
+        # this will write to the same project every time
+        wandb.init(project='WRI', entity='ramanshsharma')
+        wandb.watch(self)  # this will hopefully 'watch' the model
         for epoch in trange(epochs, desc="Epoch", disable=not show_progress_bar):
             training_steps = 0
 
@@ -160,7 +171,8 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                         scale_before_step = scaler.get_scale()
                         scaler.scale(loss_value).backward()
                         scaler.unscale_(optimizer)
-                        torch.nn.utils.clip_grad_norm_(loss_model.parameters(), max_grad_norm)
+                        torch.nn.utils.clip_grad_norm_(
+                            loss_model.parameters(), max_grad_norm)
                         scaler.step(optimizer)
                         scaler.update()
 
@@ -168,7 +180,8 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                     else:
                         loss_value = loss_model(features, labels)
                         loss_value.backward()
-                        torch.nn.utils.clip_grad_norm_(loss_model.parameters(), max_grad_norm)
+                        torch.nn.utils.clip_grad_norm_(
+                            loss_model.parameters(), max_grad_norm)
                         optimizer.step()
 
                     optimizer.zero_grad()
@@ -185,10 +198,17 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                         loss_model.train()
 
             # training evaluation
-            training_acc_list.append(t_evaluator(self, output_path=output_path, epoch=epoch, steps=-1))
+            training_acc_evaluated = t_evaluator(
+                self, output_path=output_path, epoch=epoch, steps=-1)
+            training_acc_list.append(training_acc_evaluated)
+
+            wandb.log({"train_acc": training_acc_evaluated}, commit=False)
 
             # validation evaluation
-            flag = self._eval_during_training(evaluator, output_path, model_deets, save_best_model, epoch, -1, callback)
+            flag = self._eval_during_training(
+                evaluator, output_path, model_deets, save_best_model, epoch, -1, callback)
+
+            wandb.finish()
 
             if flag is True:
                 print(f'Epoch: {epoch}')
@@ -199,19 +219,23 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                 print(f'Epoch: {epoch}')
                 print(f"Best score: {self.best_score}")
                 print('=' * 60)
-                self.plot_train_val_accuracy(model_deets, output_path, training_acc_list)
+                self.plot_train_val_accuracy(
+                    model_deets, output_path, training_acc_list)
                 return
 
             # removing the unnecessary first element in ACC_LIST that needed to be there for epoch 1
             if epoch == 0:
                 del self.acc_list[0]
 
-        if evaluator is None and output_path is not None:  # No evaluator, but output path: save final model version
+        # No evaluator, but output path: save final model version
+        if evaluator is None and output_path is not None:
             self.save(output_path)
 
     def plot_train_val_accuracy(self, model_deets, output_path, training_acc_list):
-        plt.plot(range(1, len(training_acc_list) + 1), training_acc_list, 'orange', label='Training accuracy')
-        plt.plot(range(1, len(self.acc_list) + 1), self.acc_list, 'blue', label='Validation accuracy')
+        plt.plot(range(1, len(training_acc_list) + 1),
+                 training_acc_list, 'orange', label='Training accuracy')
+        plt.plot(range(1, len(self.acc_list) + 1), self.acc_list,
+                 'blue', label='Validation accuracy')
         plt.title('Training and Validation accuracy')
         plt.xlabel('Epochs')
         plt.ylabel('Accuracy')
@@ -226,15 +250,19 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                               model_deets, save_best_model, epoch, steps, callback):
         """Runs evaluation during the training"""
 
-        score_dict = evaluator(self, output_path=output_path, model_deets=model_deets, epoch=epoch, steps=steps)
+        score_dict = evaluator(self, output_path=output_path,
+                               model_deets=model_deets, epoch=epoch, steps=steps)
 
         score = score_dict["accuracy"]
         self.acc_list.append(score)
 
+        wandb.log({"validation_acc": score}, commit=True)
+
         prev_score = self.acc_list[-2]
         moving_average = mean(self.acc_list[-self.patience - 1: -1])
 
-        print(f"{'=' * 60}\nCurrent Score is: {score}\nCurrent ACC_LIST is: {self.acc_list}")
+        print(
+            f"{'=' * 60}\nCurrent Score is: {score}\nCurrent ACC_LIST is: {self.acc_list}")
 
         if score >= moving_average or len(
                 self.acc_list) - 1 <= self.patience:  # score is >= the moving average in the last PATIENCE values
@@ -252,5 +280,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                 # if current score < previous score
                 return True  # do not save the model but continue training
         else:
-            print(f'Current score ({score}) less than moving average ({moving_average})')
+            print(
+                f'Current score ({score}) less than moving average ({moving_average})')
             return False  # if this accuracy is less than moving average, we do not want to save the weights of this epoch

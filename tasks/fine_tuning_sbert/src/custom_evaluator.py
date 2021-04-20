@@ -29,7 +29,8 @@ def batch_to_device(batch, target_device: device):
     features = batch[0]
     for paired_sentence_idx in range(len(features)):
         for feature_name in features[paired_sentence_idx]:
-            features[paired_sentence_idx][feature_name] = features[paired_sentence_idx][feature_name].to(target_device)
+            features[paired_sentence_idx][feature_name] = features[paired_sentence_idx][feature_name].to(
+                target_device)
 
     labels = batch[1].to(target_device)
     return features, labels
@@ -110,8 +111,10 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
             name = "_" + name
 
         self.csv_file = "accuracy_f1_evaluation" + name + "_results.csv"
-        self.csv_headers = [param_name for param_name in self.model_hyper_params]
-        self.csv_headers.extend(["epoch", "steps", "accuracy", "macro_f1", "weighted_f1"])
+        self.csv_headers = [
+            param_name for param_name in self.model_hyper_params]
+        self.csv_headers.extend(
+            ["epoch", "steps", "accuracy", "macro_f1", "weighted_f1"])
 
     def __call__(self, model, output_path: str = None, model_deets: str = None,
                  epoch: int = -1, steps: int = -1) -> dict:
@@ -153,7 +156,8 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
                       "macro_f1": macro_f1,
                       "weighted_f1": weighted_f1}
 
-        logging.info("Accuracy: {:.4f} ({}/{})\n".format(accuracy, correct, total))
+        logging.info(
+            "Accuracy: {:.4f} ({}/{})\n".format(accuracy, correct, total))
         logging.info(f"Macro F1: {macro_f1}")
         logging.info(f"Weighted F1: {weighted_f1}")
         out_path = f"{output_path}/{model_deets}_n-epochs={epoch}" if model_deets and output_path else None
