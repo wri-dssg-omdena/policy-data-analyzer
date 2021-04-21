@@ -214,8 +214,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                 print(f'Epoch: {epoch}')
                 print(f"Best score: {self.best_score}")
                 print('=' * 60)
-                self.plot_train_val_accuracy(
-                    model_deets, output_path, training_acc_list)
                 return
 
             # removing the unnecessary first element in ACC_LIST that needed to be there for epoch 1
@@ -225,20 +223,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         # No evaluator, but output path: save final model version
         if evaluator is None and output_path is not None:
             self.save(output_path)
-
-    def plot_train_val_accuracy(self, model_deets, output_path, training_acc_list):
-        plt.plot(range(1, len(training_acc_list) + 1),
-                 training_acc_list, 'orange', label='Training accuracy')
-        plt.plot(range(1, len(self.acc_list) + 1), self.acc_list,
-                 'blue', label='Validation accuracy')
-        plt.title('Training and Validation accuracy')
-        plt.xlabel('Epochs')
-        plt.ylabel('Accuracy')
-        plt.rcParams["figure.figsize"] = [15, 15]
-        plt.legend()
-        fig = plt.gcf()
-        wandb.log({"train_val_accuracy": wandb.Image(fig)})
-        plt.show()
 
     def _eval_during_training(self, evaluator, output_path,
                               model_deets, save_best_model, epoch, steps, callback):
