@@ -79,13 +79,8 @@ def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
 
     # wandb code
     fig = plt.gcf()
+    fig.set_size_inches(15, 10)  # enlarging CM
     wandb.log({"confusion matrix": wandb.Image(fig)})
-    if output_path:
-        fname = f"{output_path}_cm.png"
-        plt.savefig(fname)
-        print(f"Stored confusion matrix: {fname}")
-
-    plt.show()
 
 
 class CustomLabelAccuracyEvaluator(SentenceEvaluator):
