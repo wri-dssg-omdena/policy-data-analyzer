@@ -127,8 +127,10 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                                                              model_hyper_params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed})
 
                 # this will write to the same project every time
-                wandb.init(project='WRI', entity='ramanshsharma')
+                wandb.init(name=model_deets, project='WRI', tags=['baseline', 'training'],
+                           entity='ramanshsharma')
 
+                wandb.watch(model, log='all')
                 model.fit(train_objectives=[(train_dataloader, classifier)],
                           evaluator=dev_evaluator,
                           epochs=max_num_epochs,
@@ -141,6 +143,15 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                           )
 
                 wandb.finish()
+
+                # Save as artifact for version control.
+                run = wandb.init(project='WRI', entity='ramanshsharma')
+
+                artifact = wandb.Artifact('model', type='model')
+                artifact.add_file(output_path)
+
+                run.log_artifact(artifact)
+                run.join()
 
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
