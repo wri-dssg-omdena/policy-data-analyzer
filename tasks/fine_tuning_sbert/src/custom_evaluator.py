@@ -78,8 +78,7 @@ def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
     fig = plt.gcf()
     fig.set_size_inches(15, 10)  # enlarging CM
     wandb.log({"confusion matrix": wandb.Image(fig)})
-    plt.ion()
-    plt.ioff()
+    plt.close()  # this should prevent output of plt.imshow above
 
 
 class CustomLabelAccuracyEvaluator(SentenceEvaluator):
