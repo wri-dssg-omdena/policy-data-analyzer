@@ -184,7 +184,7 @@ def set_seeds(seed):
 
 
 def evaluate_using_sbert(model, test_sents, test_labels, label_names,
-                         model_deets, numeric_labels, output_path=None):
+                         model_deets, numeric_labels, output_path=None, testing=False):
     """
     Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
     and returning. Evaluation method:
@@ -210,9 +210,11 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names,
 
     print("Visualizing...")
     out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
-    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
-                            output_path=out_path)
-    evaluator.plot_confusion_matrix(color_map='Blues', output_path=out_path)
+    if not testing:
+        visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
+                                output_path=out_path)
+        evaluator.plot_confusion_matrix(
+            color_map='Blues', output_path=out_path)
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
     return evaluator.avg_f1.tolist()
