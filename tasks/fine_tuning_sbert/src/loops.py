@@ -3,10 +3,17 @@ import math
 import random
 import wandb
 import time
+from pathlib import Path
 from typing import Iterable, Dict
 
 import cupy as cp
 import spacy
+import onnx
+import transformers
+import multiprocessing
+import onnxruntime as rt
+import torch
+from transformers import convert_graph_to_onnx
 from sentence_transformers import SentencesDataset, SentenceTransformer, InputExample
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -131,6 +138,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                            entity='ramanshsharma')
 
                 wandb.watch(model, log='all')
+
                 model.fit(train_objectives=[(train_dataloader, classifier)],
                           evaluator=dev_evaluator,
                           epochs=max_num_epochs,
@@ -141,9 +149,43 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                           baseline=baseline,
                           patience=patience,
                           )
-                # Save the model in the exchangeable ONNX format on WANDB project
-                torch.onnx.export(model, "model.onnx")
-                wandb.save("model.onnx")
+                # testing onnx format for model ===============================================
+                model_access = f"sentence-transformers/{model_name}"
+                model_pipeline = transformers.FeatureExtractionPipeline(
+                    model=model,
+                    tokenizer=transformers.AutoTokenizer.from_pretrained(
+                        model_access, use_fast=True),
+                    framework="pt",
+                    device=-1
+                )
+
+                with torch.no_grad():
+                    input_names, output_names, dynamic_axes, tokens = convert_graph_to_onnx.infer_shapes(
+                        model_pipeline,
+                        "pt"
+                    )
+                    _, model_args = convert_graph_to_onnx.ensure_valid_input(
+                        model_pipeline.model, tokens, input_names
+                    )
+                del dynamic_axes["output_0"]  # Delete unused output
+                del dynamic_axes["output_1"]  # Delete unused output
+
+                output_names = ["sentence_embedding"]
+                dynamic_axes["sentence_embedding"] = {0: 'batch'}
+                torch.onnx.export(
+                    model,
+                    model_args,
+                    f=Path(output_path+f'{model_deets}.onnx').as_posix(),
+                    input_names=input_names,
+                    output_names=output_names,
+                    dynamic_axes=dynamic_axes,
+                    do_constant_folding=True,
+                    use_external_data_format=False,
+                    enable_onnx_checker=True,
+                    opset_version=12,
+                )
+
+                wandb.save(f"{model_deets}.onnx")
                 wandb.finish()
 
                 end = time.time()
