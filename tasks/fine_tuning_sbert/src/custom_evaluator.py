@@ -162,27 +162,4 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         out_path = f"{output_path}/{model_deets}_n-epochs={epoch}" if model_deets and output_path else None
         plot_confusion_matrix(cm, self.label_names, output_path=out_path)
 
-        if output_path is not None:
-            self.store_results(score_dict, epoch, output_path, steps)
-
         return score_dict
-
-    def store_results(self, results_dict, epoch, output_path, steps):
-        accuracy = results_dict["accuracy"]
-        macro_f1 = results_dict["macro_f1"]
-        weighted_f1 = results_dict["weighted_f1"]
-
-        csv_path = os.path.join(output_path, self.csv_file)
-        if not os.path.isfile(csv_path):
-            with open(csv_path, mode="w", encoding="utf-8") as f:
-                writer = csv.writer(f)
-                writer.writerow(self.csv_headers)
-                row = [param_value for param_value in self.model_hyper_params]
-                row.extend([epoch, steps, accuracy, macro_f1, weighted_f1])
-                writer.writerow(row)
-        else:
-            with open(csv_path, mode="a", encoding="utf-8") as f:
-                writer = csv.writer(f)
-                row = [param_value for param_value in self.model_hyper_params]
-                row.extend([epoch, steps, accuracy, macro_f1, weighted_f1])
-                writer.writerow(row)

@@ -136,7 +136,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         num_train_objectives = len(train_objectives)
 
         skip_scheduler = False
-
         for epoch in trange(epochs, desc="Epoch", disable=not show_progress_bar):
             training_steps = 0
 

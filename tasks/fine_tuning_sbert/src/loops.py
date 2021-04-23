@@ -141,17 +141,10 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                           baseline=baseline,
                           patience=patience,
                           )
-
+                # Save the model in the exchangeable ONNX format on WANDB project
+                torch.onnx.export(model, "model.onnx")
+                wandb.save("model.onnx")
                 wandb.finish()
-
-                # Save as artifact for version control.
-                run = wandb.init(project='WRI', entity='ramanshsharma')
-
-                artifact = wandb.Artifact('model', type='model')
-                artifact.add_file(output_path)
-
-                run.log_artifact(artifact)
-                run.join()
 
                 end = time.time()
                 hours, rem = divmod(end - start, 3600)
