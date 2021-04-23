@@ -3,7 +3,8 @@
         $ python sentence_splitting.py -c [path_to_aws_credentials_json] -l [english | spanish] -n [any integer]
     -  English documents, 5 words minimum for a sentence to be stored
         $ python sentence_splitting.py -c /Users/some_user/credentials.json -l english -n 5
-
+    -  Spanish documents, 5 words minimum for a sentence to be stored
+        $ python sentence_splitting.py -c /home/propietari/Documents/claus/AWS_S3_keys_wri_sentence_splitting.json -l spanish -n 5
     Expected format for JSON credentials file:
     {
         "aws": {
@@ -132,7 +133,7 @@ def aws_credentials_from_file(f_name):
     """
     with open(f_name, "r") as f:
         creds = json.load(f)
-
+    print(creds["aws"]["id"])
     return creds["aws"]["id"], creds["aws"]["secret"]
 
 
