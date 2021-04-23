@@ -17,8 +17,6 @@ from torch.utils.data import DataLoader
 from torch import device
 import logging
 from tqdm import tqdm
-import os
-import csv
 from sklearn.metrics import f1_score, confusion_matrix
 from sentence_transformers.evaluation import SentenceEvaluator
 
@@ -76,11 +74,12 @@ def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
     plt.tight_layout()
     plt.xlabel('Predicted label')
     plt.ylabel('True label')
-
     # wandb code
     fig = plt.gcf()
     fig.set_size_inches(15, 10)  # enlarging CM
     wandb.log({"confusion matrix": wandb.Image(fig)})
+    plt.ion()
+    plt.ioff()
 
 
 class CustomLabelAccuracyEvaluator(SentenceEvaluator):
