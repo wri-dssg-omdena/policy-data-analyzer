@@ -144,7 +144,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                           epochs=max_num_epochs,
                           evaluation_steps=1000,
                           warmup_steps=warmup_steps,
-                          output_path=wandb.run.dir+output_path,
+                          output_path=output_path,
                           model_deets=model_deets,
                           baseline=baseline,
                           patience=patience,
