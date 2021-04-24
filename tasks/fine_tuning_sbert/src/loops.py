@@ -134,7 +134,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                                                              model_hyper_params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed})
 
                 # this will write to the same project every time
-                wandb.init(name=model_deets, project='WRI', tags=['baseline', 'training'],
+                wandb.init(notes=model_deets, project='WRI', tags=['baseline', 'training'],
                            entity='ramanshsharma')
 
                 wandb.watch(model, log='all')
