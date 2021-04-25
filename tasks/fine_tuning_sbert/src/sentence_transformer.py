@@ -249,12 +249,12 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             if score > prev_score and score - prev_score >= self.baseline:  # better score
                 if score > self.best_score:  # checking for local maxima
                     self.best_score = score
-                    self.save(os.path.join(wandb.run.dir, output_path))
+                    self.save(output_path)
                 return True  # continue training whether this is local maxima or not
             elif score >= prev_score and score - prev_score < self.baseline:
                 if score > self.best_score:  # checking for local maxima
                     self.best_score = score
-                    self.save(os.path.join(wandb.run.dir, output_path))
+                    self.save(output_path)
                 return False  # end training whether this is local maxima or not, no more training happening after this plateau
             else:
                 # if current score < previous score

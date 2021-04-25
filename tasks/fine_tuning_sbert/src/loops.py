@@ -74,8 +74,7 @@ def grid_search_fine_tune_sbert(config=None):
     """
 
     # this will write to the same project every time
-    wandb.init(config=config, tags=[
-               'baseline', 'training'])
+    wandb.init(config=config, magic=True)
 
     config = wandb.config
 
@@ -85,7 +84,6 @@ def grid_search_fine_tune_sbert(config=None):
     label2int = dict(zip(label_names, range(len(label_names))))
 
     model_deets = f"{config.eval_classifier}_model={config.model_name}_test-perc={config.dev_perc}_seed={config.seeds}"
-    wandb.run.notes = model_deets
 
     X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=config.dev_perc,
                                                       stratify=train_labels, random_state=100)
@@ -121,8 +119,6 @@ def grid_search_fine_tune_sbert(config=None):
                                                  name='lae-dev', label_names=label_names,
                                                  model_hyper_params={'model_name': config.model_name, 'dev_perc': config.dev_perc, 'seed': config.seeds})
 
-    wandb.watch(model, log='all')
-
     model.fit(train_objectives=[(train_dataloader, classifier)],
               evaluator=dev_evaluator,
               epochs=config.max_num_epochs,
@@ -133,9 +129,6 @@ def grid_search_fine_tune_sbert(config=None):
               baseline=config.baseline,
               patience=config.patience,
               )
-
-    wandb.save(config.output_path)
-    wandb.finish()
 
     end = time.time()
     hours, rem = divmod(end - start, 3600)
