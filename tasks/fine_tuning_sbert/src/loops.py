@@ -73,10 +73,10 @@ def grid_search_fine_tune_sbert(config=None):
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
 
-    config = wandb.config
-
     # this will write to the same project every time
-    wandb.init(group=config.group, config=config, magic=True)
+    wandb.init(config=config, magic=True)
+
+    config = wandb.config
 
     print(
         f"Grid Search Fine tuning parameters:\n{config}")
@@ -86,6 +86,7 @@ def grid_search_fine_tune_sbert(config=None):
     model_deets = f"{config.eval_classifier}_model={config.model_name}_test-perc={config.dev_perc}_seed={config.seeds}"
 
     wandb.run.notes = model_deets
+    wandb.run.group = config.group
 
     X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=config.dev_perc,
                                                       stratify=train_labels, random_state=100)
