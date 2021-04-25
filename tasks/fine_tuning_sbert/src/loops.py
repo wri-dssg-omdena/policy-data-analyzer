@@ -99,7 +99,7 @@ def grid_search_fine_tune_sbert(config=None):
 
     # this will write to the same project every time
     wandb.init(config=config_default, tags=[
-               'baseline', 'training'], magic=True)
+               'baseline', 'training'])
 
     config = wandb.config
 
