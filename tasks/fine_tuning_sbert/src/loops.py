@@ -72,10 +72,13 @@ def grid_search_fine_tune_sbert(config=None):
     """
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
-
+    print('Inside grid search function')
     # this will write to the same project every time
     run = wandb.init()
-
+    print('Printing Run')
+    print(run)
+    print('Printing run config')
+    print(run.config)
     config = run.config
 
     print(
