@@ -69,80 +69,104 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(config):
+def grid_search_fine_tune_sbert(config=None):
     """
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
-    train_sents = config.train_sents
-    train_labels = config.train_labels
-    label_names = config.label_names
+
+    config_default = {
+        "dev_perc": {
+            "values": [0.20, 0.25]
+        },
+        'model_name': {
+            'values': ['paraphrase-xlm-r-multilingual-v1', 'stsb-xlm-r-multilingual', 'quora-distilbert-multilingual', 'distiluse-base-multilingual-sed-v2']
+        },
+        'seeds': {
+            'values': [10, 11, 12]
+        },  # all values below are set but not varies
+        "max_num_epochs": {
+            "values": [10]
+        },
+        "baseline": {
+            "values": [0.001]
+        },
+        "patience": {
+            "values": [5]
+        },
+        "eval_classifier": {
+            "values": ["SBERT"]
+        }
+    }
+
+    # this will write to the same project every time
+    wandb.init(config=config_default, project='WRI', tags=['baseline', 'training'],
+               entity='ramanshsharma', magic=True)
+
+    config = wandb.config
 
     print(
         f"Grid Search Fine tuning parameters:\n{json.dumps(config, indent=4)}")
 
-    label2int = dict(zip(label_names, range(len(label_names))))
+    label2int = dict(zip(config.label_names, range(len(config.label_names))))
 
     model_deets = f"{config.eval_classifier}_model={config.model_name}_test-perc={config.dev_perc}_seed={config.seeds}"
-    # this will write to the same project every time
+    wandb.run.notes = model_deets
 
-    with wandb.init(config=config, notes=model_deets, project='WRI', tags=['baseline', 'training'],
-                    entity='ramanshsharma'):
+    X_train, X_dev, y_train, y_dev = train_test_split(config.train_sents, config.train_labels, test_size=config.dev_perc,
+                                                      stratify=config.train_labels, random_state=100)
 
-        X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=config.dev_perc,
-                                                          stratify=train_labels, random_state=100)
+    # Load data samples into batches
+    train_batch_size = 16
+    train_samples = build_data_samples(X_train, label2int, y_train)
+    dev_samples = build_data_samples(X_dev, label2int, y_dev)
 
-        # Load data samples into batches
-        train_batch_size = 16
-        train_samples = build_data_samples(X_train, label2int, y_train)
-        dev_samples = build_data_samples(X_dev, label2int, y_dev)
+    # Train set config
+    model = EarlyStoppingSentenceTransformer(config.model_name)
+    train_dataset = SentencesDataset(train_samples, model=model)
+    train_dataloader = DataLoader(
+        train_dataset, shuffle=True, batch_size=train_batch_size)
 
-        # Train set config
-        model = EarlyStoppingSentenceTransformer(config.model_name)
-        train_dataset = SentencesDataset(train_samples, model=model)
-        train_dataloader = DataLoader(
-            train_dataset, shuffle=True, batch_size=train_batch_size)
+    # Dev set config
+    dev_dataset = SentencesDataset(dev_samples, model=model)
+    dev_dataloader = DataLoader(
+        dev_dataset, shuffle=True, batch_size=train_batch_size)
 
-        # Dev set config
-        dev_dataset = SentencesDataset(dev_samples, model=model)
-        dev_dataloader = DataLoader(
-            dev_dataset, shuffle=True, batch_size=train_batch_size)
+    # Define the way the loss is computed
+    classifier = SoftmaxClassifier(model=model,
+                                   sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
+                                   num_labels=len(label2int))
+    warmup_steps = math.ceil(
+        len(train_dataset) * config.max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
 
-        # Define the way the loss is computed
-        classifier = SoftmaxClassifier(model=model,
-                                       sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
-                                       num_labels=len(label2int))
-        warmup_steps = math.ceil(
-            len(train_dataset) * config.max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
+    set_seeds(config.seeds)
 
-        set_seeds(config.seeds)
+    # Train the model
+    start = time.time()
+    dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
+                                                 name='lae-dev', label_names=config.label_names,
+                                                 model_hyper_params={'model_name': config.model_name, 'dev_perc': config.dev_perc, 'seed': config.seeds})
 
-        # Train the model
-        start = time.time()
-        dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
-                                                     name='lae-dev', label_names=label_names,
-                                                     model_hyper_params={'model_name': config.model_name, 'dev_perc': config.dev_perc, 'seed': config.seeds})
+    wandb.watch(model, log='all')
 
-        wandb.watch(model, log='all')
+    model.fit(train_objectives=[(train_dataloader, classifier)],
+              evaluator=dev_evaluator,
+              epochs=config.max_num_epochs,
+              evaluation_steps=1000,
+              warmup_steps=warmup_steps,
+              output_path=config.output_path,
+              model_deets=model_deets,
+              baseline=config.baseline,
+              patience=config.patience,
+              )
 
-        model.fit(train_objectives=[(train_dataloader, classifier)],
-                  evaluator=dev_evaluator,
-                  epochs=config.max_num_epochs,
-                  evaluation_steps=1000,
-                  warmup_steps=warmup_steps,
-                  output_path=config.output_path,
-                  model_deets=model_deets,
-                  baseline=config.baseline,
-                  patience=config.patience,
-                  )
+    wandb.save(config.output_path)
+    wandb.finish()
 
-        wandb.save(config.output_path)
-        wandb.finish()
-
-        end = time.time()
-        hours, rem = divmod(end - start, 3600)
-        minutes, seconds = divmod(rem, 60)
-        print("Time taken for fine-tuning:",
-              "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+    end = time.time()
+    hours, rem = divmod(end - start, 3600)
+    minutes, seconds = divmod(rem, 60)
+    print("Time taken for fine-tuning:",
+          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
 
 def build_data_samples(X_train, label2int, y_train):
