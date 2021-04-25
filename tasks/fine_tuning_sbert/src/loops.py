@@ -74,9 +74,9 @@ def grid_search_fine_tune_sbert(config=None):
     """
 
     # this will write to the same project every time
-    wandb.init(config=config, magic=True)
+    run = wandb.init(config=config, magic=True)
 
-    config = wandb.config
+    config = run.config
 
     print(
         f"Grid Search Fine tuning parameters:\n{json.dumps(config, indent=4)}")
