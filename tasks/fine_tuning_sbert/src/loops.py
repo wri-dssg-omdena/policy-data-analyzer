@@ -1,6 +1,4 @@
-import os
 import math
-import random
 import wandb
 import time
 from pathlib import Path
@@ -68,7 +66,7 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(config=None):
+def train(config=None):
     """
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
@@ -131,6 +129,86 @@ def grid_search_fine_tune_sbert(config=None):
               baseline=config.baseline,
               patience=config.patience,
               )
+
+    end = time.time()
+    hours, rem = divmod(end - start, 3600)
+    minutes, seconds = divmod(rem, 60)
+    print("Time taken for fine-tuning:",
+          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+
+
+def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_names,
+                                eval_classifier=None):
+    """
+    Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
+    """
+    output_path = train_params["output_path"]
+    dev_perc = train_params["all_dev_perc"]
+    model_name = train_params["model_names"]
+    max_num_epochs = train_params["max_num_epochs"]
+    baseline = train_params['baseline']
+    patience = train_params['patience']
+    seed = train_params['seeds']
+
+    print(
+        f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
+
+    label2int = dict(zip(label_names, range(len(label_names))))
+
+    X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=dev_perc,
+                                                      stratify=train_labels, random_state=100)
+
+    # Load data samples into batches
+    train_batch_size = 16
+    train_samples = build_data_samples(X_train, label2int, y_train)
+    dev_samples = build_data_samples(X_dev, label2int, y_dev)
+
+    # Train set config
+    model = EarlyStoppingSentenceTransformer(model_name)
+    train_dataset = SentencesDataset(train_samples, model=model)
+    train_dataloader = DataLoader(
+        train_dataset, shuffle=True, batch_size=train_batch_size)
+
+    # Dev set config
+    dev_dataset = SentencesDataset(dev_samples, model=model)
+    dev_dataloader = DataLoader(
+        dev_dataset, shuffle=True, batch_size=train_batch_size)
+
+    # Define the way the loss is computed
+    classifier = SoftmaxClassifier(model=model,
+                                   sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
+                                   num_labels=len(label2int))
+    warmup_steps = math.ceil(
+        len(train_dataset) * max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
+
+    set_seeds(seed)
+    model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={dev_perc}_seed={seed}"
+
+    # Train the model
+    start = time.time()
+    dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
+                                                 name='lae-dev', label_names=label_names,
+                                                 model_hyper_params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed})
+
+    # this will write to the same project every time
+    wandb.init(notes=model_deets, project='WRI', tags=['baseline', 'training'],
+               entity='ramanshsharma')
+
+    model.fit(train_objectives=[(train_dataloader, classifier)],
+              evaluator=dev_evaluator,
+              epochs=max_num_epochs,
+              evaluation_steps=1000,
+              warmup_steps=warmup_steps,
+              output_path=output_path,
+              model_deets=model_deets,
+              baseline=baseline,
+              patience=patience,
+              )
+
+    torch.save(model.state_dict(), output_path+'/saved_model.pt')
+    wandb.save(output_path+'/saved_model.pt')
+
+    wandb.finish()
 
     end = time.time()
     hours, rem = divmod(end - start, 3600)
