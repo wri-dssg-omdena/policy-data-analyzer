@@ -77,6 +77,8 @@ def grid_search_fine_tune_sbert(config=None):
     run = wandb.init()
     print('Printing Run')
     print(str(run), type(run))
+    print('trying to print run config parameters')
+    print(run.config.dev_perc)
     print('Printing run config')
     print(run.config, type(run.config))
     config = run.config
