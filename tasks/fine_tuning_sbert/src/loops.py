@@ -74,7 +74,7 @@ def grid_search_fine_tune_sbert(config=None):
     """
 
     # this will write to the same project every time
-    run = wandb.init(config={}, magic=True)
+    run = wandb.init()
 
     config = run.config
 
