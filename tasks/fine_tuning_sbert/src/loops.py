@@ -207,7 +207,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
               patience=patience,
               )
 
-    torch.save(model.state_dict(), output_path+'/saved_model.pt')
+    torch.save(model, output_path+'/saved_model.pt')
     wandb.save(output_path+'/saved_model.pt')
 
     wandb.finish()
