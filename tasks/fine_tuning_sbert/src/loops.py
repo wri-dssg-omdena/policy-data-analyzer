@@ -73,32 +73,8 @@ def grid_search_fine_tune_sbert(config=None):
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
 
-    config_default = {
-        "dev_perc": {
-            "values": [0.20, 0.25]
-        },
-        'model_name': {
-            'values': ['paraphrase-xlm-r-multilingual-v1', 'stsb-xlm-r-multilingual', 'quora-distilbert-multilingual', 'distiluse-base-multilingual-sed-v2']
-        },
-        'seeds': {
-            'values': [10, 11, 12]
-        },  # all values below are set but not varies
-        "max_num_epochs": {
-            "values": [10]
-        },
-        "baseline": {
-            "values": [0.001]
-        },
-        "patience": {
-            "values": [5]
-        },
-        "eval_classifier": {
-            "values": ["SBERT"]
-        }
-    }
-
     # this will write to the same project every time
-    wandb.init(config=config_default, tags=[
+    wandb.init(config=config, tags=[
                'baseline', 'training'])
 
     config = wandb.config
