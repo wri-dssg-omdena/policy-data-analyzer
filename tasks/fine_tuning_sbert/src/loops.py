@@ -68,7 +68,7 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(run.config=None):
+def grid_search_fine_tune_sbert(config=None):
     """
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
