@@ -8,12 +8,7 @@ from typing import Iterable, Dict
 
 import cupy as cp
 import spacy
-import onnx
-import transformers
-import multiprocessing
-import onnxruntime as rt
 import torch
-from transformers import convert_graph_to_onnx
 from sentence_transformers import SentencesDataset, SentenceTransformer, InputExample
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
@@ -34,6 +29,10 @@ else:
 
 #  May need to run python -m spacy download es_core_news_lg first!
 es_nlp = spacy.load('es_core_news_lg')
+
+train_sents = None
+train_labels = None
+label_names = None
 
 
 class SoftmaxClassifier(nn.Module):
@@ -99,21 +98,21 @@ def grid_search_fine_tune_sbert(config=None):
     }
 
     # this will write to the same project every time
-    wandb.init(config=config_default, project='WRI', tags=['baseline', 'training'],
-               entity='ramanshsharma', magic=True)
+    wandb.init(config=config_default, tags=[
+               'baseline', 'training'], magic=True)
 
     config = wandb.config
 
     print(
         f"Grid Search Fine tuning parameters:\n{json.dumps(config, indent=4)}")
 
-    label2int = dict(zip(config.label_names, range(len(config.label_names))))
+    label2int = dict(zip(label_names, range(len(label_names))))
 
     model_deets = f"{config.eval_classifier}_model={config.model_name}_test-perc={config.dev_perc}_seed={config.seeds}"
     wandb.run.notes = model_deets
 
-    X_train, X_dev, y_train, y_dev = train_test_split(config.train_sents, config.train_labels, test_size=config.dev_perc,
-                                                      stratify=config.train_labels, random_state=100)
+    X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=config.dev_perc,
+                                                      stratify=train_labels, random_state=100)
 
     # Load data samples into batches
     train_batch_size = 16
@@ -143,7 +142,7 @@ def grid_search_fine_tune_sbert(config=None):
     # Train the model
     start = time.time()
     dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
-                                                 name='lae-dev', label_names=config.label_names,
+                                                 name='lae-dev', label_names=label_names,
                                                  model_hyper_params={'model_name': config.model_name, 'dev_perc': config.dev_perc, 'seed': config.seeds})
 
     wandb.watch(model, log='all')
@@ -167,6 +166,13 @@ def grid_search_fine_tune_sbert(config=None):
     minutes, seconds = divmod(rem, 60)
     print("Time taken for fine-tuning:",
           "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+
+
+def make_dataset_public(train_sents_, train_labels_, label_names_):
+    global train_sents, train_labels, label_names
+    train_sents = train_sents_
+    train_labels = train_labels_
+    label_names = label_names_
 
 
 def build_data_samples(X_train, label2int, y_train):
