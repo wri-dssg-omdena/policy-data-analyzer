@@ -85,6 +85,8 @@ def grid_search_fine_tune_sbert(config=None):
 
     model_deets = f"{config.eval_classifier}_model={config.model_name}_test-perc={config.dev_perc}_seed={config.seeds}"
 
+    wandb.run.notes = model_deets
+
     X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=config.dev_perc,
                                                       stratify=train_labels, random_state=100)
 
