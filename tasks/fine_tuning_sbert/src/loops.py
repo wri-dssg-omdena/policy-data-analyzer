@@ -68,7 +68,7 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(config=None):
+def grid_search_fine_tune_sbert(run.config=None):
     """
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
@@ -77,20 +77,19 @@ def grid_search_fine_tune_sbert(config=None):
     run = wandb.init()
     print('Printing Run')
     print(str(run), type(run))
-    print('trying to print run config parameters')
+    print('trying to print run run.config parameters')
     print(run.config.dev_perc)
-    print('Printing run config')
+    print('Printing run run.config')
     print(run.config, type(run.config))
-    config = run.config
 
     print(
-        f"Grid Search Fine tuning parameters:\n{json.dumps(config, indent=4)}")
+        f"Grid Search Fine tuning parameters:\n{json.dumps(run.config, indent=4)}")
 
     label2int = dict(zip(label_names, range(len(label_names))))
 
-    model_deets = f"{config.eval_classifier}_model={config.model_name}_test-perc={config.dev_perc}_seed={config.seeds}"
+    model_deets = f"{run.config.eval_classifier}_model={run.config.model_name}_test-perc={run.config.dev_perc}_seed={run.config.seeds}"
     print('Made model deets')
-    X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=config.dev_perc,
+    X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=run.config.dev_perc,
                                                       stratify=train_labels, random_state=100)
 
     print('split dataset into training and validation')
@@ -99,13 +98,13 @@ def grid_search_fine_tune_sbert(config=None):
     train_samples = build_data_samples(X_train, label2int, y_train)
     dev_samples = build_data_samples(X_dev, label2int, y_dev)
     print('data samples built')
-    # Train set config
-    model = EarlyStoppingSentenceTransformer(config.model_name)
+    # Train set run.config
+    model = EarlyStoppingSentenceTransformer(run.config.model_name)
     train_dataset = SentencesDataset(train_samples, model=model)
     train_dataloader = DataLoader(
         train_dataset, shuffle=True, batch_size=train_batch_size)
     print('training model and training dataloaders built')
-    # Dev set config
+    # Dev set run.config
     dev_dataset = SentencesDataset(dev_samples, model=model)
     dev_dataloader = DataLoader(
         dev_dataset, shuffle=True, batch_size=train_batch_size)
@@ -115,25 +114,25 @@ def grid_search_fine_tune_sbert(config=None):
                                    sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
                                    num_labels=len(label2int))
     warmup_steps = math.ceil(
-        len(train_dataset) * config.max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
+        len(train_dataset) * run.config.max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
     print('softmax classifier built')
-    set_seeds(config.seeds)
-    print('seed function called with config seeds')
+    set_seeds(run.config.seeds)
+    print('seed function called with run.config seeds')
     # Train the model
     start = time.time()
     dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
                                                  name='lae-dev', label_names=label_names,
-                                                 model_hyper_params={'model_name': config.model_name, 'dev_perc': config.dev_perc, 'seed': config.seeds})
+                                                 model_hyper_params={'model_name': run.config.model_name, 'dev_perc': run.config.dev_perc, 'seed': run.config.seeds})
     print('customlabelaccuracyevaluator made')
     model.fit(train_objectives=[(train_dataloader, classifier)],
               evaluator=dev_evaluator,
-              epochs=config.max_num_epochs,
+              epochs=run.config.max_num_epochs,
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
-              output_path=config.output_path,
+              output_path=run.config.output_path,
               model_deets=model_deets,
-              baseline=config.baseline,
-              patience=config.patience,
+              baseline=run.config.baseline,
+              patience=run.config.patience,
               )
     print('model fit called')
     end = time.time()
