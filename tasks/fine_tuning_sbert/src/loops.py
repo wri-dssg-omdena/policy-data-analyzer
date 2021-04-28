@@ -276,9 +276,9 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names,
     evaluator = ModelEvaluator(
         label_names, y_true=numeric_labels, y_pred=numeric_preds)
 
-    print("Visualizing...")
-    out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
     if not testing:
+        print("Visualizing...")
+        out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
         visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
                                 output_path=out_path)
         evaluator.plot_confusion_matrix(
@@ -289,7 +289,7 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names,
 
 
 def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels,
-                           label_names, model_deets, output_path):
+                           label_names, model_deets=None, output_path=None, testing=False):
     """
     Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
     and returning. Evaluation method:
@@ -313,11 +313,12 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     evaluator = ModelEvaluator(
         label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
 
-    print("Visualizing...")
-    out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
-    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
-                            output_path=out_path)
-    evaluator.plot_confusion_matrix(color_map='Blues', output_path=out_path)
+    if not testing:
+        print("Visualizing...")
+        out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
+        visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
+                                output_path=out_path)
+        evaluator.plot_confusion_matrix(color_map='Blues', output_path=out_path)
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
     return evaluator.avg_f1.tolist()
