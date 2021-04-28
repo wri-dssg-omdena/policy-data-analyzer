@@ -205,6 +205,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
               model_deets=model_deets,
               baseline=baseline,
               patience=patience,
+              show_progress_bar=False
               )
 
     torch.save(model, output_path+'/saved_model.pt')
