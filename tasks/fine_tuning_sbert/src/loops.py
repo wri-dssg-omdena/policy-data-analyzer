@@ -193,8 +193,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
                                                  model_hyper_params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed})
 
     # this will write to the same project every time
-    wandb.init(notes=model_deets, project='WRI', tags=['baseline', 'training'],
-               entity='ramanshsharma')
+    run = wandb.init(notes=model_deets, project='WRI', tags=['baseline', 'training'],
+                     entity='ramanshsharma')
 
     model.fit(train_objectives=[(train_dataloader, classifier)],
               evaluator=dev_evaluator,
@@ -208,6 +208,9 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
               show_progress_bar=False
               )
 
+    run.save()
+    run_name = run.name
+
     torch.save(model, output_path+'/saved_model.pt')
     wandb.save(output_path+'/saved_model.pt')
 
@@ -218,6 +221,8 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
     minutes, seconds = divmod(rem, 60)
     print("Time taken for fine-tuning:",
           "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+
+    return run_name
 
 
 def make_dataset_public(train_sents_, train_labels_, label_names_):
