@@ -209,7 +209,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
               )
 
     run.save()
-    run_name = run.name
+    run_name = run.id
 
     torch.save(model, output_path+'/saved_model.pt')
     wandb.save(output_path+'/saved_model.pt')
