@@ -12,7 +12,7 @@
 from typing import Dict, List, Any, Set
 
 from tasks.text_preprocessing.src.utils import *
-from tasks.data_loading.src.s3_client import *
+from tasks.data_loading import S3Client
 
 import nltk
 import json
