@@ -5,8 +5,8 @@ from codecs import getreader
 
 
 class S3Client:
-    def __init__(self, creds_filepath, creds_filename, bucket_name, language=None):
-        self.aws_id, self.aws_secret = aws_credentials_from_file(creds_filepath, creds_filename)
+    def __init__(self, creds_filepath, bucket_name, language=None):
+        self.aws_id, self.aws_secret = aws_credentials_from_file(creds_filepath)
         self.s3 = get_s3(self.aws_id, self.aws_secret)
         self.bucket_name = bucket_name
         self.metadata_folder = f"metadata/"

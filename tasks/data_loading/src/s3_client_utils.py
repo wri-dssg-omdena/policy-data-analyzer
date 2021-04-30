@@ -2,12 +2,12 @@ import boto3
 import json
 
 
-def aws_credentials_from_file(path, filename):
+def aws_credentials_from_file(path):
     """
     Get the AWS S3 Id and Secret credentials, from a json file in the format:
         {"AWS_ID": "AWS_SECRET"}
     """
-    with open(f"{path}/{filename}", 'r') as f:
+    with open(path, 'r') as f:
         key_dict = json.load(f)
     for key in key_dict:
         aws_id = key
@@ -35,7 +35,3 @@ def labeled_sentences_from_json(sents_json):
     """
     return {sent_id: sent_labels_map for sent_id, sent_labels_map in [*sents_json.values()][0]["sentences"].items()}
 
-
-## TODO: Move this function somewhere else?
-def format_sents_for_output(sents, doc_id):
-    return {f"{doc_id}_sent_{i}": {"text": sent, "label": []} for i, sent in enumerate(sents)}
