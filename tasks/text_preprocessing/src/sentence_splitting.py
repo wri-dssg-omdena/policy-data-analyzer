@@ -102,7 +102,7 @@ def get_nltk_sents(txt: str, tokenizer: nltk.PunktSentenceTokenizer, extra_abbre
     return tokenizer.tokenize(txt)
 
 
-def main(credentials_fpath, language, min_num_words):
+def main(credentials_fpath, language, min_num_words, print_every):
     """
     1. Set up S3 bucket object using credentials from given file
     2. Iterate through new text files in given language folder (i.e english_documents/text_files/new/)
@@ -135,7 +135,7 @@ def main(credentials_fpath, language, min_num_words):
 
         i += 1
 
-        if i % 100 == 0:
+        if i % print_every == 0:
             print("----------------------------------------------")
             print(f"Processing {i} documents...")
             print(f"Number of errors so far: {len(error_files)}")
@@ -159,7 +159,9 @@ if __name__ == '__main__':
                         help="Language for sentence preprocessing/splitting. Current options are: english, spanish")
     parser.add_argument('-n', '--min_num_words', default=5,
                         help="Minimum number of words that a sentence needs to have to be stored")
+    parser.add_argument('-p', '--print_every', default=100,
+                        help="Print status of preprocessing every X iterations")
 
     args = parser.parse_args()
 
-    main(args.creds_file, args.language, int(args.min_num_words))
+    main(args.creds_file, args.language, int(args.min_num_words), int(args.print_every))
