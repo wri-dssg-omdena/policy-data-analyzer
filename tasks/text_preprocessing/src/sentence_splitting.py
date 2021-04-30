@@ -21,7 +21,6 @@ import unidecode
 
 EN_TOKENIZER = nltk.data.load("tokenizers/punkt/english.pickle")
 ES_TOKENIZER = nltk.data.load("tokenizers/punkt/spanish.pickle")
-BUCKET_NAME = "wri-nlp-policy"
 
 
 def format_sents_for_output(sents: List[str], doc_id: str) -> Dict[str, Dict[str, Any]]:
