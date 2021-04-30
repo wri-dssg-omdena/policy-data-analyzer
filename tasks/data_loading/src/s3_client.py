@@ -5,8 +5,8 @@ from codecs import getreader
 
 
 class S3Client:
-    def __init__(self, creds_filepath, creds_filename, bucket_name, language=None):
-        self.aws_id, self.aws_secret = aws_credentials_from_file(creds_filepath, creds_filename)
+    def __init__(self, creds_filepath, bucket_name, language=None):
+        self.aws_id, self.aws_secret = aws_credentials_from_file(creds_filepath)
         self.s3 = get_s3(self.aws_id, self.aws_secret)
         self.bucket_name = bucket_name
         self.metadata_folder = f"metadata/"
@@ -51,8 +51,9 @@ class S3Client:
         then deleting it from the old one
         """
         try:
-            self.s3.Object(self.bucket_name, f"{obj_old_folder}/{obj_name}") \
-                .copy_from(CopySource=f"{self.bucket_name}/{obj_new_folder}/{obj_name}")
+            self.s3.meta.client.copy_object(Bucket=self.bucket_name,
+                                                 CopySource=f"{self.bucket_name}/{obj_old_folder}/{obj_name}",
+                                                 Key=f"{obj_new_folder}/{obj_name}")
             _ = self.s3.Object(self.bucket_name, f"{obj_old_folder}/{obj_name}").delete()
         except Exception as e:
             print(f"Error while moving {obj_name} from {obj_old_folder} to {obj_new_folder}.")
@@ -70,14 +71,13 @@ class S3Client:
                 text = obj.get()['Body'].read().decode('utf-8')
                 yield file_id, text
 
-    def store_sentences(self, sents, file_name, file_uuid, language):
+    def store_sentences(self, sents, file_uuid, language):
         """
         Store a JSON file containing the metadata and sentences for a given text file in the S3 bucket
         """
         self._update_folder_names(language)
         sents_json = {file_uuid: {"metadata":
                                       {"n_sentences": len(sents),
-                                       "file_name": file_name,
                                        "language": language},
                                   "sentences": sents}}
 
