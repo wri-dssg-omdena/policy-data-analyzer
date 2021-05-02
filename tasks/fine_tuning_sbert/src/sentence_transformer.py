@@ -214,10 +214,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             if epoch == 0:
                 del self.acc_list[0]
 
-        # No evaluator, but output path: save final model version
-        if evaluator is None and output_path is not None:
-            self.save(output_path)
-
     def _eval_during_training(self, evaluator, output_path, epoch, steps):
         """Runs evaluation during the training"""
 
