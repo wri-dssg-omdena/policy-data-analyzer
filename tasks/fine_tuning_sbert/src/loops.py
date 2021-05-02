@@ -118,8 +118,7 @@ def train(config=None):
     # Train the model
     start = time.time()
     dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
-                                                 name='lae-dev', label_names=label_names,
-                                                 model_hyper_params={'model_name': config.model_name, 'dev_perc': config.dev_perc, 'seed': config.seeds})
+                                                 name='lae-dev', label_names=label_names)
 
     model.fit(train_objectives=[(train_dataloader, classifier)],
               evaluator=dev_evaluator,
@@ -127,7 +126,6 @@ def train(config=None):
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
               output_path=config.output_path,
-              model_deets=model_deets,
               baseline=config.baseline,
               patience=config.patience,
               )
@@ -202,7 +200,6 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
               output_path=output_path,
-              model_deets=model_deets,
               baseline=baseline,
               patience=patience,
               show_progress_bar=False
@@ -255,8 +252,7 @@ def set_seeds(seed):
     torch.backends.cudnn.enabled = False
 
 
-def evaluate_using_sbert(model, test_sents, test_labels, label_names,
-                         model_deets, numeric_labels, output_path=None, testing=False):
+def evaluate_using_sbert(model, test_sents, test_labels, label_names, numeric_labels):
     """
     Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
     and returning. Evaluation method:
@@ -281,20 +277,14 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names,
     evaluator = ModelEvaluator(
         label_names, y_true=numeric_labels, y_pred=numeric_preds)
 
-    if not testing:
-        print("Visualizing...")
-        out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
-        visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
-                                output_path=out_path)
-        evaluator.plot_confusion_matrix(
-            color_map='Blues', output_path=out_path)
+    evaluator.plot_confusion_matrix(color_map='Blues')
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50)
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
     return evaluator.avg_f1.tolist()
 
 
-def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels,
-                           label_names, model_deets=None, output_path=None, testing=False):
+def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels, label_names):
     """
     Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
     and returning. Evaluation method:
@@ -318,12 +308,8 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     evaluator = ModelEvaluator(
         label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
 
-    if not testing:
-        print("Visualizing...")
-        out_path = f"{output_path}/{model_deets}" if output_path and model_deets else None
-        visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
-                                output_path=out_path)
-        evaluator.plot_confusion_matrix(color_map='Blues', output_path=out_path)
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50)
+    evaluator.plot_confusion_matrix(color_map='Blues')
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
     return evaluator.avg_f1.tolist()

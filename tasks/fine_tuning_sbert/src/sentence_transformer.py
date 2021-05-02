@@ -35,7 +35,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             weight_decay: float = 0.01,
             evaluation_steps: int = 0,
             output_path: str = None,
-            model_deets: str = None,
             save_best_model: bool = True,
             max_grad_norm: float = 1,
             use_amp: bool = False,
@@ -60,7 +59,6 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         :param weight_decay: Weight decay for model parameters
         :param evaluation_steps: If > 0, evaluate the model using evaluator after each number of training steps
         :param output_path: Storage path for the model and evaluation files
-        :param model_deets: Name containing hyperparameters of model
         :param save_best_model: If true, the best model (according to evaluator) is stored at output_path
         :param max_grad_norm: Used for gradient normalization.
         :param use_amp: Use Automatic Mixed Precision (AMP). Only for Pytorch >= 1.6.0
@@ -201,7 +199,7 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
 
             # validation evaluation
             flag = self._eval_during_training(
-                evaluator, output_path, model_deets, save_best_model, epoch, -1, callback)
+                evaluator, output_path, save_best_model, epoch, -1, callback)
 
             if flag is True:
                 print(f'Epoch: {epoch}')
@@ -222,12 +220,10 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         if evaluator is None and output_path is not None:
             self.save(output_path)
 
-    def _eval_during_training(self, evaluator, output_path,
-                              model_deets, save_best_model, epoch, steps, callback):
+    def _eval_during_training(self, evaluator, output_path, epoch, steps):
         """Runs evaluation during the training"""
 
-        score_dict = evaluator(self, output_path=output_path,
-                               model_deets=model_deets, epoch=epoch, steps=steps)
+        score_dict = evaluator(self, epoch=epoch, steps=steps)
 
         score = score_dict["accuracy"]
         self.acc_list.append(score)

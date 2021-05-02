@@ -37,8 +37,7 @@ def batch_to_device(batch, target_device: device):
 
 def plot_confusion_matrix(cm, label_names, title='Confusion matrix',
                           color_map=None,
-                          normalize=True,
-                          output_path=None):
+                          normalize=True):
     """
     Adapted from: https://stackoverflow.com/questions/19233771/sklearn-plot-confusion-matrix-with-labels
     """
@@ -90,8 +89,7 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
     The results are written in a CSV. If a CSV already exists, then values are appended.
     """
 
-    def __init__(self, dataloader: DataLoader, name: str = "", label_names: list = None, softmax_model=None,
-                 model_hyper_params: Dict[str, str] = None):
+    def __init__(self, dataloader: DataLoader, name: str = "", label_names: list = None, softmax_model=None):
         """
         Constructs an evaluator for the given dataset
 
@@ -102,19 +100,8 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         self.name = name
         self.softmax_model = softmax_model
         self.label_names = label_names
-        self.model_hyper_params = model_hyper_params
 
-        if name:
-            name = "_" + name
-
-        self.csv_file = "accuracy_f1_evaluation" + name + "_results.csv"
-        self.csv_headers = [
-            param_name for param_name in self.model_hyper_params]
-        self.csv_headers.extend(
-            ["epoch", "steps", "accuracy", "macro_f1", "weighted_f1"])
-
-    def __call__(self, model, output_path: str = None, model_deets: str = None,
-                 epoch: int = -1, steps: int = -1) -> dict:
+    def __call__(self, model, epoch: int = -1, steps: int = -1) -> dict:
         model.eval()
         total = 0
         correct = 0
@@ -157,7 +144,7 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
             "Accuracy: {:.4f} ({}/{})\n".format(accuracy, correct, total))
         logging.info(f"Macro F1: {macro_f1}")
         logging.info(f"Weighted F1: {weighted_f1}")
-        out_path = f"{output_path}/{model_deets}_n-epochs={epoch}" if model_deets and output_path else None
-        plot_confusion_matrix(cm, self.label_names, output_path=out_path)
+
+        plot_confusion_matrix(cm, self.label_names)
 
         return score_dict

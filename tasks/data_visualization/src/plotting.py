@@ -9,8 +9,7 @@ import scprep
 import phate
 
 
-def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=100, output_path=None,
-                            verbose=0):
+def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps=None, seed=100, verbose=0):
     df = pd.DataFrame()
     df["y"] = np.array(numeric_labels)
 
@@ -73,11 +72,9 @@ def visualize_embeddings_2D(embs, numeric_labels, tsne_perplexity, pca_k_n_comps
 
     # wandb code
     fig = plt.gcf()
+    fig.set_size_inches(15, 10)  # enlarging embeddings
     wandb.log({"PCA_2D_embedding": wandb.Image(fig)})
-    if output_path:
-        plt.savefig(output_path + "_viz.png")
-    else:
-        plt.show()
+    plt.close()  # to prevent plotting at testing time
 
 
 def visualize_PCA_embeddings_3D(embs, labels, fname=None, seed=100):
