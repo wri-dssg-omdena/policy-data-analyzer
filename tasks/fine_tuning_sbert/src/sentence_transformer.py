@@ -30,8 +30,7 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
             scheduler: str = 'WarmupLinear',
             warmup_steps: int = 10000,
             optimizer_class: Type[Optimizer] = transformers.AdamW,
-            optimizer_params: Dict[str, object] = {
-                'lr': 2e-5, 'correct_bias': True},
+            optimizer_params: Dict[str, object] = {'lr': 2e-5, 'correct_bias': True},
             weight_decay: float = 0.01,
             evaluation_steps: int = 0,
             output_path: str = None,
@@ -119,8 +118,7 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                     nd in n for nd in no_decay)], 'weight_decay': 0.0}
             ]
 
-            optimizer = optimizer_class(
-                optimizer_grouped_parameters, **optimizer_params)
+            optimizer = optimizer_class(optimizer_grouped_parameters, **optimizer_params)
             scheduler_obj = self._get_scheduler(optimizer, scheduler=scheduler, warmup_steps=warmup_steps,
                                                 t_total=num_train_steps)
 

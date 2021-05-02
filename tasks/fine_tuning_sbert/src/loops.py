@@ -126,6 +126,7 @@ def train(config=None):
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
               output_path=config.output_path,
+              optimizer_params={'lr': config.learning_rate, 'correct_bias': True},
               baseline=config.baseline,
               patience=config.patience,
               )
@@ -149,6 +150,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
     baseline = train_params['baseline']
     patience = train_params['patience']
     seed = train_params['seeds']
+    learning_rate = train_params['learning_rate']
 
     print(
         f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
@@ -200,6 +202,7 @@ def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_n
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
               output_path=output_path,
+              optimizer_params={'lr': learning_rate, 'correct_bias': True},
               baseline=baseline,
               patience=patience,
               show_progress_bar=False
