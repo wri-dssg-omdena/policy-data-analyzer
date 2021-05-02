@@ -196,8 +196,7 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
                       "epoch": epoch})
 
             # validation evaluation
-            flag = self._eval_during_training(
-                evaluator, output_path, save_best_model, epoch, -1, callback)
+            flag = self._eval_during_training(evaluator, output_path, epoch, -1)
 
             if flag is True:
                 print(f'Epoch: {epoch}')
