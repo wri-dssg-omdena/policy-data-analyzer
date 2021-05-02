@@ -138,8 +138,7 @@ def train(config=None):
           "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
 
-def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, label_names,
-                                eval_classifier=None):
+def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     """
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
