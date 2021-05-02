@@ -150,7 +150,7 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     seed = train_params['seeds']
     learning_rate = train_params['learning_rate']
 
-    print(f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
+    print(f"Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
     label2int = dict(zip(label_names, range(len(label_names))))
 
@@ -186,8 +186,7 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     # Train the model
     start = time.time()
     dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
-                                                 name='lae-dev', label_names=label_names,
-                                                 model_hyper_params={'model_name': model_name, 'dev_perc': dev_perc, 'seed': seed})
+                                                 name='lae-dev', label_names=label_names)
 
     # this will write to the same project every time
     run = wandb.init(notes=model_deets, project='WRI', tags=['baseline', 'training'],
