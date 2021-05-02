@@ -4,6 +4,7 @@ import time
 from pathlib import Path
 import os
 import random
+import subprocess
 from typing import Iterable, Dict
 
 import cupy as cp
@@ -27,8 +28,6 @@ if spacy.prefer_gpu():
 else:
     print("Using the CPU")
 
-#  May need to run python -m spacy download es_core_news_lg first!
-es_nlp = spacy.load('es_core_news_lg')
 
 train_sents = None
 train_labels = None
@@ -264,6 +263,8 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names, numeric_la
     """
     # Projection matrix Z low-dim projection
     print("Classifying sentences...")
+    subprocess.check_call(["python", "-m", "spacy", "download", "es_core_news_lg"])
+    es_nlp = spacy.load('es_core_news_lg')
     proj_matrix = cp.asnumpy(calc_proj_matrix(
         test_sents, 50, es_nlp, model, 0.01))
     test_embs = encode_all_sents(test_sents, model, proj_matrix)
