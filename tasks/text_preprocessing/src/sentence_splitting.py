@@ -8,6 +8,27 @@
     {
         "AWS ID": "AWS SECRET"
     }
+
+    Sample output format after sentence splitting for document with id "23effs8765":
+    {"23effs8765":
+        {
+            "metadata": {
+                "n_sentences": 23,
+                "language": "English"
+             },
+            "sentences": {
+                "23effs8765_sent_0": {
+                    "text": "Here is a sample sentence that is NOT an incentive",
+                    "labels": [0]
+                },
+                "23effs8765_sent_1": {
+                    "text": "This sentence should be an incentive",
+                    "labels": [1]
+                }
+            }
+        }
+    }
+
 """
 from typing import Dict, List, Any, Set
 
