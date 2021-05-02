@@ -263,6 +263,7 @@ def evaluate_using_sbert(model, test_sents, test_labels, label_names, numeric_la
     """
     # Projection matrix Z low-dim projection
     print("Classifying sentences...")
+    subprocess.check_call(["pip", "install", "--quiet", "download", "spacy==3.0.5"])
     subprocess.check_call(["python", "-m", "spacy", "download", "es_core_news_lg"])
     es_nlp = spacy.load('es_core_news_lg')
     proj_matrix = cp.asnumpy(calc_proj_matrix(
