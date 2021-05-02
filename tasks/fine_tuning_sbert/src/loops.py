@@ -151,8 +151,7 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     seed = train_params['seeds']
     learning_rate = train_params['learning_rate']
 
-    print(
-        f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
+    print(f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
     label2int = dict(zip(label_names, range(len(label_names))))
 
