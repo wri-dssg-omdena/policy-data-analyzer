@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import itertools
 from itertools import cycle
+import wandb
 import matplotlib.colors as mcolors
 
 import sys
@@ -75,7 +76,6 @@ class ModelEvaluator:
         self.NPV = self.TN / (self.TN + self.FN)  # Negative predictive value
         self.FPR = self.FP / (self.FP + self.TN)  # Fall out or false positive rate
         self.FNR = self.FN / (self.TP + self.FN)  # False negative rate
-
 
     def evaluate(self, y_true, y_pred, plot_cm=False, normalize=False, exp_name=None):
         """
@@ -148,11 +148,9 @@ class ModelEvaluator:
         weighted_metrics = sum(metric_array * weights)
         return weighted_metrics / len(y_true)
 
-
     def plot_confusion_matrix(self, title='Confusion matrix',
                               color_map=None,
-                              normalize=True,
-                              output_path=None):
+                              normalize=True):
         """
         Adapted from: https://stackoverflow.com/questions/19233771/sklearn-plot-confusion-matrix-with-labels
         """
@@ -189,12 +187,10 @@ class ModelEvaluator:
         plt.xlabel('Predicted label')
         plt.ylabel('True label')
 
-        if output_path:
-            fname = f"{output_path}_cm.png"
-            plt.savefig(fname)
-            print(f"Stored confusion matrix: {fname}")
-
-        plt.show()
+        fig = plt.gcf()
+        fig.set_size_inches(15, 10)  # enlarging CM
+        wandb.log({"Test set CM": wandb.Image(fig)})
+        plt.close()
 
     def plot_precision_recall_curve(self, y_true, y_pred, bin_class=False, all_classes=False,
                                     exp_name=None):
@@ -213,7 +209,8 @@ class ModelEvaluator:
 
         if bin_class:
             if not isinstance(y_pred.flat[0], np.floating):
-                print("Error: Array of predictions should contain probabilities [0.3, 0.75] instead of labels [0, 1] for binary classification problems.")
+                print(
+                    "Error: Array of predictions should contain probabilities [0.3, 0.75] instead of labels [0, 1] for binary classification problems.")
                 return
 
             random_pred_precision = y_true.mean()
