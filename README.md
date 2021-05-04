@@ -14,6 +14,8 @@ In the long term, we are building a tool that can be extended to any use case re
   - [Incentive Detection](#incentive-detection)
   - [Incentive Instrument Classification](#incentive-instrument-classification)
 - [Development](#development)
+  - [Getting Started](#getting-started)
+  - [Main Components](#main-components)
   - [Contribution Guidelines](#contribution-guidelines)
   - [Project Organization](#project-organization)
 - [Background, Motivation and Impact](#background-motivation-and-impact)
@@ -44,6 +46,14 @@ The modeling side has yielded promising results, and we will be presenting this 
 <img src="https://github.com/wri-dssg/policy-data-analyzer/blob/master/images/MulticlassClassificationResults.png" width="55%">
 
 ## Development
+
+### Getting Started
+
+**Requirements**
+
+- Python >= 3.6
+- Miniconda or `virtualenv` (or any type of virtual environment tool)
+- pip
 
 ### Contribution Guidelines
 
@@ -104,8 +114,6 @@ The modeling side has yielded promising results, and we will be presenting this 
     ```
 - _If I'm working with someone in the same issue, can I contribute/push to their branch?_
     - Technically yes, but it would be safer if you would work on yours first (maybe divide the issue in smaller issues) and then open a PR to theirs once you feel ready to merge code. Alternatively you could pair program and not worry about overwritting someone else's code :)
-- _Can I push directly to master?_
-    - Please don't :( 
     
 ## Project Organization
 
