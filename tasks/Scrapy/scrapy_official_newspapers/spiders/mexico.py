@@ -19,23 +19,29 @@ class MexicoDOF(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["sidofqa.segob.gob.mx"]
-    start_date = "2021-02-25"
+    start_date = "2010-01-01"
     #This is a category that appears in the database which yields a lot of documents that announce job posts. We exclude them from the search
     authorship_to_exclude = 'CONVOCATORIAS PARA CONCURSOS DE PLAZAS VACANTES DEL SERVICIO PROFESIONAL DE CARRERA EN LA ADMINISTRACION PUBLICA FEDERAL'
-    folder_to_save = "wri.-testing/dof/"
+    folder_to_save = "spanish_documents/text_files/new/"
+    # folder_to_save = "wri.-testing/dof/"
 
     def __init__(self):
         self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_ES.json')
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
         self.from_date, self.today = self.create_date_span(self.start_date)
 
-        #folder = '/home/propietari/Documents/claus/' # TODO: change to your local path
-        folder = 'C:/Users/jordi/Documents/claus/' # TODO: change to your local path
-        file_name = 'AWS_S3_keys_JordiPlanas_Made_in_game.json' # TODO: Change to your filename
-        self.bucket = "wri-testing" # TODO: Change to the final bucket
-        bucket_region = "eu-central-1" # TODO: Change to fit to the final bucket
-        file = folder + file_name
-        self.s3 = self.open_S3_session(file, self.bucket, bucket_region)
+        # folder = 'C:/Users/jordi/Documents/claus/' # TODO: change to your local path
+        # file_name = 'AWS_S3_keys_JordiPlanas_Made_in_game.json' # TODO: Change to your filename
+        folder = '/home/propietari/Documents/claus/' # TODO: change to your local path
+        file_name = "AWS_S3_keys_wri.json"
+
+        # self.bucket = "wri-testing" # TODO: Change to the final bucket
+        # bucket_region = "eu-central-1" # TODO: Change to fit to the final bucket
+        self.bucket = "wri-nlp-policy"
+        bucket_region = "us-east-1"
+
+        keys_file = folder + file_name
+        self.s3 = self.open_S3_session(keys_file, self.bucket, bucket_region)
     
     def start_requests(self):
         for day in self.create_date_list(self.from_date, self.today, 1, "days", self.country_code):
@@ -44,7 +50,7 @@ class MexicoDOF(BaseSpider):
             day = day.strftime('%d-%m-%Y')
             #self.debug(day)
             self.start_url = f'https://sidofqa.segob.gob.mx/dof/sidof/notas/{day}'
-            #print(start_urls)
+            #print(f"\n *************** \n {self.start_url}\n ********************")
             yield scrapy.Request(self.start_url, dont_filter=True, callback=self.parse)
 
     def parse(self, response):
@@ -78,24 +84,31 @@ class MexicoDOF(BaseSpider):
                     doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
                     doc_name = self.HSA1_encoding(doc_url) + ".txt"
                     item['doc_name'] = doc_name
-                    #self.debug("\n       #################       \n")
+                    #self.debug(f"\n       #################       \n {doc_url} \n   ###############")
                     #self.debug(doc_name)
                     yield item
-                    yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other, cb_kwargs=dict(document = doc_name))
+                    yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other, cb_kwargs=dict(document = doc_name, url = doc_url))
             else:
                 pass
 
-    def parse_other(self, response, document):
-        # self.debug("\n**** in the nota detalle ****\n")
+    def parse_other(self, response, document, url):
         soup = BeautifulSoup(response.css('div#DivDetalleNota').get(), features = "lxml")
         paragraphs = soup.find_all("p")
-        tables = soup.find_all("td")
         text = ""
-        for line in paragraphs[1:]:
-            text = text + line.text + "\n"
-        for cell in tables:
-            text = text + cell.text + "\n"
+        if len(paragraphs) == 0:
+            text = text + soup.text
+        else:
+            tables = soup.find_all("td")
+            for line in paragraphs[1:]:
+                text = text + line.text + "\n"
+            text = text + "<table>" + "\n"
+            for cell in tables:
+                if "En el documento que usted está visualizando" not in cell.text:
+                    text = text + cell.text + "\n"
+            text = text + "<\\table>" + "\n"
         file = self.folder_to_save + document
+        #self.debug(url)
+        #self.debug(text)
         #self.debug("\n       ****************       \n")
         #self.debug(file)
         self.save_to_s3(self.s3, self.bucket, file, text.replace("\t", ""))
