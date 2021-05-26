@@ -1,13 +1,16 @@
-import os
 import math
-import random
+import wandb
 import time
+from pathlib import Path
+import os
+import random
+import subprocess
 from typing import Iterable, Dict
 
 import cupy as cp
 import spacy
+import torch
 from sentence_transformers import SentencesDataset, SentenceTransformer, InputExample
-from sentence_transformers.evaluation import LabelAccuracyEvaluator
 from sklearn.metrics import classification_report
 from sklearn.model_selection import train_test_split
 from torch import nn, Tensor
@@ -17,6 +20,7 @@ from tasks.data_augmentation.src.zero_shot_classification.latent_embeddings_clas
 from tasks.data_loading.src.utils import *
 from tasks.data_visualization.src.plotting import *
 from tasks.fine_tuning_sbert.src.sentence_transformer import EarlyStoppingSentenceTransformer
+from tasks.fine_tuning_sbert.src.custom_evaluator import CustomLabelAccuracyEvaluator
 from tasks.model_evaluation.src.model_evaluator import *
 
 if spacy.prefer_gpu():
@@ -24,8 +28,10 @@ if spacy.prefer_gpu():
 else:
     print("Using the CPU")
 
-#  May need to run python -m spacy download es_core_news_lg first!
-es_nlp = spacy.load('es_core_news_lg')
+
+train_sents = None
+train_labels = None
+label_names = None
 
 
 class SoftmaxClassifier(nn.Module):
@@ -61,195 +67,236 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def grid_search_fine_tune_sbert(train_params, train_sents, train_labels, test_sents, test_labels, label_names,
-                                eval_classifier=None):
+def train(config=None):
     """
-    Find the optimal SBERT model by doing a hyperparameter search over random seeds, test percentage, and different types of SBERT models
+    Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
+    """
+
+    # this will write to the same project every time
+    wandb.init(config=config, magic=True)
+
+    config = wandb.config
+
+    print(
+        f"Grid Search Fine tuning parameters:\n{config}")
+
+    label2int = dict(zip(label_names, range(len(label_names))))
+
+    model_deets = f"{config.eval_classifier}_model={config.model_name}_test-perc={config.dev_perc}_seed={config.seeds}"
+
+    wandb.run.notes = model_deets
+
+    X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=config.dev_perc,
+                                                      stratify=train_labels, random_state=100)
+
+    # Load data samples into batches
+    train_batch_size = 16
+    train_samples = build_data_samples(X_train, label2int, y_train)
+    dev_samples = build_data_samples(X_dev, label2int, y_dev)
+
+    # Train set config
+    model = EarlyStoppingSentenceTransformer(config.model_name)
+    train_dataset = SentencesDataset(train_samples, model=model)
+    train_dataloader = DataLoader(
+        train_dataset, shuffle=True, batch_size=train_batch_size)
+
+    # Dev set config
+    dev_dataset = SentencesDataset(dev_samples, model=model)
+    dev_dataloader = DataLoader(
+        dev_dataset, shuffle=True, batch_size=train_batch_size)
+
+    # Define the way the loss is computed
+    classifier = SoftmaxClassifier(model=model,
+                                   sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
+                                   num_labels=len(label2int))
+    warmup_steps = math.ceil(
+        len(train_dataset) * config.max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
+
+    set_seeds(config.seeds)
+
+    # Train the model
+    start = time.time()
+    dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
+                                                 name='lae-dev', label_names=label_names)
+
+    model.fit(train_objectives=[(train_dataloader, classifier)],
+              evaluator=dev_evaluator,
+              epochs=config.max_num_epochs,
+              evaluation_steps=1000,
+              warmup_steps=warmup_steps,
+              output_path=config.output_path,
+              optimizer_params={'lr': config.learning_rate, 'correct_bias': True},
+              baseline=config.baseline,
+              patience=config.patience,
+              )
+
+    end = time.time()
+    hours, rem = divmod(end - start, 3600)
+    minutes, seconds = divmod(rem, 60)
+    print("Time taken for fine-tuning:",
+          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+
+
+def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
+    """
+    Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
     output_path = train_params["output_path"]
-    experiment = train_params["experiment"]
-    all_test_perc = train_params["all_test_perc"]
-    model_names = train_params["model_names"]
+    dev_perc = train_params["all_dev_perc"]
+    model_name = train_params["model_names"]
     max_num_epochs = train_params["max_num_epochs"]
     baseline = train_params['baseline']
     patience = train_params['patience']
-    seeds = train_params['seeds']
+    seed = train_params['seeds']
+    learning_rate = train_params['learning_rate']
 
-    numeric_labels = labels2numeric(test_labels, label_names)
+    print(f"Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
-    if eval_classifier is None:
-        train_params["eval_classifier"] = "SBERT"
-    else:
-        train_params["eval_classifier"] = eval_classifier.__class__.__name__
+    label2int = dict(zip(label_names, range(len(label_names))))
 
-    print(f"Grid Search Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
+    X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=dev_perc,
+                                                      stratify=train_labels, random_state=100)
 
-    json_output_fname = output_path + f"/{experiment}_FineTuningResults.json"
+    # Load data samples into batches
+    train_batch_size = 16
+    train_samples = build_data_samples(X_train, label2int, y_train)
+    dev_samples = build_data_samples(X_dev, label2int, y_dev)
 
-    # Output setup - we will update the json as the fine tuning process goes so every result is stored immediately
-    with open(json_output_fname, "w") as f:
-        json.dump({}, f)
+    # Train set config
+    model = EarlyStoppingSentenceTransformer(model_name)
+    train_dataset = SentencesDataset(train_samples, model=model)
+    train_dataloader = DataLoader(
+        train_dataset, shuffle=True, batch_size=train_batch_size)
 
-    for test_perc in all_test_perc:
-        with open(json_output_fname, "r") as fr:
-            output = json.load(fr)
+    # Dev set config
+    dev_dataset = SentencesDataset(dev_samples, model=model)
+    dev_dataloader = DataLoader(
+        dev_dataset, shuffle=True, batch_size=train_batch_size)
 
-        output[f"test_perc={test_perc}"] = {}
-        X_train, X_test, y_train, y_test = train_test_split(train_sents, train_labels, test_size=test_perc,
-                                                            stratify=train_labels, random_state=100)
+    # Define the way the loss is computed
+    classifier = SoftmaxClassifier(model=model,
+                                   sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
+                                   num_labels=len(label2int))
+    warmup_steps = math.ceil(
+        len(train_dataset) * max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
 
-        # Load data samples into batches
-        train_batch_size = 16
-        label2int = dict(zip(label_names, range(len(label_names))))
-        train_samples = []
-        for sent, label in zip(X_train, y_train):
-            label_id = label2int[label]
-            train_samples.append(InputExample(texts=[sent], label=label_id))
+    set_seeds(seed)
+    model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={dev_perc}_seed={seed}"
 
-        # Configure the dev set evaluator - still need to test whether this works
-        dev_samples = []
-        for sent, label in zip(X_test, y_test):
-            label_id = label2int[label]
-            dev_samples.append(InputExample(texts=[sent], label=label_id))
+    # Train the model
+    start = time.time()
+    dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
+                                                 name='lae-dev', label_names=label_names)
 
-        for model_name in model_names:
-            # Setup
-            output[f"test_perc={test_perc}"][f'model_name={model_name}'] = {}
+    # this will write to the same project every time
+    run = wandb.init(notes=model_deets, project='WRI', tags=['baseline', 'training'],
+                     entity='ramanshsharma')
 
-            # Train set config
-            model = EarlyStoppingSentenceTransformer(model_name)
-            train_dataset = SentencesDataset(train_samples, model=model)
-            train_dataloader = DataLoader(train_dataset, shuffle=True, batch_size=train_batch_size)
+    model.fit(train_objectives=[(train_dataloader, classifier)],
+              evaluator=dev_evaluator,
+              epochs=max_num_epochs,
+              evaluation_steps=1000,
+              warmup_steps=warmup_steps,
+              output_path=output_path,
+              optimizer_params={'lr': learning_rate, 'correct_bias': True},
+              baseline=baseline,
+              patience=patience,
+              show_progress_bar=False
+              )
 
-            for seed in seeds:
-                # Setup
-                output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'] = []
+    run.save()
+    run_name = run.id
 
-                # =============== SETTING GLOBAL SEEDS ===============================
-                os.environ['PYTHONHASHSEED'] = str(seed)
-                # Torch RNG
-                torch.manual_seed(seed)
-                # torch.cuda.manual_seed(seed)
-                torch.cuda.manual_seed_all(seed)
-                # Python RNG
-                np.random.seed(seed)
-                random.seed(seed)
-                # CuDA Determinism
-                torch.backends.cudnn.deterministic = True
-                torch.backends.cudnn.benchmark = False
-                torch.backends.cudnn.enabled = False
-                # ====================================================================
+    torch.save(model, output_path+'/saved_model.pt')
+    wandb.save(output_path+'/saved_model.pt')
 
-                # Define the way the loss is computed
-                classifier = SoftmaxClassifier(model=model,
-                                               sentence_embedding_dimension=model.get_sentence_embedding_dimension(),
-                                               num_labels=len(label2int))
+    wandb.finish()
 
-                # Dev set config
-                dev_dataset = SentencesDataset(dev_samples, model=model)
-                dev_dataloader = DataLoader(dev_dataset, shuffle=True, batch_size=train_batch_size)
-                dev_evaluator = LabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
-                                                       name='lae-dev')
+    end = time.time()
+    hours, rem = divmod(end - start, 3600)
+    minutes, seconds = divmod(rem, 60)
+    print("Time taken for fine-tuning:",
+          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-                warmup_steps = math.ceil((len(train_dataset) / train_batch_size) * 0.1)  # 10% of total training steps
-
-                model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={test_perc}_n-epoch={max_num_epochs}_seed={seed}"
-
-                # Train the model
-                start = time.time()
-
-                model.fit(train_objectives=[(train_dataloader, classifier)],
-                          evaluator=dev_evaluator,
-                          epochs=max_num_epochs,  # We always tune on an extra epoch to see the performance gain
-                          evaluation_steps=1000,
-                          warmup_steps=warmup_steps,
-                          output_path=output_path,
-                          BASELINE=baseline,
-                          PATIENCE=patience,
-                          params={'model_name': model_name, 'test_perc': test_perc, 'seed': seed}
-                          )
-
-                end = time.time()
-                hours, rem = divmod(end - start, 3600)
-                minutes, seconds = divmod(rem, 60)
-                print("Time taken for fine-tuning:", "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
-
-                if eval_classifier is None:
-                    evaluate_using_sbert(model, test_sents, test_labels, label_names,
-                                         model_deets, model_name, max_num_epochs, numeric_labels, output,
-                                         output_path, test_perc, json_output_fname, seed)
-                else:
-                    evaluate_using_sklearn(eval_classifier, model, train_sents, train_labels, test_sents,
-                                           test_labels, label_names, model_deets, model_name, max_num_epochs,
-                                           output, test_perc, output_path, json_output_fname, seed)
+    return run_name
 
 
-def evaluate_using_sbert(model, test_sents, test_labels, label_names,
-                         model_deets, model_name, num_epochs, numeric_labels, output,
-                         output_path, test_perc, json_output_fname, seed):
+def make_dataset_public(train_sents_, train_labels_, label_names_):
+    global train_sents, train_labels, label_names
+    train_sents = train_sents_
+    train_labels = train_labels_
+    label_names = label_names_
+
+
+
+def build_data_samples(X_train, label2int, y_train):
+    train_samples = []
+    for sent, label in zip(X_train, y_train):
+        label_id = label2int[label]
+        train_samples.append(InputExample(texts=[sent], label=label_id))
+    return train_samples
+
+
+def set_seeds(seed):
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    # Torch RNG
+    torch.manual_seed(seed)
+    # torch.cuda.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    # Python RNG
+    np.random.seed(seed)
+    random.seed(seed)
+    # CuDA Determinism
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    torch.backends.cudnn.enabled = False
+
+
+def evaluate_using_sbert(model, test_sents, test_labels, label_names, numeric_labels):
+    """
+    Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
+    and returning. Evaluation method:
+     - Calculate cosine similarity between label and sentence embeddings
+     #A-latent-embedding-approach
+     - Includes the projection matrix approach used in https://joeddav.github.io/blog/2020/05/29/ZSL.html
+
+    """
     # Projection matrix Z low-dim projection
     print("Classifying sentences...")
-    proj_matrix = cp.asnumpy(calc_proj_matrix(test_sents, 50, es_nlp, model, 0.01))
+    subprocess.check_call(["pip", "install", "--quiet", "download", "spacy==3.0.5"])
+    subprocess.check_call(["python", "-m", "spacy", "download", "es_core_news_lg"])
+    es_nlp = spacy.load('es_core_news_lg')
+    proj_matrix = cp.asnumpy(calc_proj_matrix(
+        test_sents, 50, es_nlp, model, 0.01))
     test_embs = encode_all_sents(test_sents, model, proj_matrix)
     label_embs = encode_labels(label_names, model, proj_matrix)
 
-    # i = 0
-    # # ===========
-    # viz_string = f"{output_path}/{model_deets}_exp_{i}"
-    # cm_string = f"{output_path}/{model_deets}_exp_{i}"
-    # # ===========
-
-    # while os.path.exists(viz_string):
-    #     i += 1
-    #     viz_string = f"{output_path}/{model_deets}_exp_{i}"
-    #     cm_string = f"{output_path}/{model_deets}_exp_{i}"
-
-    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
-                            store_name=f"{output_path}/{model_deets}")
-
-    model_preds, model_scores = calc_all_cos_similarity(test_embs, label_embs, label_names)
+    model_preds, model_scores = calc_all_cos_similarity(
+        test_embs, label_embs, label_names)
 
     print("Evaluating predictions...")
+    print(classification_report(test_labels, model_preds))
     numeric_preds = labels2numeric(model_preds, label_names)
-    evaluator = ModelEvaluator(label_names, y_true=numeric_labels, y_pred=numeric_preds)
+    evaluator = ModelEvaluator(
+        label_names, y_true=numeric_labels, y_pred=numeric_preds)
 
-    # with open(f"{results_save_path}/exp_num.txt") as f:
-    #     exp = int(f.read())
-
-    output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'].append(
-        {"num_epochs": num_epochs,
-         "avg_f1": evaluator.avg_f1.tolist()})
-
-    # with open(f"{results_save_path}/exp_num.txt", "w") as f:
-    #     f.write(str(exp+1))
-
-    with open(json_output_fname, "w") as f:
-        json.dump(output, f)
-    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
+    evaluator.plot_confusion_matrix(color_map='Blues')
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50)
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
+    return evaluator.avg_f1.tolist()
 
-def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels,
-                           label_names, model_deets, model_name, num_epochs, output,
-                           test_perc, output_path, json_output_fname, seed):
+
+def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, test_labels, label_names):
+    """
+    Evaluate an S-BERT model on a previously unseen test set, visualizing the embeddings, confusion matrix,
+    and returning. Evaluation method:
+     - A sklearn classifier, such as a RandomForest or SVM
+    """
     # Sentence encoding
     print("Classifying sentences...")
     train_embs = encode_all_sents(train_sents, model)
     test_embs = encode_all_sents(test_sents, model)
-
-    # i = 0
-    # # ===========
-    # viz_string = f"{output_path}/{model_deets}_exp_{i}"
-    # cm_string = f"{output_path}/{model_deets}_exp_{i}"
-    # # ===========
-
-    # while os.path.exists(viz_string):
-    #     i += 1
-    #     viz_string = f"{output_path}/{model_deets}_exp_{i}"
-    #     cm_string = f"{output_path}/{model_deets}_exp_{i}"
-
-    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50,
-                            store_name=f"{output_path}/{model_deets}")
 
     # Classifier training
     clf.fit(np.vstack(train_embs), train_labels)
@@ -261,20 +308,11 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     print(classification_report(test_labels, clf_preds))
     numeric_preds = labels2numeric(clf_preds, label_names)
     numeric_test_labels = labels2numeric(test_labels, label_names)
-    evaluator = ModelEvaluator(label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
+    evaluator = ModelEvaluator(
+        label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
 
-    # with open(f"{results_save_path}/exp_num.txt") as f:
-    #     exp = int(f.read())
-
-    output[f"test_perc={test_perc}"][f'model_name={model_name}'][f'seed={seed}'].append(
-        {"num_epochs": num_epochs,
-         "avg_f1": evaluator.avg_f1.tolist()})
-
-    # with open(f"{results_save_path}/exp_num.txt", "w") as f:
-    #     f.write(str(exp+1))
-
-    with open(json_output_fname, "w") as f:
-        json.dump(output, f)
-
-    evaluator.plot_confusion_matrix(color_map='Blues', exp_name=f"{output_path}/{model_deets}")
+    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50)
+    evaluator.plot_confusion_matrix(color_map='Blues')
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
+
+    return evaluator.avg_f1.tolist()

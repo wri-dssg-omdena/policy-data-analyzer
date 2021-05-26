@@ -2,12 +2,12 @@ import boto3
 import json
 
 
-def aws_credentials_from_file(path, filename):
+def aws_credentials_from_file(path):
     """
     Get the AWS S3 Id and Secret credentials, from a json file in the format:
         {"AWS_ID": "AWS_SECRET"}
     """
-    with open(f"{path}/{filename}", 'r') as f:
+    with open(path, 'r') as f:
         key_dict = json.load(f)
     for key in key_dict:
         aws_id = key
@@ -35,7 +35,6 @@ def labeled_sentences_from_json(sents_json):
     """
     return {sent_id: sent_labels_map for sent_id, sent_labels_map in [*sents_json.values()][0]["sentences"].items()}
 
-def versioning_s3_objects(s3, bucket_name, sents_folder, dest_bucket_name):
     """
     When a file is changed in the s3 bucket, changes might not be available before 24h because the old versions are cached in the 
     AWS cloud front. There are two alternatives to access new files. 
