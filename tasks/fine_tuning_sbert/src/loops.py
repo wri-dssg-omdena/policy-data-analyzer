@@ -78,13 +78,15 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     #baseline = train_params['baseline']
     #patience = train_params['patience']
     #seed = train_params['seeds']
-    
-    learning_rate = train_params['learning_rate']
+    #learning_rate = train_params['learning_rate']
 
     print(f"Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
-    label2int = dict(zip(label_names, range(len(label_names))))
+    # Load base model 
+    model = SentenceTransformer(model_name)
 
+    # Splitting training and validation datasets
+    label2int = dict(zip(label_names, range(len(label_names))))
     X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=dev_perc,
                                                       stratify=train_labels, random_state=100)
 
@@ -94,8 +96,6 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     dev_samples = build_data_samples(X_dev, label2int, y_dev)
 
     # Train set config
-    #model = EarlyStoppingSentenceTransformer(model_name)
-    model = SentenceTransformer(model_name)
     train_dataset = SentencesDataset(train_samples, model=model)
     train_dataloader = DataLoader(
         train_dataset, shuffle=True, batch_size=train_batch_size)
@@ -112,7 +112,7 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     warmup_steps = math.ceil(
         len(train_dataset) * max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
 
-    set_seeds(seed)
+    #set_seeds(seed)
     model_deets = f"{train_params['eval_classifier']}_model={model_name}_test-perc={dev_perc}_seed={seed}"
 
     # Train the model
@@ -129,10 +129,10 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
               epochs=max_num_epochs,
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
-              output_path=output_path,
-              optimizer_params={'lr': learning_rate, 'correct_bias': True},
-              baseline=baseline,
-              patience=patience,
+              output_path= None,
+              #optimizer_params={'lr': learning_rate, 'correct_bias': True},
+              #baseline=baseline,
+              #patience=patience,
               show_progress_bar=False
               )
 
