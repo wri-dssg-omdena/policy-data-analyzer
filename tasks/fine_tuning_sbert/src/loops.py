@@ -130,9 +130,6 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
               output_path= None,
-              #optimizer_params={'lr': learning_rate, 'correct_bias': True},
-              #baseline=baseline,
-              #patience=patience,
               show_progress_bar=False
               )
 
@@ -150,7 +147,7 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     print("Time taken for fine-tuning:",
           "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
 
-    return run_name
+    return model
 
 
 def make_dataset_public(train_sents_, train_labels_, label_names_):
