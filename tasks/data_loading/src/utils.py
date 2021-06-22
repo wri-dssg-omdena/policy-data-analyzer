@@ -103,7 +103,7 @@ def load_dataset(data_path, experiment):
 
     return dataset[0], dataset[1], dataset[2], dataset[3]
 
-def load_training_dataset_HSSC(data_path, language, classification, labeling, data):
+def load_training_dataset_HSSC(data_path, language, classification, labeling, dataset_type):
     """
     Return the train data, train labels, test data, and test labels
     """
@@ -112,21 +112,19 @@ def load_training_dataset_HSSC(data_path, language, classification, labeling, da
         for file_type in ["sentences", "labels"]:
             filename = classification + "_" + labeling + "_" + language + "_" + dataset_type + "_" + file_type + ".csv"
             f = data_path + "/" + filename
-            print(f)
-    #        try:
-    #            print(dataset_type, "_", file_type)
-    #            data = pd.read_csv(f, index_col=False, header=None)
+            try:
+                data = pd.read_csv(f, index_col=False, header=None)
                 
-    #        except Exception as e:
-    #            if "can't decode byte" in str(e):
-    #                data = pd.read_csv(f, index_col=False, header=None, encoding="ISO-8859-1")
-    #            else:
-    #                raise Exception("Couldn't read file:", f)
-    #        dataset.append(data[0].tolist())  # The data is always the entire first column
-    #if data == "train":
-    #    return dataset[0], dataset[1]
-    #elif data == "test":
-    #    return dataset[2], dataset[3]
+            except Exception as e:
+                if "can't decode byte" in str(e):
+                    data = pd.read_csv(f, index_col=False, header=None, encoding="ISO-8859-1")
+                else:
+                    raise Exception("Couldn't read file:", f)
+            dataset.append(data[0].tolist())  # The data is always the entire first column
+    if dataset_type == "train":
+        return dataset[0], dataset[1]
+    elif dataset_type == "test":
+        return dataset[2], dataset[3]
 
 def load_json(file_name):
     with open(file_name, "r") as f:
