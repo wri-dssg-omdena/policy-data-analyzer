@@ -113,7 +113,9 @@ def load_training_dataset_HSSC(data_path, language, classification, labeling, da
             filename = classification + "_" + labeling + "_" + language + "_" + dataset_type + "_" + file_type + ".csv"
             f = data_path + "/" + filename
             try:
+                print(dataset_type, "_", file_type)
                 data = pd.read_csv(f, index_col=False, header=None)
+                
             except Exception as e:
                 if "can't decode byte" in str(e):
                     data = pd.read_csv(f, index_col=False, header=None, encoding="ISO-8859-1")
