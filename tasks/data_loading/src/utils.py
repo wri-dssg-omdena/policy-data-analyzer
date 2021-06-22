@@ -158,6 +158,25 @@ def plot_data_distribution(data, label_names, normalize=True):
     print("Label counts:")
     print(dict(zip(label_names, weights)))
 
+def plot_data_distribution_HSSC(data, label_names, normalize=True):
+    weights = np.array(get_counts_per_label(data, len(label_names)))
+    if normalize:
+        weights = weights / sum(weights)
+    
+    figure = plt.figure(figsize = (5,5))
+    axarr = figure.add_subplot(1,1,1)
+    plt.bar(label_names, weights)
+    plt.xticks(label_names, rotation=90)
+    plt.title("Data Distribution")
+    plt.xlabel("Label")
+    plt.ylabel("Percentage of label in data")
+    plt.show()
+
+    print("Label counts:")
+    print(dict(zip(label_names, weights)))
+
+    return(figure)
+
 def select_labels(dataset, labels_to_be_retrieved):
   new_dict = {}
   for key, value in dataset.items():
