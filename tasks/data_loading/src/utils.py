@@ -169,11 +169,12 @@ def plot_data_distribution_HSSC(data, label_names, normalize=True):
     plt.title("Data Distribution")
     plt.xlabel("Label")
     plt.ylabel("Percentage of label in data")
-    plt.show()
 
     figure = plt.gcf()
-    figure.set_size_inches(2,2)
-    plt.close()
+    figure.set_size_inches(10,10)
+
+    plt.show()
+
     print("Label counts:")
     print(dict(zip(label_names, weights)))
 
