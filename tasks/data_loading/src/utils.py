@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from os import listdir
 from os.path import isfile, join
-import wandb
+
 
 def country_labeled_sentences(excel_map):
     result = {}
@@ -169,17 +169,16 @@ def plot_data_distribution_HSSC(data, label_names, normalize=True):
     plt.title("Data Distribution")
     plt.xlabel("Label")
     plt.ylabel("Percentage of label in data")
-    plt.show()
 
     figure = plt.gcf()
-    figure.set_size_inches(10,10) # enlarging CM
-    wandb.log({"Test set CM": wandb.Image(figure)})
-    plt.close()
+    figure.set_size_inches(10,10)
+
+    plt.show()
 
     print("Label counts:")
     print(dict(zip(label_names, weights)))
 
-    # return(figure)
+    return(figure)
 
 def select_labels(dataset, labels_to_be_retrieved):
   new_dict = {}
