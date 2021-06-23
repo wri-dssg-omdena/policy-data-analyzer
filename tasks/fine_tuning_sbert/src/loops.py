@@ -120,32 +120,19 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
     dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
                                                  name='lae-dev', label_names=label_names)
 
-    # this will write to the same project every time
-    run = wandb.init(notes=model_deets, project='WRI', tags=['baseline', 'training'],
-                     entity='ramanshsharma')
-
     model.fit(train_objectives=[(train_dataloader, classifier)],
               evaluator=dev_evaluator,
               epochs=max_num_epochs,
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
-              output_path= None,
+              output_path= output_path,
               show_progress_bar=False
               )
 
-    run.save()
-    run_name = run.id
 
-    torch.save(model, output_path+'/saved_model.pt')
-    wandb.save(output_path+'/saved_model.pt')
-
-    wandb.finish()
-
-    end = time.time()
-    hours, rem = divmod(end - start, 3600)
-    minutes, seconds = divmod(rem, 60)
-    print("Time taken for fine-tuning:",
-          "{:0>2}:{:0>2}:{:05.2f}".format(int(hours), int(minutes), seconds))
+    if output_path != None:
+        torch.save(model, output_path+'/saved_model.pt')
+        wandb.save(output_path+'/saved_model.pt')
 
     return model
 
@@ -190,7 +177,6 @@ def evaluate_using_sklearn(clf, model, train_sents, train_labels, test_sents, te
     evaluator = ModelEvaluator(
         label_names, y_true=numeric_test_labels, y_pred=numeric_preds)
 
-    visualize_embeddings_2D(np.vstack(test_embs), test_labels, tsne_perplexity=50)
     evaluator.plot_confusion_matrix(color_map='Blues')
     print("Macro/Weighted Avg F1-score:", evaluator.avg_f1.tolist())
 
