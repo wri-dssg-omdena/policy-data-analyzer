@@ -171,7 +171,7 @@ def plot_data_distribution_HSSC(data, label_names, normalize=True):
     plt.ylabel("Percentage of label in data")
 
     figure = plt.gcf()
-    figure.set_size_inches(10,10)
+    figure.set_size_inches(7,7)
 
     plt.show()
 
