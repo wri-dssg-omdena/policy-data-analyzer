@@ -67,7 +67,7 @@ class SoftmaxClassifier(nn.Module):
             return features, output
 
 
-def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
+def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_names):
     """
     Find the optimal SBERT model by doing a hyperparameter search over random seeds, dev percentage, and different types of SBERT models
     """
