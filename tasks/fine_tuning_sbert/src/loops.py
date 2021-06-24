@@ -75,10 +75,6 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     dev_perc = train_params["all_dev_perc"]
     model_name = train_params["model_names"]
     max_num_epochs = train_params["max_num_epochs"]
-    language = train_params["language"]
-    class_type = train_params["classification_type"]
-    train = train_params["training_data"]
-    test = train_params["test_data"]
 
     print(f"Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
@@ -111,9 +107,6 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
                                    num_labels=len(label2int))
     warmup_steps = math.ceil(
         len(train_dataset) * max_num_epochs / train_batch_size * 0.1)  # 10% of train data for warm-up
-
-
-    model_deets = f"{language}_{class_type}_train_data{train}_test_data={test}"
 
     # Train the model
     start = time.time()
