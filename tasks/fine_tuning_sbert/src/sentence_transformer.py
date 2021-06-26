@@ -131,14 +131,14 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         num_train_objectives = len(train_objectives)
 
         skip_scheduler = False
-        for epoch in trange(epochs, desc="Epoch", disable=not show_progress_bar):
+        for epoch in epochs:
             training_steps = 0
 
             for loss_model in loss_models:
                 loss_model.zero_grad()
                 loss_model.train()
 
-            for _ in trange(steps_per_epoch, desc="Iteration", smoothing=0.05, disable=not show_progress_bar):
+            for _ in steps_per_epoch:
                 for train_idx in range(num_train_objectives):
                     loss_model = loss_models[train_idx]
                     optimizer = optimizers[train_idx]

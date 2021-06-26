@@ -200,8 +200,8 @@ def single_run_fine_tune(train_params, train_sents, train_labels, label_names):
               output_path=output_path,
               optimizer_params={'lr': learning_rate, 'correct_bias': True},
               baseline=baseline,
-              patience=patience,
-              show_progress_bar=False
+              patience=patience
+              #   show_progress_bar=False
               )
 
     run.save()
@@ -226,7 +226,6 @@ def make_dataset_public(train_sents_, train_labels_, label_names_):
     train_sents = train_sents_
     train_labels = train_labels_
     label_names = label_names_
-
 
 
 def build_data_samples(X_train, label2int, y_train):
