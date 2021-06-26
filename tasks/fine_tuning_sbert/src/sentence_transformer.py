@@ -16,7 +16,7 @@ from torch import nn
 import torch
 from torch.optim import Optimizer
 from torch.utils.data import DataLoader
-from tqdm.autonotebook import trange
+# from tqdm.autonotebook import trange
 from statistics import mean
 
 
@@ -131,14 +131,14 @@ class EarlyStoppingSentenceTransformer(SentenceTransformer):
         num_train_objectives = len(train_objectives)
 
         skip_scheduler = False
-        for epoch in epochs:
+        for epoch in range(epochs, start=1):
             training_steps = 0
 
             for loss_model in loss_models:
                 loss_model.zero_grad()
                 loss_model.train()
 
-            for _ in steps_per_epoch:
+            for _ in range(steps_per_epoch):
                 for train_idx in range(num_train_objectives):
                     loss_model = loss_models[train_idx]
                     optimizer = optimizers[train_idx]
