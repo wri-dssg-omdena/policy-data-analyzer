@@ -75,10 +75,11 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     dev_perc = train_params["all_dev_perc"]
     model_name = train_params["model_names"]
     max_num_epochs = train_params["max_num_epochs"]
+    group_name = train_params["group_name"]
 
     print(f"Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
 
-    # Load base model 
+    # Load base model
     model = SentenceTransformer(model_name)
 
     # Splitting training and validation datasets
@@ -113,19 +114,25 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     dev_evaluator = CustomLabelAccuracyEvaluator(dataloader=dev_dataloader, softmax_model=classifier,
                                                  name='lae-dev', label_names=label_names)
 
+    # Init WandB
+    wandb.init(project='HSSC', group=group_name, entity='jordi_planas')
+
     model.fit(train_objectives=[(train_dataloader, classifier)],
               evaluator=dev_evaluator,
               epochs=max_num_epochs,
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
-              output_path= output_path,
+              output_path=output_path,
               show_progress_bar=False
               )
-
 
     if output_path != None:
         torch.save(model, output_path+'/saved_model.pt')
         wandb.save(output_path+'/saved_model.pt')
+        wandb.finish()
+
+    else:
+        wandb.finish()
 
     return model
 
@@ -135,7 +142,6 @@ def make_dataset_public(train_sents_, train_labels_, label_names_):
     train_sents = train_sents_
     train_labels = train_labels_
     label_names = label_names_
-
 
 
 def build_data_samples(X_train, label2int, y_train):
