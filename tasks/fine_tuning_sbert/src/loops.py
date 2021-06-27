@@ -78,6 +78,7 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     group_name = train_params["group_name"]
 
     print(f"Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Load base model
     model = SentenceTransformer(model_name)
@@ -86,7 +87,6 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     label2int = dict(zip(label_names, range(len(label_names))))
     X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=dev_perc,
                                                       stratify=train_labels, random_state=100)
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     X_train, X_dev, y_train, y_dev = X_train.to(device), X_dev.to(device), y_train.to(device), y_dev.to(device)
 
@@ -98,12 +98,12 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     # Train set config
     train_dataset = SentencesDataset(train_samples, model=model)
     train_dataloader = DataLoader(
-        train_dataset, shuffle=True, batch_size=train_batch_size)
+        train_dataset.to(device), shuffle=True, batch_size=train_batch_size)
 
     # Dev set config
     dev_dataset = SentencesDataset(dev_samples, model=model)
     dev_dataloader = DataLoader(
-        dev_dataset, shuffle=True, batch_size=train_batch_size)
+        dev_dataset.to(device), shuffle=True, batch_size=train_batch_size)
 
     # Define the way the loss is computed
     classifier = SoftmaxClassifier(model=model,
