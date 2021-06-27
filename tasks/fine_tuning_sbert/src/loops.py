@@ -122,8 +122,8 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
               epochs=max_num_epochs,
               evaluation_steps=1000,
               warmup_steps=warmup_steps,
-              output_path=output_path,
-              show_progress_bar=False
+              output_path=output_path
+              #   show_progress_bar=False
               )
 
     if output_path != None:
