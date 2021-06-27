@@ -101,8 +101,9 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         self.softmax_model = softmax_model
         self.label_names = label_names
 
-    def __call__(self, model, epoch: int = -1, steps: int = -1) -> dict:
+    def __call__(self, model, output_path="", epoch: int = -1, steps: int = -1) -> dict:
         model.eval()
+        device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         total = 0
         correct = 0
 
@@ -120,7 +121,7 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         all_predictions = []
         all_labels = []
         for step, batch in enumerate(tqdm(self.dataloader, desc="Evaluating")):
-            features, label_ids = batch_to_device(batch, model.device)
+            features, label_ids = batch_to_device(batch, device)
             with torch.no_grad():
                 _, prediction = self.softmax_model(features, labels=None)
 
