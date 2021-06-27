@@ -86,6 +86,9 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     label2int = dict(zip(label_names, range(len(label_names))))
     X_train, X_dev, y_train, y_dev = train_test_split(train_sents, train_labels, test_size=dev_perc,
                                                       stratify=train_labels, random_state=100)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    X_train, X_dev, y_train, y_dev = X_train.to(device), X_dev.to(device), y_train.to(device), y_dev.to(device)
 
     # Load data samples into batches
     train_batch_size = 16
