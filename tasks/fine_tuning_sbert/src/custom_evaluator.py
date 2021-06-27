@@ -101,7 +101,7 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         self.softmax_model = softmax_model
         self.label_names = label_names
 
-    def __call__(self, model, epoch: int = -1, steps: int = -1) -> dict:
+    def __call__(self, model, output_path="", epoch: int = -1, steps: int = -1) -> dict:
         model.eval()
         total = 0
         correct = 0
