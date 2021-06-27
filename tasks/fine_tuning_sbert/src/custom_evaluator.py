@@ -120,7 +120,7 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
 
         all_predictions = []
         all_labels = []
-        for step, batch in enumerate(tqdm(self.dataloader.to(device), desc="Evaluating")):
+        for step, batch in enumerate(tqdm(self.dataloader, desc="Evaluating")):
             features, label_ids = batch_to_device(batch, device)
             with torch.no_grad():
                 _, prediction = self.softmax_model(features, labels=None)
