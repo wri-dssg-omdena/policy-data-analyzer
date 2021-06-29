@@ -78,7 +78,6 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     group_name = train_params["group_name"]
 
     print(f"Fine tuning parameters:\n{json.dumps(train_params, indent=4)}")
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     # Load base model
     model = SentenceTransformer(model_name)
@@ -96,12 +95,13 @@ def single_run_fine_tune_HSSC(train_params, train_sents, train_labels, label_nam
     # Train set config
     train_dataset = SentencesDataset(train_samples, model=model)
     train_dataloader = DataLoader(
-        train_dataset.to(device), shuffle=True, batch_size=train_batch_size)
+        train_dataset, shuffle=True, batch_size=train_batch_size)
 
     # Dev set config
     dev_dataset = SentencesDataset(dev_samples, model=model)
     dev_dataloader = DataLoader(
-        dev_dataset.to(device), shuffle=True, batch_size=train_batch_size)
+        dev_dataset, shuffle=True, batch_size=train_batch_size)
+        # (trainset,batch_size=batch_size,shuffle=True,num_workers=0,pin_memory=False, generator=torch.Generator(device='cuda'))
 
     # Define the way the loss is computed
     classifier = SoftmaxClassifier(model=model,
