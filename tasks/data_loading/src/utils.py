@@ -103,7 +103,7 @@ def load_dataset(data_path, experiment):
 
     return dataset[0], dataset[1], dataset[2], dataset[3]
 
-def load_training_dataset_HSSC(data_path, language, classification, labeling, dataset_type):
+def load_training_dataset_HSSC(data_path, language, classification, labeling, data_type):
     """
     Return the train data, train labels, test data, and test labels
     """
@@ -121,9 +121,9 @@ def load_training_dataset_HSSC(data_path, language, classification, labeling, da
                 else:
                     raise Exception("Couldn't read file:", f)
             dataset.append(data[0].tolist())  # The data is always the entire first column
-    if dataset_type == "train":
+    if data_type == "train":
         return dataset[2], dataset[3]
-    elif dataset_type == "test":
+    elif data_type == "test":
         return dataset[0], dataset[1]
 
 def load_json(file_name):
