@@ -148,4 +148,4 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
 
         plot_confusion_matrix(cm, self.label_names)
 
-        return score_dict
+        return accuracy
