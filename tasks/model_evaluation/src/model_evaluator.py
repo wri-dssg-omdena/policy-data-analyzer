@@ -67,7 +67,7 @@ class ModelEvaluator:
             [recall_score(y_true, y_pred, average='macro'), recall_score(y_true, y_pred, average='weighted')])
         self.avg_specificity = np.array([np.mean(self.specificity), self.weighted_avg(self.specificity, y_true, )])
         self.avg_f1 = np.array(
-            [f1_score(y_true, y_pred, average='macro'), f1_score(y_true, y_pred, average='weighted')])
+            [round(f1_score(y_true, y_pred, average='macro'), 3), round(f1_score(y_true, y_pred, average='weighted'), 3)])
         self.accuracy = accuracy_score(y_true, y_pred)
         self.acc = np.array(["-----", "-----", "-----", self.accuracy])
 
