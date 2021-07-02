@@ -16,11 +16,11 @@ class USFR(BaseSpider):
     scrapable = "True"
     allowed_domains = ["api.govinfo.gov"]
     start_date = "2011-01-01"
-    stop_date = "2011-01-30"
+    stop_date = "2021-06-30"
     # API_key_file = 'C:/Users/user/Google Drive/Els_meus_documents/projectes/CompetitiveIntelligence/WRI/Notebooks/credentials/us_gov_api_key.json'
-    # API_key_file = 'C:/Users/jordi/Documents/claus/us_gov_api_key.json'
+    API_key_file = 'C:/Users/jordi/Documents/claus/us_gov_api_key_jpc.json'
     # API_key_file = '/home/propietari/Documents/claus/us_gov_api_key.json'
-    API_key_file = '/home/propietari/Documents/claus/us_gov_api_key_jpc.json'
+    #API_key_file = '/home/propietari/Documents/claus/us_gov_api_key_jpc.json'
 
     def __init__(self):
         # First we import the two dictionaries that we are going to use to filter the policies.
@@ -35,23 +35,25 @@ class USFR(BaseSpider):
 
         # This piece of code is to deal with the fact that the scraping can't be done in a single batch. The spiders breaks when the user credentials reach its limits
         # as the items are not recovered consecutively, the final list has gaps. This piece of code is to fill the gaps in ulterior runs.
-        path = "/home/propietari/Documents/GitHub/policy-data-analyzer/tasks/Scrapy/scrapy_official_newspapers/output/"
+        #path = "/home/propietari/Documents/GitHub/policy-data-analyzer/tasks/Scrapy/scrapy_official_newspapers/output/"
+        path = "C:/Users/jordi/Documents/GitHub/policy-data-analyzer/tasks/Scrapy/scrapy_official_newspapers/output/"
         # file_name = "USFR_20210310.csv"
-        file = path + self.name + "_" + self.today + ".csv"
+        today = datetime.date.today()
+        file = path + self.name + "_" + today.strftime('%Y%m%d') + ".csv"
 
         self.dates_dict = {}
         try:
             with open(file, 'r', errors="surrogateescape") as f:
                 reader = csv.reader(f)
                 for row in reader:
-                    self.dates_dict[datetime.datetime.strptime(row[6], '%Y-%m-%d').date()] = 0
+                    self.dates_dict[datetime.datetime.strptime(row[6], '%Y%m%d').date()] = 0
         except:
             f = open(file, 'w')
             f.close()
             with open(file, 'r', errors="surrogateescape") as f:
                 reader = csv.reader(f)
                 for row in reader:
-                    self.dates_dict[datetime.datetime.strptime(row[6], '%Y-%m-%d').date()] = 0
+                    self.dates_dict[datetime.datetime.strptime(row[6], '%Y%m%d').date()] = 0
     
     def start_requests(self):
         for day in self.create_date_list(self.from_date, self.stop_date, 1, "days", self.country_code):
