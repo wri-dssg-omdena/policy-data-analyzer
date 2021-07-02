@@ -15,14 +15,16 @@ class LeyChile(BaseSpider):
     state_name = "Federal"
     state_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
     source = "LeyChile"
-    spider_builder = "Ignacio Fernandez & Jordi Planas"
+    spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ['bcn.cl/leychile']
-    start_date = "2000-01-01"
+    start_date = "2021-06-28"
 
     def __init__(self):
-        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain.json')
+        self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_ES.json')
         self.negative_keyword_dict = self.import_json('./keywords_and_dictionaries/negative_keywords_knowledge_domain_ES.json')
+        self.from_date, self.today = self.create_date_span(self.start_date)
+
         self.start_urls = [f'https://nuevo.leychile.cl/servicios/Consulta/listaresultadosavanzada?stringBusqueda=-1%23normal%23on%7C%7C4%23normal%23{self.from_date}%23{self.today}%7C%7C117%23normal%23on%7C%7C48%23normal%23on&tipoNormaBA=&npagina=1&itemsporpagina=10&orden=2&tipoviene=4&totalitems=&seleccionado=0&taxonomia=&valor_taxonomia=&o=experta&r=']
 
     def parse(self, response):
@@ -52,11 +54,13 @@ class LeyChile(BaseSpider):
                 item["law_class"] = norm['NORMA']
                 item['title'] = norm['TITULO_NORMA']
                 item['reference'] = norm['TIPO']
+                print("***** ", norm['ORGANISMO'], " *****")
                 item['authorship'] = norm['ORGANISMO']
                 item['summary'] = norm['DESCRIPCION']
                 item['publication_date'] = pub_date_format
+                print("***** ", norm_url, " *****")
                 item['url'] = norm_url
-                item['doc_url'] = doc_url
+                item['file_urls'] = doc_url
                 item['doc_name'] = self.HSA1_encoding(doc_url)
                 for column in item:
                     item[column] = item[column] or False
