@@ -18,7 +18,7 @@ class LeyChile(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ['bcn.cl/leychile']
-    start_date = "2021-06-28"
+    start_date = "2011-01-01"
 
     def __init__(self):
         self.keyword_dict = self.import_json('./keywords_and_dictionaries/keywords_knowledge_domain_ES.json')
@@ -54,14 +54,12 @@ class LeyChile(BaseSpider):
                 item["law_class"] = norm['NORMA']
                 item['title'] = norm['TITULO_NORMA']
                 item['reference'] = norm['TIPO']
-                print("***** ", norm['ORGANISMO'], " *****")
                 item['authorship'] = norm['ORGANISMO']
                 item['summary'] = norm['DESCRIPCION']
                 item['publication_date'] = pub_date_format
-                print("***** ", norm_url, " *****")
                 item['url'] = norm_url
-                item['file_urls'] = doc_url
-                item['doc_name'] = self.HSA1_encoding(doc_url)
+                item['file_urls'] = [doc_url]
+                item['doc_name'] = self.HSA1_encoding(doc_url) + ".txt"
                 for column in item:
                     item[column] = item[column] or False
                 yield item

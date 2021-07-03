@@ -19,10 +19,10 @@ class MexicoDOF(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["sidofqa.segob.gob.mx"]
-    start_date = "2010-01-01"
+    start_date = "2011-01-01"
     #This is a category that appears in the database which yields a lot of documents that announce job posts. We exclude them from the search
     authorship_to_exclude = 'CONVOCATORIAS PARA CONCURSOS DE PLAZAS VACANTES DEL SERVICIO PROFESIONAL DE CARRERA EN LA ADMINISTRACION PUBLICA FEDERAL'
-    folder_to_save = "spanish_documents/text_files/new/"
+    folder_to_save = "spanish_documents/text_files/HSSC/new/"
     # /wri-nlp-policy/english_documents/text_files/Testing/
     # folder_to_save = "wri.-testing/dof/"
 
