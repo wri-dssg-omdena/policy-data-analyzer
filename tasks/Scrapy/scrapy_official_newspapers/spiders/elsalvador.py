@@ -16,10 +16,10 @@ class ElSalvador(BaseSpider):
 	spider_builder = "Jordi Planas"
 	scrapable = "True"
 	allowed_domains = ["jurisprudencia.gob.sv"]
-	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola"]#["forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
+	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola", "forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
 	info_url = ""
 	counter = 0
-	start_date = "2020-12-01"
+	start_date = "2018-12-01"
 	serch_results = 0
 
 	url_dict = {}

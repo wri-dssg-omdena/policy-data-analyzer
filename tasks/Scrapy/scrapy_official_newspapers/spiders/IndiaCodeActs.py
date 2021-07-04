@@ -9,12 +9,12 @@ class IndiaCodeActs(BaseSpider):
     country = "India"
     country_code = "IN" # You can find the ISO3166 country code here: https://gist.github.com/ssskip/5a94bfcd2835bf1dea52
     state_name = "Federal"
-    satate_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
+    state_code = "" # As per the Holidays package, you can find the code here https://pypi.org/project/holidays/ if avaiable.
     source = "India Code"
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["indiacode.nic.in/"]
-    start_date = "1950-01-01"
+    start_date = "2011-01-01"
     done_dictionary = {}
     
     def __init__(self):
@@ -68,6 +68,9 @@ class IndiaCodeActs(BaseSpider):
                 self.state_name = tr.css('td::text')[1].get()
             if "Act ID" in tr.css('td')[0].get():
                 reference = tr.css('td::text')[1].get()
+            else:
+                print("\n*** No Act ID ***\n")
+                reference = "NA"
             if "Enactment" in tr.css('td::text')[0].get():
                 publication_date = tr.css('td::text')[1].get()
             if "Short Title" in tr.css('td::text')[0].get():
