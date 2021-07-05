@@ -41,6 +41,7 @@ class ElSalvador(BaseSpider):
 		for i in range(0, len(response.xpath('//*[@id="files"]/tbody/tr/td/h4/a'))):
 			url = response.xpath('//*[@id="files"]/tbody/tr/td/a/@href')[i].get().replace("\'", "")
 			self.info_url = url.replace("http", "https")
+			print("*****", self.info_url)
 			if self.info_url in self.url_dict:
 				pass
 			else:
