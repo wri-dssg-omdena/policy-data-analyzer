@@ -141,6 +141,6 @@ class CustomLabelAccuracyEvaluator(SentenceEvaluator):
         logging.info(f"Macro F1: {macro_f1}")
         logging.info(f"Weighted F1: {weighted_f1}")
 
-        plot_confusion_matrix(cm, self.label_names)
+        # plot_confusion_matrix(cm, self.label_names)
 
         return accuracy
