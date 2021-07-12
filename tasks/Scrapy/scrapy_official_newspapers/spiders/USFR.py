@@ -37,17 +37,20 @@ class USFR(BaseSpider):
         # as the items are not recovered consecutively, the final list has gaps. This piece of code is to fill the gaps in ulterior runs.
         #path = "/home/propietari/Documents/GitHub/policy-data-analyzer/tasks/Scrapy/scrapy_official_newspapers/output/"
         path = "C:/Users/jordi/Documents/GitHub/policy-data-analyzer/tasks/Scrapy/scrapy_official_newspapers/output/"
-        # file_name = "USFR_20210310.csv"
-        today = datetime.date.today()
-        file = path + self.name + "_" + today.strftime('%Y%m%d') + ".csv"
+        file_name = "USFR_20210702.csv"
+        #today = datetime.date.today()
+        #file = path + self.name + "_" + today.strftime('%Y%m%d') + ".csv"
+        file = path + file_name
 
         self.dates_dict = {}
         try:
             with open(file, 'r', errors="surrogateescape") as f:
+                print("\n*********** File Opened *************\n")
                 reader = csv.reader(f)
                 for row in reader:
                     self.dates_dict[datetime.datetime.strptime(row[6], '%Y%m%d').date()] = 0
         except:
+            print("\n******** File not found *********\n")
             f = open(file, 'w')
             f.close()
             with open(file, 'r', errors="surrogateescape") as f:

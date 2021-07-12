@@ -58,7 +58,7 @@ class ScrapyOfficialNewspapersPipeline:
 
     def open_spider(self, spider):
         dir = "./output/"
-        self.file = open(dir + f"{spider.name}_{self.today}.csv", 'ab')
+        self.file = open(dir + "USFR_20210702.csv", 'ab') #f"{spider.name}_{self.today}.csv"
         self.exporter_1 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'Latin1')
         self.exporter_2 = CsvItemExporter(self.file, include_headers_line = False, encoding = 'utf-8')		
         self.exporter_1.start_exporting()
