@@ -16,10 +16,10 @@ class ElSalvador(BaseSpider):
 	spider_builder = "Jordi Planas"
 	scrapable = "True"
 	allowed_domains = ["jurisprudencia.gob.sv"]
-	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola"]#["forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
+	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola", "forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
 	info_url = ""
 	counter = 0
-	start_date = "2020-12-01"
+	start_date = "2018-12-01"
 	serch_results = 0
 
 	url_dict = {}
@@ -41,6 +41,7 @@ class ElSalvador(BaseSpider):
 		for i in range(0, len(response.xpath('//*[@id="files"]/tbody/tr/td/h4/a'))):
 			url = response.xpath('//*[@id="files"]/tbody/tr/td/a/@href')[i].get().replace("\'", "")
 			self.info_url = url.replace("http", "https")
+			print("*****", self.info_url)
 			if self.info_url in self.url_dict:
 				pass
 			else:
