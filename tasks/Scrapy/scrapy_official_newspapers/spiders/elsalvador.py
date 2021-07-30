@@ -19,7 +19,7 @@ class ElSalvador(BaseSpider):
 	keywords = ["agropecuario", "ganadero", "ganadería", "energía", "energético", "energética", "agrícola", "forestal", "agrícola", "restauración", "uso del suelo", "minería", "medio ambiente"]
 	info_url = ""
 	counter = 0
-	start_date = "2018-12-01"
+	start_date = "2011-01-01"
 	serch_results = 0
 
 	url_dict = {}
@@ -54,14 +54,14 @@ class ElSalvador(BaseSpider):
 	
 	def parse_other(self, response):
 		self.counter += 1
-		# print("\n----- Reccord processed succesfully\n\n", response.xpath('//*[@id="menu1"]/table').get(), "\n")
+		# print("\n----- Reccord processed succesfully\n\n", response.xpath('//*[@id="menu1"]/table/tr//td').getall(), "\n")
 		item = ScrapyOfficialNewspapersItem()
 		item['country'] = self.country
 		item['state'] = self.state_name
 		item['data_source'] = self.source
 		item['url'] = response.url
 		
-		table = response.xpath('//*[@id="menu1"]/table').get()
+		table = response.xpath('//*[@id="menu1"]/table/tr//td').getall()
 
 		item, good = self.parse_table(item, table)
 		
@@ -74,38 +74,42 @@ class ElSalvador(BaseSpider):
 			pass
 
 	def parse_table(self, item_object, table):
-		cells = table.split("<tr>")
 		municipio = ""
 		num_documento = "-"
 		tipo_documento = ""
 		summary = ""
 		valid = True
-		for cell in cells:
-			rows = cell.split("</td>")
-			if "Naturaleza [Legislación]" in rows[0]:
-				tipo_documento = self.remove_html_tags(rows[1]).strip()
-			if "Número de decreto" in rows[0]:
-				num_documento = num_documento + self.remove_html_tags(rows[1]).strip()
-			if "Tipo de documento" in rows[0]:
-				tipo_1_documento = self.remove_html_tags(rows[1]).strip()
-			if "Municipio" in rows[0]:
-				municipio = self.remove_html_tags(rows[1]).strip()
-			if "Nombre" in rows[0]:
-				title = self.remove_html_tags(rows[1]).strip().replace("”", "").replace("“","").replace("\"","")
-				item_object['title'] = title
-			if "Fecha de Publicación en D. O." in rows[0]:
-				item_object['publication_date'] = self.remove_html_tags(rows[1]).strip()
-			if "Origen" in rows[0]:
-				item_object['authorship'] = self.remove_html_tags(rows[1]).strip()
-			if "Consideraciones sobre el documento" in rows[0]:
-				summary = self.remove_html_tags(rows[1]).strip()
-				text_to_search = title + " " + summary
-				item_object['summary'] = summary
-			if "Vigencia" in rows[0]:
-				if self.remove_html_tags(rows[1]).strip() == "Vigente":
-					valid = True
+		for i, tab in enumerate(table):
+			if i % 2 == 0:
+				# print(f"{i}\n%%%%%%%% {tab}\n")
+				rows = tab.split("</td>")
+				# print(f"##### {table[i+1]}\n\n")
+				if "Naturaleza [Legislación]" in tab:
+					tipo_documento = self.remove_html_tags(table[i+1]).strip()
+				if "Número de decreto" in tab:
+					num_documento = num_documento + self.remove_html_tags(table[i+1]).strip()
+				if "Tipo de documento" in tab:
+					tipo_1_documento = self.remove_html_tags(table[i+1]).strip()
+				if "Municipio" in tab:
+					municipio = self.remove_html_tags(table[i+1]).strip()
+				if "Nombre" in tab:
+					title = self.remove_html_tags(table[i+1]).strip().replace("”", "").replace("“","").replace("\"","")
+					item_object['title'] = title
+				if "Fecha de Publicación en D. O." in tab:
+					item_object['publication_date'] = self.remove_html_tags(table[i+1]).strip()
+				if "Origen" in tab:
+					item_object['authorship'] = self.remove_html_tags(table[i+1]).strip()
+				if "Consideraciones sobre el documento" in tab:
+					summary = self.remove_html_tags(table[i+1]).strip()
+					text_to_search = title + " " + summary
+					item_object['summary'] = summary
 				else:
-					valid = False
+					text_to_search = title
+				if "Vigencia" in tab:
+					if self.remove_html_tags(table[i+1]).strip() == "Vigente":
+						valid = True
+					else:
+						valid = False
 		# print(tipo_documento + "-" + num_documento)
 		if tipo_documento == "":
 			tipo_documento = tipo_1_documento
