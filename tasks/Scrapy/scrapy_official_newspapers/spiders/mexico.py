@@ -83,6 +83,7 @@ class MexicoDOF(BaseSpider):
                     item['publication_date'] = nota['fecha']
                     item['url'] = self.start_url
                     doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
+                    item['file_urls'] = [doc_url]
                     doc_name = self.HSA1_encoding(doc_url) + ".txt"
                     item['doc_name'] = doc_name
                     #self.debug(f"\n       #################       \n {doc_url} \n   ###############")
@@ -112,4 +113,4 @@ class MexicoDOF(BaseSpider):
         #self.debug(text)
         #self.debug("\n       ****************       \n")
         #self.debug(file)
-        self.save_to_s3(self.s3, self.bucket, file, text.replace("\t", ""))
+        # self.save_to_s3(self.s3, self.bucket, file, text.replace("\t", ""))
