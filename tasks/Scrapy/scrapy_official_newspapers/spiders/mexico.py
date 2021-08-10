@@ -47,14 +47,14 @@ class MexicoDOF(BaseSpider):
     def start_requests(self):
         for day in self.create_date_list(self.from_date, self.today, 1, "days", self.country_code):
             #self.debug(day)
-            self.day_doc_url = day.strftime('%d/%m/%Y')
+            day_doc_url = day.strftime('%d/%m/%Y')
             day = day.strftime('%d-%m-%Y')
             #self.debug(day)
-            self.start_url = f'https://sidofqa.segob.gob.mx/dof/sidof/notas/{day}'
+            start_url = f'https://sidofqa.segob.gob.mx/dof/sidof/notas/{day}'
             #print(f"\n *************** \n {self.start_url}\n ********************")
-            yield scrapy.Request(self.start_url, dont_filter=True, callback=self.parse)
+            yield scrapy.Request(start_url, dont_filter=True, callback=self.parse, cb_kwargs=dict(day = day_doc_url, url = start_url))
 
-    def parse(self, response):
+    def parse(self, response, day, url):
         # notas = []
         # notas.append(json.loads(response.text)["NotasMatutinas"])
         # notas.append(json.loads(response.text)["NotasVespertinas"])
@@ -81,19 +81,19 @@ class MexicoDOF(BaseSpider):
                         item['authorship'] = nota['nombreCodOrgaUno']
                     item['summary'] = ""
                     item['publication_date'] = nota['fecha']
-                    item['url'] = self.start_url
-                    doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
+                    item['url'] = url
+                    doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={day}&print=true'
                     item['file_urls'] = [doc_url]
                     doc_name = self.HSA1_encoding(doc_url) + ".txt"
                     item['doc_name'] = doc_name
                     #self.debug(f"\n       #################       \n {doc_url} \n   ###############")
                     #self.debug(doc_name)
                     yield item
-                    yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other, cb_kwargs=dict(document = doc_name, url = doc_url))
+                    yield scrapy.Request(doc_url, dont_filter=True, callback=self.parse_other, cb_kwargs=dict(document = doc_name))
             else:
                 pass
 
-    def parse_other(self, response, document, url):
+    def parse_other(self, response, document):
         soup = BeautifulSoup(response.css('div#DivDetalleNota').get(), features = "lxml")
         paragraphs = soup.find_all("p")
         text = ""
