@@ -19,7 +19,7 @@ class MexicoDOF(BaseSpider):
     spider_builder = "Jordi Planas"
     scrapable = "True"
     allowed_domains = ["sidofqa.segob.gob.mx"]
-    start_date = "2010-01-01"
+    start_date = "2011-01-01"
     #This is a category that appears in the database which yields a lot of documents that announce job posts. We exclude them from the search
     authorship_to_exclude = 'CONVOCATORIAS PARA CONCURSOS DE PLAZAS VACANTES DEL SERVICIO PROFESIONAL DE CARRERA EN LA ADMINISTRACION PUBLICA FEDERAL'
     folder_to_save = "spanish_documents/text_files/new/"
@@ -46,14 +46,14 @@ class MexicoDOF(BaseSpider):
     def start_requests(self):
         for day in self.create_date_list(self.from_date, self.today, 1, "days", self.country_code):
             #self.debug(day)
-            self.day_doc_url = day.strftime('%d/%m/%Y')
+            day_doc_url = day.strftime('%d/%m/%Y')
             day = day.strftime('%d-%m-%Y')
             #self.debug(day)
-            self.start_url = f'https://sidofqa.segob.gob.mx/dof/sidof/notas/{day}'
+            start_url = f'https://sidofqa.segob.gob.mx/dof/sidof/notas/{day}'
             #print(f"\n *************** \n {self.start_url}\n ********************")
-            yield scrapy.Request(self.start_url, dont_filter=True, callback=self.parse)
+            yield scrapy.Request(start_url, dont_filter=True, callback=self.parse, cb_kwargs=dict(day_doc_url = day_doc_url))
 
-    def parse(self, response):
+    def parse(self, response, day_doc_url):
         # notas = []
         # notas.append(json.loads(response.text)["NotasMatutinas"])
         # notas.append(json.loads(response.text)["NotasVespertinas"])
@@ -81,7 +81,8 @@ class MexicoDOF(BaseSpider):
                     item['summary'] = ""
                     item['publication_date'] = nota['fecha']
                     item['url'] = self.start_url
-                    doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={self.day_doc_url}&print=true'
+                    doc_url = f'https://www.dof.gob.mx/nota_detalle.php?codigo={codigo_nota}&fecha={day_doc_url}&print=true'
+                    item['file_urls'] = [doc_url]
                     doc_name = self.HSA1_encoding(doc_url) + ".txt"
                     item['doc_name'] = doc_name
                     #self.debug(f"\n       #################       \n {doc_url} \n   ###############")
@@ -111,4 +112,4 @@ class MexicoDOF(BaseSpider):
         #self.debug(text)
         #self.debug("\n       ****************       \n")
         #self.debug(file)
-        self.save_to_s3(self.s3, self.bucket, file, text.replace("\t", ""))
+        # self.save_to_s3(self.s3, self.bucket, file, text.replace("\t", ""))
