@@ -125,3 +125,4 @@ tasks/data_augmentation/input/Embeddings_Chile_201223.json
 tasks/data_augmentation/input/Embeddings_ElSalvador_201223.json
 tasks/data_augmentation/input/WRI_Policy_Tags.xlsx
 tasks/preprocess_text/input/WRI Policy Tags Complete File phrases extraction all.xlsx
+tasks/database_analysis/output/metadata.xlsx
