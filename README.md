@@ -150,5 +150,29 @@ Success will be achieved as governments or market platforms create aligned incen
 
 _Description taken from: [DSSG Solve Project Description](https://www.solveforgood.org/proj/46/)_
 
+## Citation
+This repository has been developed as part of the following paper. Please cite the following paper if you found the repository useful:
 
+```text
+@article{DBLP:journals/corr/abs-2201-07105,
+  author    = {Jordi Planas and
+               Daniel Firebanks{-}Quevedo and
+               Galina Naydenova and
+               Ramansh Sharma and
+               Cristina Taylor and
+               Kathleen Buckingham and
+               Rong Fang},
+  title     = {Beyond modeling: {NLP} Pipeline for efficient environmental policy
+               analysis},
+  journal   = {CoRR},
+  volume    = {abs/2201.07105},
+  year      = {2022},
+  url       = {https://arxiv.org/abs/2201.07105},
+  eprinttype = {arXiv},
+  eprint    = {2201.07105},
+  timestamp = {Fri, 21 Jan 2022 13:57:15 +0100},
+  biburl    = {https://dblp.org/rec/journals/corr/abs-2201-07105.bib},
+  bibsource = {dblp computer science bibliography, https://dblp.org}
+}
+```
 
